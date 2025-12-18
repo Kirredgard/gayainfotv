@@ -1,0 +1,1340 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>GAYA INFO TV — Actualités & Direct</title>
+<meta name="description" content="GAYA INFO TV - Actualités locales, direct TV.">
+
+<!-- ICONES MODERNES -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<style>
+:root{
+    --red:#e00000;
+    --gray:#ddd;
+    --light:#fafafa;
+}
+
+html{ scroll-behavior:smooth; }
+
+body{
+    margin:0;
+    font-family: Georgia, "Times New Roman", serif;
+    color:#111;
+    background:#fff;
+}
+:root{
+  --red:#e63939;
+  --dark:#020617;
+  --max:1200px;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:system-ui,Segoe UI,Roboto,Arial;
+  background:#f5f5f5;
+  color:#111;
+}
+a{text-decoration:none;color:inherit}
+
+/* ================= TOP BAR ================= */
+.top-bar{
+  background:#fff;
+  border-bottom:1px solid #eee;
+}
+.top-bar-inner{
+  max-width:var(--max);
+  margin:auto;
+  padding:6px 16px;
+  display:flex;
+  justify-content:space-between;
+  font-size:13px;
+}
+
+/* ================= HEADER ================= */
+.main-header{background:#fff}
+
+/* HEADER TOP (COMPACT) */
+.header-top{
+  border-bottom:1px solid #e5e7eb;
+}
+.header-top-inner{
+  max-width:var(--max);
+  margin:auto;
+  padding:10px 16px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+/* LOGO + TITRE (PETITS & ROUGES) */
+.logo-title{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.logo-title img{
+  height:40px;
+}
+.logo-title span{
+  font-size:22px;
+  font-weight:900;
+  color:var(--red);
+}
+
+/* ACTIONS */
+.header-actions{
+  display:flex;
+  gap:8px;
+}
+.btn-outline{
+  border:1.5px solid var(--red);
+  color:var(--red);
+  padding:4px 12px;
+  border-radius:999px;
+  font-weight:800;
+  font-size:13px;
+}
+.btn-live{
+  background:var(--red);
+  color:#fff;
+  padding:4px 14px;
+  border-radius:999px;
+  font-weight:900;
+  font-size:13px;
+}
+.header-actions i{margin-right:5px}
+
+/* NAV BAR (MÊME COULEUR QUE FOOTER) */
+.nav-bar{
+  background:var(--dark);
+}
+.nav-inner{
+  max-width:var(--max);
+  margin:auto;
+  padding:8px 16px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  position:relative;
+   z-index: 10;
+}
+
+/* MENU */
+.menu{
+  display:flex;
+  align-items:center;
+  gap:18px;
+}
+.menu a{
+  color:#e5e7eb;
+  font-weight:700;
+  font-size:14px;
+  margin-right : 30px;
+}
+.menu a:hover{
+  color:#fff;
+}
+/* ===== SOMMES NOUS ===== */
+.container {
+display: grid;
+grid-template-columns: 1fr 2fr;
+gap: 60px;
+padding: 80px 100px;
+max-width: 1200px;
+margin: auto;
+}
+
+
+h1 {
+font-size: 30px;
+font-weight: 700;
+margin: 0;
+}
+
+
+.content {
+font-size: 15px;
+line-height: 1.6;
+}
+
+
+.content p {
+margin-bottom: 20px;
+}
+
+
+@media (max-width: 900px) {
+.container {
+grid-template-columns: 1fr;
+padding: 40px 20px;
+}
+}
+  .page {
+      max-width: 1100px;
+      margin: auto;
+      padding: 50px 60px;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 50px;
+    }
+
+    .header h1 {
+      font-size: 28px;
+      margin: 0;
+      font-weight: 700;
+    }
+
+    .header a {
+      font-size: 16px;
+      color: #000;
+      text-decoration: none;
+      border-bottom: 2px solid #000;
+      padding-bottom: 2px;
+    }
+
+    .team {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 50px;
+    }
+
+    .member img {
+      width: 130px;
+      height: 130px;
+      object-fit: cover;
+      display: block;
+      margin-bottom: 14px;
+    }
+
+    .member h2 {
+      font-size: 16px;
+      margin: 0 0 4px 0;
+      font-weight: 700;
+      min-height: 20px;
+    }
+
+    .member .role {
+      font-size: 13px;
+      margin-bottom: 4px;
+      min-height: 10px;
+    }
+
+    .member .email {
+      font-size: 13px;
+      color: #888;
+    }
+
+    @media (max-width: 900px) {
+      .page {
+        padding: 40px 20px;
+      }
+
+      .team {
+        grid-template-columns: 1fr;
+      }
+
+      .header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+      }
+    }
+/* ===== CROLLS ===== */
+
+.scrol{
+    display:flex;
+    flex-direction:column;
+    gap:16px;
+}
+
+.scrol a{
+    text-decoration:none;
+    color:#111;
+    font-size:17px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+}
+
+.scrol a::before{
+    content:"◯";
+    color:#999;
+}
+
+.scrol a.active{
+    color:var(--red);
+    font-weight:bold;
+}
+
+.scrol a.active::before{
+    content:"⦿";
+    color:var(--red);
+}
+
+
+/* DROPDOWN MENU */
+.dropdown {
+  position: relative;
+}
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: var(--dark);
+  min-width: 140px;
+  box-shadow: 0px 8px 16px rgba(0,0,0,0.2);
+  border-radius: 6px;
+  z-index: 100;
+  top: 100%;
+}
+.dropdown-content a {
+  color: #e5e7eb;
+  padding: 10px 12px;
+  display: block;
+  font-size: 13px;
+}
+.dropdown-content a:hover {
+  background-color: var(--red);
+  color: #fff;
+}
+.dropdown.show .dropdown-content {
+  display: block;
+}
+/* Flèche tournante */
+.dropbtn i {
+  margin-left: 6px;
+  transition: transform 0.3s;
+}
+.dropdown.show .dropbtn i {
+  transform: rotate(180deg);
+}
+
+/* RIGHT NAV */
+.nav-right{
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+/* SEARCH DISCRÈTE */
+.search-mini{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  background:rgba(255,255,255,.12);
+  padding:4px 10px;
+  border-radius:999px;
+}
+.search-mini input{
+  background:transparent;
+  border:none;
+  outline:none;
+  color:#fff;
+  width:100px;
+  font-size:12px;
+}
+.search-mini input::placeholder{color:#cbd5f5}
+.search-mini i{color:#fff;font-size:13px}
+
+/* SOCIAL ICONS */
+.socials a{
+  color:#cbd5f5;
+  font-size:15px;
+  transition:.3s;
+}
+.socials a:hover{
+  color:#fff;
+  transform:scale(1.15);
+}
+
+/* HAMBURGER MENU */
+.hamburger{
+  display:none;
+  font-size:20px;
+  color:#e5e7eb;
+  cursor:pointer;
+  position: relative;
+  z-index: 10;
+}
+
+/* Responsive */
+@media(max-width:900px){
+  .menu{
+    flex-direction: column;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: var(--dark);
+    display: none;
+    gap: 0;
+    padding: 10px 0;
+  }
+  .menu.show{
+    display: flex;
+  }
+  .menu a{
+    padding: 10px 16px;
+    width: 100%;
+  }
+  .dropdown-content{
+    position: relative;
+    top: 0;
+    box-shadow: none;
+  }
+  .hamburger{
+    display:block;
+  }
+}
+
+/* ================= HERO ================= */
+.hero{
+  background:#fff;
+  padding:8px;
+  border-bottom:1px solid #eee;
+}
+.hero p{
+  color:var(--red);
+  font-weight:800;
+  white-space:nowrap;
+  animation:scroll 15s linear infinite;
+  font-size:14px;
+}
+@keyframes scroll{
+  from{transform:translateX(100%)}
+  to{transform:translateX(-100%)}
+}
+
+/* ================= MAIN ================= */
+.container{
+  max-width:var(--max);
+  margin:auto;
+  padding:20px;
+  display:grid;
+  grid-template-columns:3fr 1fr;
+  gap:20px;
+}
+@media(max-width:900px){
+  .container{grid-template-columns:1fr}
+}
+
+/* SLIDER */
+.slider{
+  position:relative;
+  height:380px;
+  border-radius:14px;
+  overflow:hidden;
+}
+.slider img{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  opacity:0;
+  transition:.8s;
+}
+.slider img.active{opacity:1}
+.caption{
+  position:absolute;
+  bottom:0;
+  padding:18px;
+  background:linear-gradient(transparent,rgba(0,0,0,.85));
+  color:#fff;
+}
+/* SECTIONS */
+section{ padding-bottom:40px; }
+
+section h2{
+    font-size:24px;
+    margin-bottom:16px;
+}
+
+p{
+    font-size:15px;
+    line-height:1.65;
+    margin-bottom:14px;
+}
+
+hr{
+    border:none;
+    border-top:1px solid var(--gray);
+    margin:30px 0;
+}
+
+/* CTA */
+.cta{
+    display:inline-block;
+    margin-top:10px;
+    padding:10px 18px;
+    border:1px solid var(--red);
+    color:var(--red);
+    text-decoration:none;
+    font-size:14px;
+    font-weight:bold;
+    border-radius:30px;
+    transition: 0.3s ease, transform 0.3s ease;
+}
+
+.cta:hover{
+    background:var(--red);
+    color:#fff;
+    transform: scale(1.08);
+}
+
+.cta span.heart{
+    display:inline-block;
+    margin-right:6px;
+    transition: transform 0.3s ease;
+}
+
+.cta:hover span.heart{
+    transform: scale(1.3);
+}
+/* LAYOUT */
+.page{
+    max-width:1200px;
+    margin:40px auto;
+    padding:0 20px;
+    display:flex;
+    gap:30px;
+}
+
+.content{ flex:3; }
+
+.sidebar{
+    flex:1;
+    border-left:1px solid var(--gray);
+    padding-left:25px;
+    position:sticky;
+    top:30px;
+    height:fit-content;
+}
+/* EQUIPE */
+.team{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:30px;
+}
+
+.member{
+    display:flex;
+    gap:14px;
+    align-items:center;
+}
+
+.member img{
+    width:100px;
+    height:120px;
+    object-fit:cover;
+}
+
+.member h4{
+    font-size:15px;
+    margin:0 0 4px;
+}
+
+.member .role{
+    font-size:13px;
+    margin-bottom:3px;
+}
+
+.member .email{
+    font-size:13px;
+    color:#777;
+}
+/* FORMULAIRE COMPACT DISCRET */
+.form-box{
+    background:#fff;
+    border-left:3px solid var(--red);
+    padding:16px;
+    max-width:420px;
+}
+
+.form-box.compact{
+    border-left:2px solid var(--red);
+    padding:10px;
+    max-width:300px;
+    font-size:13px;
+}
+
+.form-box.compact p{
+    font-size:12px;
+    margin-bottom:8px;
+}
+
+.form-box.compact input,
+.form-box.compact textarea{
+    font-size:12px;
+    padding:6px 8px;
+}
+
+.form-box.compact textarea{
+    min-height:60px;
+}
+
+.form-box.compact button{
+    font-size:12px;
+    padding:6px 12px;
+}
+/* FORMULAIRE STANDARD */
+.form-box p{
+    font-size:14px;
+    margin-bottom:12px;
+}
+
+form{
+    display:grid;
+    gap:10px;
+}
+
+input, textarea{
+    padding:8px 10px;
+    font-size:13px;
+    border:1px solid var(--gray);
+}
+
+textarea{
+    min-height:80px;
+}
+
+button{
+    padding:8px 16px;
+    font-size:13px;
+}
+
+button:hover{ opacity:0.9; }
+/* RESPONSIVE */
+@media(max-width:900px){
+    .page{
+        flex-direction:column;
+    }
+
+    .sidebar{
+        border-left:none;
+        border-top:1px solid var(--gray);
+        padding-top:15px;
+    }
+
+    .menu{
+        flex-direction:row;
+        flex-wrap:wrap;
+        gap:10px;
+    }
+
+    .menu a{
+        font-size:14px;
+        padding:6px 10px;
+       
+       
+    }
+
+    .menu a::before{ display:none; }
+
+    .team{
+        grid-template-columns:1fr;
+        gap:20px;
+    }
+}
+/* FOOTER */
+.footer{
+  background:var(--dark);
+  color:#fff;
+  margin-top:40px;
+}
+.footer-inner{
+  max-width:var(--max);
+  margin:auto;
+  padding:28px;
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:20px;
+}
+.footer h4{color:var(--red)}
+.footer-bottom{
+  background:#000;
+  text-align:center;
+  padding:12px;
+  font-size:12px;
+}
+.footer-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:30px;
+}
+
+.footer-col h4{
+  font-size:20px;
+  font-weight:800;
+  margin-bottom:14px;
+  border-bottom:1px solid #777;
+  padding-bottom:6px;
+}
+
+.footer-list,
+.footer-links{
+  list-style:none;
+  font-size:14px;
+  line-height:2;
+}
+
+.footer-list i{
+  margin-right:8px;
+}
+
+.footer-links li{
+  cursor:pointer;
+  transition:.3s;
+}
+.footer-links li:hover{
+  color:var(--red);
+  transform:translateX(4px);
+}
+
+.footer-socials{
+  margin-top:14px;
+  display:flex;
+  gap:10px;
+}
+.footer-socials a{
+  background:#fff;
+  color:#000;
+  width:36px;
+  height:36px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:6px;
+  transition:.3s;
+}
+.footer-socials a:hover{
+  background:var(--red);
+  color:#fff;
+}
+
+.footer-news{
+  font-size:14px;
+  line-height:1.7;
+  margin-bottom:14px;
+}
+
+.footer-form{
+  display:flex;
+  gap:8px;
+}
+.footer-form input{
+  flex:1;
+  padding:8px;
+  border-radius:6px;
+  border:none;
+}
+.footer-form button{
+  background:#000;
+  color:#fff;
+  border:none;
+  padding:8px 14px;
+  border-radius:6px;
+  cursor:pointer;
+}
+
+/* Responsive footer */
+@media(max-width:900px){
+  .footer-grid{
+    grid-template-columns:1fr;
+  }
+}
+hr{
+    border:none;
+    border-top:2px solid var(--gray);
+    margin:30px 0;
+}
+/* ================= RESPONSIVE GLOBAL ================= */
+
+/* Empêcher débordement horizontal */
+html, body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+/* TABLETTES (≤ 1024px) */
+@media (max-width: 1024px) {
+
+  .container {
+    grid-template-columns: 2fr 1fr;
+    gap: 16px;
+  }
+
+  .slider {
+    height: 320px;
+  }
+
+  .caption h2 {
+    font-size: 15px;
+  }
+
+  .footer-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* MOBILE & PETITS ÉCRANS (≤ 768px) */
+@media (max-width: 768px) {
+
+  /* HEADER */
+  .header-top-inner {
+    flex-direction: column;
+    gap: 10px;
+    text-align: center;
+  }
+
+  .header-actions {
+    justify-content: center;
+  }
+
+  /* NAVIGATION */
+  .nav-right {
+    display: none;
+  }
+
+  .menu a {
+    font-size: 15px;
+  }
+
+  /* HERO */
+  .hero p {
+    font-size: 13px;
+  }
+
+  /* MAIN LAYOUT */
+  .container {
+    grid-template-columns: 1fr;
+    padding: 14px;
+  }
+
+  main {
+    order: 1;
+  }
+
+  aside.sidebar {
+    order: 2;
+  }
+
+  /* SLIDER */
+  .slider {
+    height: 260px;
+    border-radius: 10px;
+  }
+
+  .caption {
+    max-height: 70px;
+  }
+
+  .caption h2 {
+    font-size: 14px;
+  }
+
+  /* ARTICLES */
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .card {
+    padding: 12px;
+  }
+
+  /* LIVE */
+  .sidebar .box.live iframe {
+    height: 220px;
+  }
+
+  #live-chat input {
+    width: 100%;
+    padding: 8px;
+    margin-top: 6px;
+  }
+
+  /* FOOTER */
+  .footer-grid {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+
+  .footer-socials {
+    justify-content: center;
+  }
+
+  .footer-form {
+    flex-direction: column;
+  }
+
+  .footer-form button {
+    width: 100%;
+  }
+}
+
+/* TRÈS PETITS TÉLÉPHONES (≤ 480px) */
+@media (max-width: 480px) {
+
+  .logo-title span {
+    font-size: 18px;
+  }
+
+  .btn-outline,
+  .btn-live {
+    font-size: 12px;
+    padding: 4px 10px;
+  }
+
+  .slider {
+    height: 220px;
+  }
+
+  .caption h2 {
+    font-size: 13px;
+  }
+
+  .hero p {
+    font-size: 12px;
+  }
+
+  .sidebar .box.live iframe {
+    height: 200px;
+  }
+}
+/* ================= GRAND ÉCRAN / TV / 2K / 4K ================= */
+@media (min-width: 1400px) {
+
+  :root {
+    --max: 1400px; /* contenu un peu plus large */
+  }
+
+  body {
+    font-size: 17px;
+  }
+
+  /* HEADER */
+  .logo-title span {
+    font-size: 26px;
+  }
+
+  .menu a {
+    font-size: 15px;
+  }
+
+  /* HERO */
+  .hero p {
+    font-size: 15px;
+  }
+
+  /* CONTAINER */
+  .container {
+    gap: 30px;
+    padding: 30px 20px;
+  }
+
+  /* SLIDER */
+  .slider {
+    height: 460px;
+  }
+
+  .caption h2 {
+    font-size: 20px;
+  }
+
+  /* ARTICLES */
+  .grid {
+    gap: 24px;
+  }
+
+  .card {
+    padding: 18px;
+  }
+
+  .card h3 {
+    font-size: 20px;
+  }
+
+  /* LIVE */
+  .sidebar .box.live iframe {
+    height: 260px;
+  }
+
+  /* FOOTER */
+  .footer-grid {
+    gap: 40px;
+  }
+
+  .footer-col h4 {
+    font-size: 22px;
+  }
+}
+
+/* ULTRA GRAND ÉCRAN (4K) */
+@media (min-width: 1800px) {
+
+  :root {
+    --max: 1600px;
+  }
+
+  body {
+    font-size: 18px;
+  }
+
+  .slider {
+    height: 520px;
+  }
+
+  .caption h2 {
+    font-size: 22px;
+  }
+
+  .sidebar .box.live iframe {
+    height: 300px;
+  }
+}
+
+.main-header{
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+}
+body{
+  padding-top: 120px; /* hauteur du header */
+}
+
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+
+
+<!-- HEADER -->
+<header class="main-header">
+  <div class="header-top">
+    <div class="header-top-inner">
+      <div class="logo-title">
+        <img src="gaya.jpg">
+        <span>GAYA INFO TV</span>
+      </div>
+
+      <div class="header-actions">
+        <span class="btn-outline"><i class="fa-solid fa-radio"></i> Radio</span>
+        <span class="btn-live"><i class="fa-solid fa-circle-play"></i> Direct</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="nav-bar">
+    <div class="nav-inner">
+
+      <div class="hamburger"><i class="fa-solid fa-bars"></i></div>
+
+      <nav class="menu">
+        <a href="index.html">ACCUEIL</a>
+        <a href="index.html">ACTUALITES</a>
+
+        <div class="dropdown">
+          <a href="#" class="dropbtn">EMISSIONS <i class="fa-solid fa-chevron-down"></i></a>
+          <div class="dropdown-content">
+            <a href="societe.html">Société</a>
+			 <a href="economie.html">Economie</a>
+            <a href="religion.html">Religion</a>
+            <a href="sport.html">Sport</a>
+			 <a href="faitsdivers.html">Faits-Divers</a>
+          </div>
+        </div>
+        <a href="multimedia.html">MULTIMEDIA</a>
+        <a href="apropos.html">À PROPOS</a>
+        <a href="contact.html">CONTACT</a>
+      </nav>
+
+      <div class="nav-right">
+        <div class="search-mini">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input placeholder="Rechercher">
+        </div>
+
+        <div class="socials">
+          <a href="#"><i class="fa-brands fa-x-twitter"></i></a>
+          <a href=""https://www.facebook.com/gayainfotv"target="_blank" rel="noopener noreferrer""><i class="fa-brands fa-facebook-f"></i></a>
+          <a href="#"><i class="fa-brands fa-instagram"></i></a>
+          <a href="https://www.youtube.com/@gayainfotv"target="_blank" rel="noopener noreferrer""><i class="fa-brands fa-youtube"></i></a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</header>
+<div class="page">
+
+<!-- CONTENU -->
+<main class="content">
+
+<section id="qui">
+<h2>Qui sommes-nous ?</h2>
+<p>
+GAYA INFO est un groupe créé en octobre 2018 à Dakar, dédié à la préservation et à la valorisation du patrimoine socioculturel 
+et religieux de Gaé, ainsi qu’au développement local. Né sur les réseaux sociaux, il constitue un espace de réflexion, d’échange et d’action autour des 
+problématiques sociales de la localité. Grâce à ses nombreuses initiatives, le groupe favorise la participation de toutes les couches de la population. 
+Il contribue au changement des mentalités et renforce le lien entre les générations.
+</p>
+<p>
+GAYA INFO a évolué progressivement vers l’audiovisuel numérique à travers une chaîne YouTube diffusant des événements religieux, culturels et sociaux. 
+Son ascension fulgurante se matérialise par des rubriques innovantes. Gaya info école, une tribune dédiée à l'éducation, participe considérablement à la 
+formation des jeunes écoliers. Gaya info sport et culture, quant à elle fait revivre les émotions à travers des couvertures inédites, visualisant les moindres détails des événements sportifs.
+</p>
+
+<!-- Bouton Soutenir avec effet -->
+<a href="don.html" class="cta"><span class="heart">💖</span> Soutenir le Média</a>
+</section>
+
+<hr>
+
+<section id="equipe">
+<h2>Notre équipe</h2>
+
+<div class="team">
+
+<div class="member">
+<img src="photos/dame.png" alt="">
+<div>
+<h4>Dame NIANG DIOP</h4>
+<div class="role">Rédacteur en chef</div>
+<div class="email">diopniangdame@gayainfotv.com</div>
+</div>
+</div>
+
+<div class="member">
+<img src="photos/photo.png" alt="">
+<div>
+<h4>Ibrahima SALL</h4>
+<div class="role">Journaliste / Rédacteur</div>
+<div class="email">sallibrahima@gayainfotv.com</div>
+</div>
+</div>
+
+<div class="member">
+<img src="photos/photo.png" alt="">
+<div>
+<h4>Abdou Aziz DIOP</h4>
+<div class="role">Journaliste / Rédacteur</div>
+<div class="email">diopabdouaziz@gayainfotv.com</div>
+</div>
+</div>
+<div class="member">
+<img src="photos/moussa.png" alt="">
+<div>
+<h4>Moussa NDIAYE</h4>
+<div class="role">Expert Com</div>
+<div class="email">ndiayemoussa@gayainfotv.com</div>
+</div>
+</div>
+<div class="member">
+<img src="photos/photo.png" alt="">
+<div>
+<h4>Ousmane NDIAYE</h4>
+<div class="role">Expert Com</div>
+<div class="email">ndiayeousmane@gayainfotv.com</div>
+</div>
+</div>
+<div class="member">
+<img src="photos/photo.png" alt="">
+<div>
+<h4>Abdoulaye WELE</h4>
+<div class="role">Sécretaire </div>
+<div class="email">weleabdoulaye@gayainfotv.com</div>
+</div>
+</div>
+
+</div>
+</section>
+
+<hr>
+
+<section id="soutenir">
+<h2>Nous rejoindre</h2>
+
+<div class="form-box compact">
+<p>
+Contactez-nous si vous souhaitez rejoindre l’équipe
+ GAYA INFO TV.
+</p>
+
+<form>
+<input type="text" placeholder="Nom" required>
+<input type="email" placeholder="Email" required>
+<textarea placeholder="Message"></textarea>
+<button type="submit">Envoyer</button>
+</form>
+</div>
+</section>
+
+</main>
+<hr>
+<!-- scrol -->
+<aside class="sidebar">
+<nav class="scrol">
+<a href="#qui" class="active">Qui sommes-nous ?</a>
+<a href="#equipe">Notre équipe</a>
+<a href="#soutenir">Nous rejoindre</a>
+</nav>
+</aside>
+
+</div>
+
+
+
+<footer class="footer">
+  <div class="footer-inner footer-grid">
+
+    <!-- Contacts -->
+    <div class="footer-col">
+      <h4>Contacts</h4>
+      <ul class="footer-list">
+        <li><i class="fa-solid fa-location-dot"></i> Gaé, Dagana</li></i> 23002 SAINT LOUIS</li>
+        <li><i class="fa-solid fa-envelope"></i> gayainfopdg@gmail.com</li>
+        <li><i class="fa-solid fa-phone"></i>77 935 17 86 / 77605 95 76</li>
+      </ul>
+
+      <div class="footer-socials">
+        <a href="#"><i class="fa-brands fa-x-twitter"></i></a>
+        <a href=""https://www.facebook.com/gayainfotv"target="_blank" rel="noopener noreferrer""><i class="fa-brands fa-facebook-f"></i></a>
+        <a href="#"><i class="fa-brands fa-linkedin-in"></i></a>
+        <a href="#"><i class="fa-brands fa-instagram"></i></a>
+        <a href="https://www.youtube.com/@gayainfotv"target="_blank" rel="noopener noreferrer""><i class="fa-brands fa-youtube"></i></a>
+      </div>
+    </div>
+
+    <!-- Voir aussi -->
+    <div class="footer-col">
+      <h4>Sites du groupe</h4>
+      <ul class="footer-links">
+        <li>→ Radio Gaya</li>
+        <li>→ Gaya info Sport & Culture</li>
+      </ul>
+    </div>
+
+    <!-- Liens rapides -->
+    <div class="footer-col">
+      <h4>liens rapides</h4>
+      <ul class="footer-links">
+        <li>→ Actualités</li>
+        <li>→ Emissions</li>
+		<li>→ Multimédia</li>
+        <li>→ Sports</li>
+        <li>→ Contact</li>
+      </ul>
+    </div>
+
+    <!-- Actualité -->
+    <div class="footer-col">
+      <h4>Subscribe Newsletters</h4>
+	  <p class="footer-news">
+        Pour recevoir les dernières actualités, le résumé de la semaine et être alerté des derniers programmes
+		publiés directement dans votre boîte e-mail.
+      </p>
+
+      <form class="footer-form">
+        <input type="email" placeholder="Your email here">
+        <button type="submit">SUBSCRIBE</button>
+      </form>
+    </div>
+
+  </div>
+
+  <div class="footer-bottom">
+    © 2025 GAYA INFO TV
+  </div>
+</footer>
+
+<script>
+const dropdown = document.querySelector('.dropdown');
+const dropBtn = dropdown.querySelector('.dropbtn');
+dropBtn.addEventListener('click', (e)=>{
+  e.preventDefault();
+  dropdown.classList.toggle('show');
+});
+window.addEventListener('click', (e)=>{
+  if(!dropdown.contains(e.target)){
+    dropdown.classList.remove('show');
+  }
+});
+
+const hamburger=document.querySelector('.hamburger');
+const menu=document.querySelector('.menu');
+hamburger.addEventListener('click', ()=>{
+  menu.classList.toggle('show');
+});
+
+const links = document.querySelectorAll('.scrol a');
+const sections = document.querySelectorAll('section');
+
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(section => {
+    const top = section.offsetTop - 140;
+    if (scrollY >= top) current = section.id;
+  });
+
+  links.forEach(link => {
+    link.classList.toggle(
+      'active',
+      link.getAttribute('href') === '#' + current
+    );
+  });
+});
+const slides=document.querySelectorAll('#slider img');
+let i=0;
+setInterval(()=>{
+  slides[i].classList.remove('active');
+  i=(i+1)%slides.length;
+  slides[i].classList.add('active');
+},5000);
+
+const articles=[
+ 
+];
+const grid=document.getElementById('articlesGrid');
+articles.forEach(a=>{
+  grid.innerHTML+=`
+  <div class="card">
+    <div class="date">${a.date}</div>
+    <h3>${a.title}</h3>
+    <p>${a.content}</p>
+  </div>`;
+});
+
+const player = document.getElementById('live-player');
+const btn = document.getElementById('fullscreen-btn');
+btn.addEventListener('click', () => {
+  if(player.requestFullscreen){
+    player.requestFullscreen();
+  }
+});
+
+const chatInput = document.getElementById('chat-input');
+const chatMessages = document.getElementById('chat-messages');
+chatInput.addEventListener('keypress', (e)=>{
+  if(e.key === 'Enter' && chatInput.value.trim() !== ''){
+    const msg = document.createElement('div');
+    msg.textContent = chatInput.value;
+    chatMessages.appendChild(msg);
+    chatInput.value = '';
+  }
+});
+
+
+
+</script>
+
+</body>
+</html>

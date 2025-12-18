@@ -1,0 +1,1513 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Contact — GAYA INFO TV</title>
+
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<style>
+:root{
+  --dark:#020617;
+  --blue:#062c3f;
+  --light:#f1f3f5;
+  --red:#e63939;
+  --max:1100px;
+}
+:root{
+  --red:#e63939;
+  --dark:#020617;
+  --max:1200px;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:system-ui,Segoe UI,Roboto,Arial;
+  background:#f5f5f5;
+  color:#111;
+}
+a{text-decoration:none;color:inherit}
+
+
+
+/* ================= HEADER ================= */
+.main-header{background:#fff}
+
+/* HEADER TOP (COMPACT) */
+.header-top{
+  border-bottom:1px solid #e5e7eb;
+}
+.header-top-inner{
+  max-width:var(--max);
+  margin:auto;
+  padding:10px 16px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+/* LOGO + TITRE (PETITS & ROUGES) */
+.logo-title{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.logo-title img{
+  height:40px;
+}
+.logo-title span{
+  font-size:22px;
+  font-weight:900;
+  color:var(--red);
+}
+
+/* ACTIONS */
+.header-actions{
+  display:flex;
+  gap:8px;
+}
+.btn-outline{
+  border:1.5px solid var(--red);
+  color:var(--red);
+  padding:4px 12px;
+  border-radius:999px;
+  font-weight:800;
+  font-size:13px;
+}
+.btn-live{
+  background:var(--red);
+  color:#fff;
+  padding:4px 14px;
+  border-radius:999px;
+  font-weight:900;
+  font-size:13px;
+}
+.header-actions i{margin-right:5px}
+
+/* NAV BAR (MÊME COULEUR QUE FOOTER) */
+.nav-bar{
+  background:var(--dark);
+}
+.nav-inner{
+  max-width:var(--max);
+  margin:auto;
+  padding:8px 16px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  position:relative;
+    z-index: 10;
+}
+
+/* MENU */
+.menu{
+  display:flex;
+  align-items:center;
+  gap:18px;
+}
+.menu a{
+  color:#e5e7eb;
+  font-weight:700;
+  font-size:14px;
+   margin-right : 30px;
+}
+.menu a:hover{
+  color:#fff;
+}
+/* ===== MANIFESTE ===== */
+.manifesto{
+  background:#fff;
+  padding:30px;
+  border-radius:16px;
+}
+.manifesto h1{
+  font-size:34px;
+  margin-bottom:20px;
+}
+.manifesto p{
+  font-size:16px;
+  line-height:1.8;
+  margin-bottom:18px;
+  color:#333;
+}
+
+/* ===== BLOC SOCIOS ===== */
+.join{
+  background:linear-gradient(135deg,#6d0027,#1a0010);
+  color:#fff;
+  padding:30px;
+  border-radius:16px;
+  margin-top:30px;
+}
+.join h2{
+  font-size:28px;
+  margin-bottom:14px;
+}
+.join p{
+  line-height:1.7;
+  font-size:15px;
+}
+.join a{
+  display:inline-block;
+  margin-top:16px;
+  background:#fff;
+  color:#000;
+  padding:10px 18px;
+  border-radius:999px;
+  font-weight:800;
+}
+
+
+
+/* DROPDOWN MENU */
+.dropdown {
+  position: relative;
+}
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: var(--dark);
+  min-width: 140px;
+  box-shadow: 0px 8px 16px rgba(0,0,0,0.2);
+  border-radius: 6px;
+  z-index: 100;
+  top: 100%;
+}
+.dropdown-content a {
+  color: #e5e7eb;
+  padding: 10px 12px;
+  display: block;
+  font-size: 13px;
+}
+.dropdown-content a:hover {
+  background-color: var(--red);
+  color: #fff;
+}
+.dropdown.show .dropdown-content {
+  display: block;
+}
+/* Flèche tournante */
+.dropbtn i {
+  margin-left: 6px;
+  transition: transform 0.3s;
+}
+.dropdown.show .dropbtn i {
+  transform: rotate(180deg);
+}
+
+/* RIGHT NAV */
+.nav-right{
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+/* SEARCH DISCRÈTE */
+.search-mini{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  background:rgba(255,255,255,.12);
+  padding:4px 10px;
+  border-radius:999px;
+}
+.search-mini input{
+  background:transparent;
+  border:none;
+  outline:none;
+  color:#fff;
+  width:100px;
+  font-size:12px;
+}
+.search-mini input::placeholder{color:#cbd5f5}
+.search-mini i{color:#fff;font-size:13px}
+
+/* SOCIAL ICONS */
+.socials a{
+  color:#cbd5f5;
+  font-size:15px;
+  transition:.3s;
+}
+.socials a:hover{
+  color:#fff;
+  transform:scale(1.15);
+}
+
+/* HAMBURGER MENU */
+.hamburger{
+  display:none;
+  font-size:20px;
+  color:#e5e7eb;
+  cursor:pointer;
+  position: relative;
+  z-index: 10;
+}
+
+/* Responsive */
+@media(max-width:900px){
+  .menu{
+    flex-direction: column;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: var(--dark);
+    display: none;
+    gap: 0;
+    padding: 10px 0;
+  }
+  .menu.show{
+    display: flex;
+  }
+  .menu a{
+    padding: 10px 16px;
+    width: 100%;
+  }
+  .dropdown-content{
+    position: relative;
+    top: 0;
+    box-shadow: none;
+  }
+  .hamburger{
+    display:block;
+  }
+}
+
+/* ================= HERO ================= */
+.hero{
+  background:#fff;
+  padding:8px;
+  border-bottom:1px solid #eee;
+}
+.hero p{
+  color:var(--red);
+  font-weight:800;
+  white-space:nowrap;
+  animation:scroll 15s linear infinite;
+  font-size:14px;
+}
+@keyframes scroll{
+  from{transform:translateX(100%)}
+  to{transform:translateX(-100%)}
+}
+
+/* ================= MAIN ================= */
+.container{
+  max-width:var(--max);
+  margin:auto;
+  padding:20px;
+  display:grid;
+  grid-template-columns:3fr 1fr;
+  gap:20px;
+}
+@media(max-width:900px){
+  .container{grid-template-columns:1fr}
+}
+
+/* SLIDER */
+.slider{
+  position:relative;
+  height:380px;
+  border-radius:14px;
+  overflow:hidden;
+}
+.slider img{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  opacity:0;
+  transition:.8s;
+}
+.slider img.active{opacity:1}
+.caption{
+  position:absolute;
+  bottom:0;
+  padding:18px;
+  background:linear-gradient(transparent,rgba(0,0,0,.85));
+  color:#fff;
+}
+
+/* ARTICLES */
+.grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:18px;
+  margin-top:18px;
+}
+@media(max-width:600px){.grid{grid-template-columns:1fr}}
+.card{
+  background:#fff;
+  padding:14px;
+  border-radius:14px;
+  border-top:4px solid var(--red);
+}
+.date{
+  color:var(--red);
+  font-weight:800;
+  font-size:11px
+}
+
+/* LIVE (sidebar améliorée) */
+.sidebar .box.live {
+  margin-top:0;
+  padding:10px;
+  border-left:4px solid var(--red);
+}
+.sidebar .box.live h2 {
+  font-size:16px;
+  margin-bottom:8px;
+}
+.sidebar .box.live iframe{
+  width:100%;
+  height:200px;
+}
+.sidebar .box.live button#fullscreen-btn{
+  margin-top:6px;
+  padding:4px 8px;
+  border:none;
+  background:var(--red);
+  color:#fff;
+  border-radius:8px;
+  font-size:12px;
+  cursor:pointer;
+}
+.sidebar .box.live .live-now{
+  margin-top:10px;
+  padding:6px;
+  background:#f1f1f1;
+  border-radius:8px;
+  font-size:13px;
+}
+#live-chat h3{
+  margin-top:10px;
+  font-size:14px;
+  color:var(--red);
+}
+#live-chat input{
+  box-sizing:border-box;
+}
+
+/* SIDEBAR */
+.sidebar .box{
+  background:#fff;
+  padding:14px;
+  border-radius:14px;
+  margin-bottom:18px;
+}
+.sidebar h3{color:var(--red)}
+
+
+
+/* FOOTER */
+.footer{
+  background:var(--dark);
+  color:#fff;
+  margin-top:40px;
+}
+.footer-inner{
+  max-width:var(--max);
+  margin:auto;
+  padding:28px;
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:20px;
+}
+.footer h4{color:var(--red)}
+.footer-bottom{
+  background:#000;
+  text-align:center;
+  padding:12px;
+  font-size:12px;
+}
+.footer-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:30px;
+}
+
+.footer-col h4{
+  font-size:20px;
+  font-weight:800;
+  margin-bottom:14px;
+  border-bottom:1px solid #777;
+  padding-bottom:6px;
+}
+
+.footer-list,
+.footer-links{
+  list-style:none;
+  font-size:14px;
+  line-height:2;
+}
+
+.footer-list i{
+  margin-right:8px;
+}
+
+.footer-links li{
+  cursor:pointer;
+  transition:.3s;
+}
+.footer-links li:hover{
+  color:var(--red);
+  transform:translateX(4px);
+}
+
+.footer-socials{
+  margin-top:14px;
+  display:flex;
+  gap:10px;
+}
+.footer-socials a{
+  background:#fff;
+  color:#000;
+  width:36px;
+  height:36px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:6px;
+  transition:.3s;
+}
+.footer-socials a:hover{
+  background:var(--red);
+  color:#fff;
+}
+
+.footer-news{
+  font-size:14px;
+  line-height:1.7;
+  margin-bottom:14px;
+}
+
+.footer-form{
+  display:flex;
+  gap:8px;
+}
+.footer-form input{
+  flex:1;
+  padding:8px;
+  border-radius:6px;
+  border:none;
+}
+.footer-form button{
+  background:#000;
+  color:#fff;
+  border:none;
+  padding:8px 14px;
+  border-radius:6px;
+  cursor:pointer;
+}
+
+/* Responsive footer */
+@media(max-width:900px){
+  .footer-grid{
+    grid-template-columns:1fr;
+  }
+  .footer-socials{
+    justify-content: center;
+  }
+  .footer-form{
+    flex-direction: column;
+  }
+  .footer-form button{
+    width: 100%;
+  }
+}
+
+
+ /* ===== NEWSLETTER FOOTER (STYLE CLASSIQUE) ===== */
+/* ================= NEWSLETTER FOOTER – FIX TOTAL ================= */
+
+
+
+
+/* 📱 MOBILE & TABLETTE */
+@media (max-width: 900px){
+  .footer-form{
+    flex-direction: column !important;
+  }
+
+  .footer-form input{
+    width: 100% !important;
+    border-bottom: 1px solid #ccc !important;
+  }
+
+  .footer-form button{
+    width: 100% !important;
+  }
+}
+
+
+
+/* Responsive footer */
+@media(max-width:900px){
+  .footer-grid{
+    grid-template-columns:1fr;
+  }
+}
+
+
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:system-ui,Segoe UI,Roboto,Arial;
+  background:#e5e7eb;
+  color:#111;
+}
+
+/* WRAPPER */
+.wrapper{
+  max-width:700px;
+  margin:30px auto;
+  background:#fff;
+  border-radius:12px;
+  padding:30px 18px;
+}
+
+
+/* SUCCESS */
+#successMsg{
+  display:none;
+  background:#e6fffa;
+  color:#065f46;
+  padding:14px;
+  border-radius:8px;
+  margin-bottom:20px;
+  font-weight:700;
+}
+
+/* HEADER */
+.header{text-align:center;margin-bottom:40px}
+.header h1{font-size:42px;font-weight:900}
+.header p{margin-top:12px;font-size:18px;color:#374151}
+
+/* OPTIONS */
+.options{
+  display:flex;
+  justify-content:center;
+  gap:20px;
+  flex-wrap:wrap;
+}
+.option{
+  width:260px;
+  background:#08293a;
+  color:#fff;
+  padding:40px 20px;
+  border-radius:10px;
+  text-align:center;
+  cursor:pointer;
+  transition:.3s;
+}
+.option i{font-size:34px;margin-bottom:14px}
+.option:hover{
+  transform:translateY(-6px);
+  background:#0b3b54;
+  box-shadow:0 20px 40px rgba(0,0,0,.2);
+}
+
+/* CONTENT */
+.content{
+  display:none;
+  margin-top:40px;
+  animation:fade .4s ease;
+}
+
+/* PHONE */
+.phone-box{
+  background:var(--light);
+  padding:30px;
+  border-radius:10px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:20px;
+  flex-wrap:wrap;
+}
+.phone-box p{font-size:18px}
+.phone-btn{
+  border:2px solid var(--blue);
+  padding:14px 26px;
+  border-radius:999px;
+  font-size:18px;
+  font-weight:800;
+  color:var(--blue);
+  text-decoration:none;
+  transition:.3s;
+}
+.phone-btn:hover{background:var(--blue);color:#fff}
+
+/* FORM */
+form{
+  max-width:600px;
+  margin:auto;
+}
+form input,form textarea{
+  width:100%;
+  padding:14px;
+  margin-bottom:14px;
+  border-radius:8px;
+  border:1px solid #ccc;
+  font-size:15px;
+}
+form button{
+  background:var(--red);
+  color:#fff;
+  border:none;
+  padding:14px;
+  width:100%;
+  font-size:16px;
+  border-radius:8px;
+  cursor:pointer;
+  font-weight:800;
+}
+
+/* MAP */
+.map{
+  margin-top:40px;
+  border-radius:12px;
+  overflow:hidden;
+}
+
+/* ANIMATION */
+@keyframes fade{
+  from{opacity:0;transform:translateY(20px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+/* WHATSAPP FLOAT */
+.whatsapp-float{
+  position:fixed;
+  bottom:22px;
+  right:22px;
+  width:46px;
+  height:46px;
+  background:#25D366;
+  color:#fff;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:22px;
+  box-shadow:0 6px 18px rgba(0,0,0,.25);
+  z-index:9999;
+  animation:pulse 2.8s infinite;
+  transition:.25s ease;
+}
+.whatsapp-float:hover{
+  transform:scale(1.08);
+  box-shadow:0 10px 24px rgba(0,0,0,.35);
+}
+@keyframes pulse{
+  0%{box-shadow:0 0 0 0 rgba(37,211,102,.35)}
+  70%{box-shadow:0 0 0 12px rgba(37,211,102,0)}
+  100%{box-shadow:0 0 0 0 rgba(37,211,102,0)}
+}
+
+/* RESPONSIVE */
+@media(max-width:700px){
+  .header h1{font-size:32px}
+  .phone-box{flex-direction:column;align-items:flex-start}
+}
+/* ================= RESPONSIVE GLOBAL ================= */
+
+/* Empêcher débordement horizontal */
+html, body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+/* TABLETTES (≤ 1024px) */
+@media (max-width: 1024px) {
+
+  .container {
+    grid-template-columns: 2fr 1fr;
+    gap: 16px;
+  }
+
+  .slider {
+    height: 320px;
+  }
+
+  .caption h2 {
+    font-size: 15px;
+  }
+
+  .footer-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* MOBILE & PETITS ÉCRANS (≤ 768px) */
+@media (max-width: 768px) {
+
+  /* HEADER */
+  .header-top-inner {
+    flex-direction: column;
+    gap: 10px;
+    text-align: center;
+  }
+
+  .header-actions {
+    justify-content: center;
+  }
+
+  /* NAVIGATION */
+  .nav-right {
+    display: none;
+  }
+
+  .menu a {
+    font-size: 15px;
+  }
+
+  /* HERO */
+  .hero p {
+    font-size: 13px;
+  }
+
+  /* MAIN LAYOUT */
+  .container {
+    grid-template-columns: 1fr;
+    padding: 14px;
+  }
+
+  main {
+    order: 1;
+  }
+
+  aside.sidebar {
+    order: 2;
+  }
+
+  /* SLIDER */
+  .slider {
+    height: 260px;
+    border-radius: 10px;
+  }
+
+  .caption {
+    max-height: 70px;
+  }
+
+  .caption h2 {
+    font-size: 14px;
+  }
+
+  /* ARTICLES */
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .card {
+    padding: 12px;
+  }
+
+  /* LIVE */
+  .sidebar .box.live iframe {
+    height: 220px;
+  }
+
+  #live-chat input {
+    width: 100%;
+    padding: 8px;
+    margin-top: 6px;
+  }
+
+  /* FOOTER */
+  .footer-grid {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+
+  .footer-socials {
+    justify-content: center;
+  }
+
+  .footer-form {
+    flex-direction: column;
+  }
+
+  .footer-form button {
+    width: 100%;
+  }
+}
+
+/* TRÈS PETITS TÉLÉPHONES (≤ 480px) */
+@media (max-width: 480px) {
+
+  .logo-title span {
+    font-size: 18px;
+  }
+
+  .btn-outline,
+  .btn-live {
+    font-size: 12px;
+    padding: 4px 10px;
+  }
+
+  .slider {
+    height: 220px;
+  }
+
+  .caption h2 {
+    font-size: 13px;
+  }
+
+  .hero p {
+    font-size: 12px;
+  }
+
+  .sidebar .box.live iframe {
+    height: 200px;
+  }
+}
+/* ================= GRAND ÉCRAN / TV / 2K / 4K ================= */
+@media (min-width: 1400px) {
+
+  :root {
+    --max: 1400px; /* contenu un peu plus large */
+  }
+
+  body {
+    font-size: 17px;
+  }
+
+  /* HEADER */
+  .logo-title span {
+    font-size: 26px;
+  }
+
+  .menu a {
+    font-size: 15px;
+  }
+
+  /* HERO */
+  .hero p {
+    font-size: 15px;
+  }
+
+  /* CONTAINER */
+  .container {
+    gap: 30px;
+    padding: 30px 20px;
+  }
+
+  /* SLIDER */
+  .slider {
+    height: 460px;
+  }
+
+  .caption h2 {
+    font-size: 20px;
+  }
+
+  /* ARTICLES */
+  .grid {
+    gap: 24px;
+  }
+
+  .card {
+    padding: 18px;
+  }
+
+  .card h3 {
+    font-size: 20px;
+  }
+
+  /* LIVE */
+  .sidebar .box.live iframe {
+    height: 260px;
+  }
+
+  /* FOOTER */
+  .footer-grid {
+    gap: 40px;
+  }
+
+  .footer-col h4 {
+    font-size: 22px;
+  }
+}
+
+/* ULTRA GRAND ÉCRAN (4K) */
+@media (min-width: 1800px) {
+
+  :root {
+    --max: 1600px;
+  }
+
+  body {
+    font-size: 18px;
+  }
+
+  .slider {
+    height: 520px;
+  }
+
+  .caption h2 {
+    font-size: 22px;
+  }
+
+  .sidebar .box.live iframe {
+    height: 300px;
+  }
+}
+.modal {
+  display:none;
+  position:fixed;
+  z-index:1000;
+  left:0;
+  top:0;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,0.5);
+  justify-content:center;
+  align-items:center;
+}
+
+.modal-content {
+  background:#fff;
+  padding:20px;
+  border-radius:12px;
+  max-width:400px;
+  width:90%;
+  box-shadow:0 6px 18px rgba(0,0,0,0.2);
+  position:relative;
+  transform: translateY(-50px);
+  opacity: 0;
+  transition: all 0.3s ease;
+}
+
+.modal-content.animate.show {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.modal-content h3 {
+  margin-top:0;
+}
+
+.modal-content button {
+  margin:8px 4px;
+  padding:10px 18px;
+  border:none;
+  border-radius:8px;
+  background:#e74c3c;
+  color:#fff;
+  cursor:pointer;
+  font-weight:700;
+  transition:.3s;
+}
+
+.modal-content button:hover {
+  background:#c0392b;
+}
+
+.close {
+  position:absolute;
+  top:10px;
+  right:15px;
+  font-size:24px;
+  cursor:pointer;
+}
+/* ===== BASE RESPONSIVE GLOBALE ===== */
+html, body {
+  width: 100%;
+  overflow-x: hidden;
+}
+
+img, iframe {
+  max-width: 100%;
+  height: auto;
+}
+@media (max-width: 900px){
+
+  .header-top-inner{
+    flex-direction: column;
+    gap: 12px;
+    text-align: center;
+  }
+
+  .logo-title{
+    justify-content: center;
+  }
+
+  .header-actions{
+    justify-content: center;
+  }
+
+  .nav-right{
+    display: none;
+  }
+
+  .menu{
+    width: 100%;
+  }
+
+  .menu a{
+    width: 100%;
+    padding: 14px 18px;
+    font-size: 15px;
+  }
+}
+@media (max-width: 768px){
+  .hero p{
+    font-size: 12px;
+    animation-duration: 18s;
+  }
+}
+@media (max-width: 900px){
+
+  .container{
+    grid-template-columns: 1fr;
+    padding: 14px;
+  }
+
+  main{
+    order: 1;
+  }
+
+  aside.sidebar{
+    order: 2;
+  }
+}
+@media (max-width: 768px){
+
+  .slider{
+    height: 240px;
+    border-radius: 10px;
+  }
+
+  .caption h2{
+    font-size: 14px;
+  }
+
+  .grid{
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 768px){
+
+  .options{
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .option{
+    width: 100%;
+  }
+
+  .modal-content{
+    max-width: 90%;
+  }
+}
+@media (max-width: 768px){
+
+  form input,
+  form textarea,
+  form button{
+    font-size: 14px;
+  }
+}
+@media (max-width: 900px){
+
+  .footer-grid{
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+
+  .footer-socials{
+    justify-content: center;
+  }
+
+  .footer-form{
+    margin: auto;
+  }
+}
+@media (max-width: 480px){
+  .whatsapp-float{
+    width: 42px;
+    height: 42px;
+    font-size: 20px;
+  }
+}
+.map iframe{
+  width: 100%;
+  height: 220px;
+  border: 0;
+}
+html, body{
+  width: 100%;
+  overflow-x: hidden;
+}
+@media (max-width: 900px){
+  .container{
+    width: 100%;
+    max-width: 100%;
+    padding: 12px;
+  }
+}
+@media (max-width: 900px){
+  .container > *{
+    min-width: 0;
+  }
+}
+img, iframe, video{
+  max-width: 100%;
+  height: auto;
+}
+
+.main-header{
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+}
+body{
+  padding-top: 120px; /* hauteur du header */
+}
+
+
+</style>
+</head>
+
+<body>
+<!-- TOP BAR -->
+
+
+<!-- HEADER -->
+<header class="main-header">
+  <div class="header-top">
+    <div class="header-top-inner">
+      <div class="logo-title">
+        <img src="gaya.jpg">
+        <span>GAYA INFO TV</span>
+      </div>
+
+      <div class="header-actions">
+        <span class="btn-outline"><i class="fa-solid fa-radio"></i> Radio</span>
+        <span class="btn-live"><i class="fa-solid fa-circle-play"></i> Direct</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="nav-bar">
+    <div class="nav-inner">
+
+      <div class="hamburger"><i class="fa-solid fa-bars"></i></div>
+
+      <nav class="menu">
+        <a href="index.html">ACCUEIL</a>
+        <a href="index.html">ACTUALITES</a>
+
+        <div class="dropdown">
+          <a href="#" class="dropbtn">EMISSIONS <i class="fa-solid fa-chevron-down"></i></a>
+          <div class="dropdown-content">
+            <a href="societe.html">Société</a>
+			 <a href="economie.html">Economie</a>
+            <a href="religion.html">Religion</a>
+            <a href="sport.html">Sport</a>
+			 <a href="faitsdivers.html">Faits-Divers</a>
+          </div>
+        </div>
+         <a href="multimedia.html">MULTIMEDIA</a>
+        <a href="apropos.html">À PROPOS</a>
+        <a href="contact.html">CONTACT</a>
+      </nav>
+
+      <div class="nav-right">
+        <div class="search-mini">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input placeholder="Rechercher">
+        </div>
+
+        <div class="socials">
+          <a href="#"><i class="fa-brands fa-x-twitter"></i></a>
+          <a href=""https://www.facebook.com/gayainfotv"target="_blank" rel="noopener noreferrer""><i class="fa-brands fa-facebook-f"></i></a>
+          <a href="#"><i class="fa-brands fa-instagram"></i></a>
+          <a href="https://www.youtube.com/@gayainfotv"target="_blank" rel="noopener noreferrer""><i class="fa-brands fa-youtube"></i></a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</header>
+
+<div class="hero">
+  <p>🔴 EN DIRECT — Actualités, analyses et couverture d'événements en direct — suivez tout ici — Service commercial 77 935 17 86 / 77605 95 76</p>
+</div>
+<div class="container">
+  <main>
+<section class="wrapper">
+
+  <!-- CONFIRMATION -->
+  <div id="successMsg">✅ Votre message a été envoyé avec succès !</div>
+
+  <!-- HEADER -->
+  <div class="header">
+    <h1>Contactez-nous</h1>
+    <p>Notre équipe se fera un plaisir de vous aider<br>et de répondre à vos questions.</p>
+  </div>
+
+  <!-- OPTIONS -->
+  <div class="options">
+    <div class="option" onclick="openModal('phoneModal')">
+      <i class="fa-solid fa-phone"></i>
+      <h3>Par téléphone</h3>
+    </div>
+    <div class="option" onclick="openModal('emailModal')">
+      <i class="fa-solid fa-envelope"></i>
+      <h3>Par e-mail</h3>
+    </div>
+  </div>
+
+ <!-- MODAL TELEPHONE -->
+<div id="phoneModal" class="modal">
+  <div class="modal-content animate">
+    <span class="close" onclick="closeModal('phoneModal')">&times;</span>
+    <h3>Choisissez le type de demande :</h3>
+    <div id="phoneOptions">
+      <button onclick="showPhone('Service commercial', '77 935 17 86 / 77 605 95 76')">Service commercial</button>
+      <button onclick="showPhone('Autre demande', '77 262 43 69')">Autre demande</button>
+    </div>
+    <div id="phoneNumber" style="display:none; margin-top:20px;">
+      <p id="phoneText"></p>
+      <a id="callBtn" href=""><button>Appeler</button></a>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL EMAIL -->
+<div id="emailModal" class="modal">
+  <div class="modal-content animate">
+    <span class="close" onclick="closeModal('emailModal')">&times;</span>
+    <h3>Choisissez le type de demande :</h3>
+    <div id="emailOptions">
+      <button onclick="showEmail('Pour contacter notre service commercial', 'service-commercial@gayainfotv.com')">Service commercial</button>
+      <button onclick="showEmail('Pour toute autre demande', 'info@gayainfotv.com')">Autre demande</button>
+    </div>
+    <div id="emailForm" style="display:none; margin-top:20px;">
+      <p id="emailText"></p>
+      <a id="sendEmailBtn" href=""><button>Envoyer un email</button></a>
+    </div>
+  </div>
+</div>
+
+
+  <!-- MAP -->
+  
+  <div class="map">
+  <iframe
+    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d30591.639653467402!2d-15.471223723696014!3d16.578774819295937!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xe94f3090a38a48d%3A0xcb3b510687c69352!2zR2FlLCBTw6luw6lnYWw!5e0!3m2!1sfr!2sfr!4v1765767879311!5m2!1sfr!2sfr" width="800" height="200" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"
+    loading="lazy"
+    referrerpolicy="no-referrer-when-downgrade"
+    allowfullscreen>
+  </iframe>
+</div>
+  
+ </main>
+</section>
+
+<!-- WHATSAPP FLOAT ICON -->
+<a href="https://wa.me/221772624369"
+   class="whatsapp-float"
+   target="_blank"
+   aria-label="WhatsApp">
+  <i class="fa-brands fa-whatsapp"></i>
+</a>
+  <aside class="sidebar">
+    <div class="box live">
+      <h2>📺 Diffusion en direct</h2>
+      <div class="live-grid">
+        <iframe id="live-player"
+          src="https://www.youtube.com/embed/live_stream?channel=YOUR_CHANNEL_ID"
+          allowfullscreen></iframe>
+        <button id="fullscreen-btn">Regarder en plein écran</button>
+      </div>
+      <div class="live-now">
+        <h3>En ce moment</h3>
+        <p>Grand débat national sur la justice</p>
+      </div>
+      <div id="live-chat">
+        <h3>💬 Chat en direct</h3>
+        <div id="chat-messages" style="height:150px; overflow-y:auto; border:1px solid #ccc; padding:6px; background:#f9f9f9; border-radius:8px;"></div>
+        <input id="chat-input" type="text" placeholder="Écrire un message...">
+      </div>
+    </div>
+  </aside>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner footer-grid">
+
+    <!-- Contacts -->
+    <div class="footer-col">
+      <h4>Contacts</h4>
+      <ul class="footer-list">
+        <li><i class="fa-solid fa-location-dot"></i> Gaé, Dagana</li></i> 23002 SAINT LOUIS</li>
+        <li><i class="fa-solid fa-envelope"></i> gayainfopdg@gmail.com</li>
+        <li><i class="fa-solid fa-phone"></i>77 935 17 86 / 77605 95 76</li>
+      </ul>
+
+      <div class="footer-socials">
+        <a href="#"><i class="fa-brands fa-x-twitter"></i></a>
+        <a href=""https://www.facebook.com/gayainfotv"target="_blank" rel="noopener noreferrer""><i class="fa-brands fa-facebook-f"></i></a>
+        <a href="#"><i class="fa-brands fa-linkedin-in"></i></a>
+        <a href="#"><i class="fa-brands fa-instagram"></i></a>
+        <a href="https://www.youtube.com/@gayainfotv"target="_blank" rel="noopener noreferrer""><i class="fa-brands fa-youtube"></i></a>
+      </div>
+    </div>
+
+    <!-- Voir aussi -->
+    <div class="footer-col">
+      <h4>Sites du groupe</h4>
+      <ul class="footer-links">
+        <li>→ Radio Gaya</li>
+        <li>→ Gaya info Sport & Culture</li>
+      </ul>
+    </div>
+
+    <!-- Liens rapides -->
+    <div class="footer-col">
+      <h4>liens rapides</h4>
+      <ul class="footer-links">
+        <li>→ Actualités</li>
+        <li>→ Emissions</li>
+        <li>→ Sports</li>
+        <li>→ Contact</li>
+      </ul>
+    </div>
+
+    <!-- Actualité -->
+    <div class="footer-col">
+      <h4>Subscribe Newsletters</h4>
+	  <p class="footer-news">
+        Pour recevoir les dernières actualités, le résumé de la semaine et être alerté des derniers programmes
+		publiés directement dans votre boîte e-mail.
+      </p>
+
+      <form class="footer-form">
+        <input type="email" placeholder="Your email here" >
+        <button type="submit">SUBSCRIBE</button>
+      </form>
+    </div>
+
+  </div>
+
+  <div class="footer-bottom">
+    © 2025 GAYA INFO TV
+  </div>
+</footer>
+
+<script>
+const slides=document.querySelectorAll('#slider img');
+let i=0;
+setInterval(()=>{
+  slides[i].classList.remove('active');
+  i=(i+1)%slides.length;
+  slides[i].classList.add('active');
+},5000);
+
+const articles=[
+ 
+];
+const grid=document.getElementById('articlesGrid');
+articles.forEach(a=>{
+  grid.innerHTML+=`
+  <div class="card">
+    <div class="date">${a.date}</div>
+    <h3>${a.title}</h3>
+    <p>${a.content}</p>
+  </div>`;
+});
+
+const player = document.getElementById('live-player');
+const btn = document.getElementById('fullscreen-btn');
+btn.addEventListener('click', () => {
+  if(player.requestFullscreen){
+    player.requestFullscreen();
+  }
+});
+
+const chatInput = document.getElementById('chat-input');
+const chatMessages = document.getElementById('chat-messages');
+chatInput.addEventListener('keypress', (e)=>{
+  if(e.key === 'Enter' && chatInput.value.trim() !== ''){
+    const msg = document.createElement('div');
+    msg.textContent = chatInput.value;
+    chatMessages.appendChild(msg);
+    chatInput.value = '';
+  }
+});
+
+const dropdown = document.querySelector('.dropdown');
+const dropBtn = dropdown.querySelector('.dropbtn');
+dropBtn.addEventListener('click', (e)=>{
+  e.preventDefault();
+  dropdown.classList.toggle('show');
+});
+window.addEventListener('click', (e)=>{
+  if(!dropdown.contains(e.target)){
+    dropdown.classList.remove('show');
+  }
+});
+
+const hamburger=document.querySelector('.hamburger');
+const menu=document.querySelector('.menu');
+hamburger.addEventListener('click', ()=>{
+  menu.classList.toggle('show');
+});
+function openModal(id) {
+  const modal = document.getElementById(id);
+  modal.style.display = 'flex';
+  modal.querySelector('.modal-content').classList.add('show');
+}
+
+function closeModal(id) {
+  const modal = document.getElementById(id);
+  modal.style.display = 'none';
+  
+  // Reset contenu pour réutilisation
+  if(id === 'phoneModal'){
+    document.getElementById('phoneOptions').style.display = 'block';
+    document.getElementById('phoneNumber').style.display = 'none';
+  }
+  if(id === 'emailModal'){
+    document.getElementById('emailOptions').style.display = 'block';
+    document.getElementById('emailForm').style.display = 'none';
+  }
+}
+
+function showPhone(type, number) {
+  document.getElementById('phoneOptions').style.display = 'none';
+  document.getElementById('phoneNumber').style.display = 'block';
+  document.getElementById('phoneText').textContent = type + ' : ' + number;
+  document.getElementById('callBtn').href = 'tel:' + number.replace(/\s/g,'');
+}
+
+function showEmail(type, email) {
+  document.getElementById('emailOptions').style.display = 'none';
+  document.getElementById('emailForm').style.display = 'block';
+  document.getElementById('emailText').textContent = type + ' : ' + email;
+  document.getElementById('sendEmailBtn').href = 'mailto:' + email;
+}
+
+// Fermer modal si clic en dehors
+window.onclick = function(e) {
+  if(e.target.classList.contains('modal')) {
+    closeModal(e.target.id);
+  }
+}
+
+
+
+</script>
+
+</body>
+</html>

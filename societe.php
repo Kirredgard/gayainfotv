@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>GAYA INFO TV — Émissions Société</title>
+<meta name="description" content="GAYA INFO TV - Émissions Société et vidéos en direct.">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<style>
+:root{
+  --red:#e63939; /* couleur Société */
+  --dark:#020617;
+  --max:1200px;
+  --gray:#ddd;
+  --light:#fafafa;
+}
+
+/* RESET & BASE */
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,Segoe UI,Roboto,Arial;background:#f5f5f5;color:#111;}
+a{text-decoration:none;color:inherit}
+
+/* HEADER et NAVBAR (inchangés) */
+.main-header{background:#fff;position:fixed;top:0;left:0;width:100%;z-index:1000;}
+body{padding-top:120px;} 
+.header-top-inner{max-width:var(--max);margin:auto;padding:10px 16px;display:flex;justify-content:space-between;align-items:center;}
+.logo-title{display:flex;align-items:center;gap:8px;}
+.logo-title img{height:40px;}
+.logo-title span{font-size:22px;font-weight:900;color:var(--red);}
+.header-actions{display:flex;gap:8px;}
+.btn-outline{border:1.5px solid var(--red);color:var(--red);padding:4px 12px;border-radius:999px;font-weight:800;font-size:13px;}
+.btn-live{background:var(--red);color:#fff;padding:4px 14px;border-radius:999px;font-weight:900;font-size:13px;}
+.header-actions i{margin-right:5px;}
+.nav-bar{background:var(--dark);}
+.nav-inner{max-width:var(--max);margin:auto;padding:8px 16px;display:flex;justify-content:space-between;align-items:center;position:relative; z-index: 10;}
+.menu{display:flex;align-items:center;gap:18px;}
+.menu a{color:#e5e7eb;font-weight:700;font-size:14px;margin-right: 30px;}
+.menu a:hover{color:#fff;}
+.dropdown {position: relative;}
+.dropdown-content {display: none;position: absolute;background-color: var(--dark);min-width: 140px;box-shadow: 0px 8px 16px rgba(0,0,0,0.2);border-radius: 6px;z-index: 100;top: 100%;}
+.dropdown-content a {color: #e5e7eb;padding: 10px 12px;display: block;font-size: 13px;}
+.dropdown-content a:hover {background-color: var(--red); color: #fff;}
+.dropdown.show .dropdown-content {display: block;}
+.dropbtn i {margin-left: 6px;transition: transform 0.3s;}
+.dropdown.show .dropbtn i {transform: rotate(180deg);}
+.nav-right{display:flex;align-items:center;gap:12px;}
+.search-mini{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.12);padding:4px 10px;border-radius:999px;}
+.search-mini input{background:transparent;border:none;outline:none;color:#fff;width:100px;font-size:12px;}
+.search-mini input::placeholder{color:#cbd5f5}
+.search-mini i{color:#fff;font-size:13px}
+.socials a{color:#cbd5f5;font-size:15px;transition:.3s;}
+.socials a:hover{color:#fff;transform:scale(1.15);}
+.hamburger {display: none;font-size: 20px;color: #e5e7eb;cursor: pointer;position: relative;z-index: 10;}
+@media (max-width: 900px) {.hamburger {display: block;} .menu {flex-direction: column;align-items: flex-start;position: absolute;top: 100%;left: 0;right: 0;background: var(--dark);display: none;}}
+.menu.show {display: flex;}
+@media(max-width:900px){.menu a{width: 100%;text-align: left;padding: 12px 16px;margin-right: 0;gap: 0;}}
+
+/* ================= CONTENU ================= */
+.container{max-width:var(--max);margin:auto;padding:20px;}
+h1.media-title{
+  color: #111;
+  font-size: 28px;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  border-left: 6px solid var(--red);
+  padding-left: 12px;
+  transition: transform 0.3s, color 0.3s;
+  cursor: default;
+}
+h1.media-title i{color: var(--red); font-size:32px; transition: transform 0.3s, color 0.3s;}
+h1.media-title:hover{transform: translateX(6px); color: var(--red);}
+h1.media-title:hover i{transform: rotate(15deg) scale(1.2); color: var(--red);}
+
+.media-layout{display: flex; gap:20px; margin-top:20px;}
+.media-grid{flex:2; display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:20px;}
+.media-info{flex:1; background:#fff; padding:16px 20px; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.1); height: fit-content;}
+.media-info h2{font-size:20px; color:var(--red); margin-bottom:12px;}
+.media-info ul{list-style:none; padding-left:0;}
+.media-info ul li{margin-bottom:10px; font-size:14px; color:#111;}
+
+.media-card{background:#fff; border-radius:12px; overflow:hidden; cursor:pointer; box-shadow:0 2px 8px rgba(0,0,0,0.1); transition:transform 0.3s, box-shadow 0.3s; position: relative;}
+.media-card:hover{transform:translateY(-6px); box-shadow:0 10px 20px rgba(0,0,0,0.15);}
+.media-card img{width:100%; display:block; border-bottom:1px solid #eee;}
+.media-card .info{padding:12px;}
+.media-card .info h3{font-size:18px; font-weight:700; color:#111; margin-bottom:6px;}
+.media-card .info p{font-size:14px; line-height:1.5; color:#333;}
+.media-card audio{width:100%; margin-top:10px;}
+.media-badge{position:absolute; top:10px; left:10px; background: var(--red); color:#fff; padding:4px 8px; font-size:12px; font-weight:700; border-radius:6px; z-index:10; text-transform:uppercase;}
+
+#video-lightbox{position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); display:none; align-items:center; justify-content:center; z-index:2000;}
+#video-lightbox iframe{width:80%; max-width:900px; height:500px; border:none; border-radius:12px;}
+#video-lightbox .close-btn{position:absolute; top:20px; right:30px; font-size:28px; color:#fff; cursor:pointer; font-weight:900;}
+
+@media(max-width:900px){ .media-layout{flex-direction:column;} .media-info{margin-top:20px;} }
+html, body {max-width: 100%; overflow-x: hidden;}
+
+/* FOOTER (inchangé) */
+.footer{background:#111;color:#fff;padding:40px 20px 20px;font-size:14px;}
+.footer-inner{max-width:var(--max);margin:auto;display:flex;flex-wrap:wrap;gap:20px;}
+.footer-col{flex:1 1 220px;}
+.footer-col h4{font-size:16px;font-weight:700;margin-bottom:12px;color:#fff;text-transform:uppercase;}
+.footer-col ul{list-style:none;padding-left:0;}
+.footer-col ul li{margin-bottom:8px;}
+.footer-col ul li i{margin-right:6px;}
+.footer-bottom{margin-top:20px;text-align:center;border-top:1px solid #333;padding-top:10px;font-size:13px;color:#aaa;}
+.footer-form{display:flex;gap:8px;margin-top:10px;}
+.footer-form input{flex:1;padding:6px 10px;border:none;border-radius:6px;}
+.footer-form button{background:var(--red);color:#fff;border:none;padding:6px 12px;border-radius:6px;cursor:pointer;}
+.footer-news{font-size:13px;line-height:1.4;color:#ccc;margin-top:6px;}
+</style>
+</head>
+<body>
+
+<header class="main-header">
+  <!-- HEADER inchangé (idem page Religion) -->
+  <div class="header-top-inner">
+    <div class="logo-title">
+      <img src="gaya.jpg" alt="GAYA INFO TV">
+      <span>GAYA INFO TV</span>
+    </div>
+    <div class="header-actions">
+      <span class="btn-outline"><i class="fa-solid fa-radio"></i> Radio</span>
+      <span class="btn-live"><i class="fa-solid fa-circle-play"></i> Direct</span>
+    </div>
+  </div>
+
+  <div class="nav-bar">
+    <div class="nav-inner">
+      <div class="hamburger"><i class="fa-solid fa-bars"></i></div>
+      <nav class="menu">
+        <a href="index.html">ACCUEIL</a>
+        <a href="actualites.html">ACTUALITES</a>
+        <div class="dropdown">
+          <a href="#" class="dropbtn">EMISSIONS <i class="fa-solid fa-chevron-down"></i></a>
+          <div class="dropdown-content">
+            <a href="societe.html">Société</a>
+            <a href="economie.html">Economie</a>
+            <a href="religion.html">Religion</a>
+            <a href="sport.html">Sport</a>
+            <a href="faitsdivers.html">Faits-Divers</a>
+          </div>
+        </div>
+        <a href="multimedia.html">MULTIMEDIA</a>
+        <a href="apropos.html">À PROPOS</a>
+        <a href="contact.html">CONTACT</a>
+      </nav>
+
+      <div class="nav-right">
+        <div class="search-mini">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input placeholder="Rechercher">
+        </div>
+        <div class="socials">
+          <a href="#"><i class="fa-brands fa-x-twitter"></i></a>
+          <a href="https://www.facebook.com/gayainfotv" target="_blank"><i class="fa-brands fa-facebook-f"></i></a>
+          <a href="#"><i class="fa-brands fa-instagram"></i></a>
+          <a href="https://www.youtube.com/@gayainfotv" target="_blank"><i class="fa-brands fa-youtube"></i></a>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="container">
+  <h1 class="media-title"><i class="fa-solid fa-users"></i> Émissions Société</h1>
+  <div class="media-layout">
+    <div class="media-grid" id="mediaGrid"></div>
+    <aside class="media-info">
+      <h2>À venir / Infos</h2>
+      <ul>
+        <li><strong>Lundi :</strong> Débat sur la vie urbaine</li>
+        <li><strong>Mercredi :</strong> Rencontre avec les associations</li>
+        <li><strong>Vendredi :</strong> Témoignages citoyens</li>
+      </ul>
+    </aside>
+  </div>
+</div>
+
+<div id="video-lightbox">
+  <span class="close-btn">&times;</span>
+  <iframe src="" allowfullscreen id="lightbox-iframe"></iframe>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-col">
+      <h4>Contacts</h4>
+      <ul>
+        <li><i class="fa-solid fa-location-dot"></i> Gaé, Dagana, 23002 SAINT LOUIS</li>
+        <li><i class="fa-solid fa-envelope"></i> gayainfopdg@gmail.com</li>
+        <li><i class="fa-solid fa-phone"></i>77 935 17 86 / 77605 95 76</li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Sites du groupe</h4>
+      <ul>
+        <li>→ Radio Gaya</li>
+        <li>→ Gaya info Sport & Culture</li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Liens rapides</h4>
+      <ul>
+        <li>→ Actualités</li>
+        <li>→ Emissions</li>
+        <li>→ Multimédia</li>
+        <li>→ Sports</li>
+        <li>→ Contact</li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Newsletter</h4>
+      <p class="footer-news">Pour recevoir les dernières actualités et programmes directement dans votre boîte e-mail.</p>
+      <form class="footer-form">
+        <input type="email" placeholder="Votre email">
+        <button type="submit">S'abonner</button>
+      </form>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    © 2025 GAYA INFO TV
+  </div>
+</footer>
+
+<script>
+const media = [
+  {type:"video",title:"Vie en Ville",showName:"Débat",desc:"Discussion sur l'urbanisme",youtubeId:"dQw4w9WgXcQ"},
+  {type:"video",title:"Associations en Action",showName:"Reportage",desc:"Portrait des associations locales",youtubeId:"9bZkp7q19f0"},
+  {type:"audio",title:"Témoignages Citoyens",showName:"Podcast",desc:"Interviews et témoignages",audioSrc:"audio/podcast2.mp3"}
+];
+
+const mediaGrid = document.getElementById('mediaGrid');
+media.forEach(m=>{
+  const div = document.createElement('div');
+  div.classList.add('media-card');
+  div.innerHTML = `
+    ${m.type==="video"?`<img src="https://img.youtube.com/vi/${m.youtubeId}/hqdefault.jpg" alt="${m.title}">`:''}
+    <span class="media-badge">${m.showName}</span>
+    <div class="info">
+      <h3>${m.title}</h3>
+      <p>${m.desc}</p>
+      ${m.type==="audio"?`<audio controls><source src="${m.audioSrc}" type="audio/mpeg">Votre navigateur ne supporte pas l'audio.</audio>`:''}
+    </div>`;
+  if(m.type==="video"){
+    div.addEventListener('click',()=>{
+      document.getElementById('video-lightbox').style.display="flex";
+      document.getElementById('lightbox-iframe').src=`https://www.youtube.com/embed/${m.youtubeId}?autoplay=1`;
+    });
+  }
+  mediaGrid.appendChild(div);
+});
+
+document.querySelector("#video-lightbox .close-btn").addEventListener("click",()=>{
+  document.getElementById('video-lightbox').style.display="none";
+  document.getElementById('lightbox-iframe').src="";
+});
+
+const hamburger=document.querySelector('.hamburger');
+const menu=document.querySelector('.menu');
+hamburger.addEventListener('click', ()=>{ menu.classList.toggle('show'); });
+
+const dropdown = document.querySelector('.dropdown');
+const dropBtn = dropdown.querySelector('.dropbtn');
+dropBtn.addEventListener('click', (e)=>{ e.preventDefault(); dropdown.classList.toggle('show'); });
+window.addEventListener('click', (e)=>{ if(!dropdown.contains(e.target)){ dropdown.classList.remove('show'); }});
+</script>
+
+</body>
+</html>

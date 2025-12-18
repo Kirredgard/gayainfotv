@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Merci</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body{
+  font-family:system-ui;
+  background:#f5f5f5;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+}
+.box{
+  background:#fff;
+  padding:40px;
+  border-radius:20px;
+  text-align:center;
+}
+h1{color:#e63939}
+</style>
+</head>
+<body>
+
+<div class="box">
+<h1 id="titre"></h1>
+<p id="montant"></p>
+<a href="mur-donateurs.php">Voir le mur des donateurs ❤️</a>
+</div>
+
+<script>
+const p = new URLSearchParams(location.search);
+const nom = p.get("nom");
+const montant = p.get("montant");
+
+document.getElementById("titre").innerHTML =
+  "🙏 Merci <strong>" + nom + "</strong>";
+
+document.getElementById("montant").innerText =
+  "Montant du don : " + montant + " FCFA";
+</script>
+</body>
+</html>

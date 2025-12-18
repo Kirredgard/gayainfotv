@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Soutenir GAYA INFO TV</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+/* CSS complet du formulaire + mur + canvas animé (identique à l'exemple précédent) */
+body{margin:0;font-family:Arial,system-ui;background:#111;overflow-x:hidden;}
+canvas{position:fixed; inset:0; z-index:-1;}
+.btn-retour{position:fixed;top:15px;left:15px;background:rgba(255,255,255,0.75);color:#222;padding:8px 14px;border-radius:20px;font-size:13px;text-decoration:none;font-weight:600;box-shadow:0 2px 10px rgba(0,0,0,0.15);transition: all 0.3s ease, transform 0.2s ease;z-index:999;display:flex;align-items:center;gap:6px;backdrop-filter: blur(5px);}
+.btn-retour:hover{background:rgba(255,255,255,0.95);transform:translateY(-2px) scale(1.03);box-shadow:0 4px 15px rgba(0,0,0,0.25);}
+.container{max-width:1000px;margin:30px auto;display:grid;grid-template-columns:2fr 1.5fr;gap:20px;}
+@media(max-width:800px){.container{grid-template-columns:1fr;padding:15px;}}
+.left{background:rgba(255,255,255,0.95);padding:25px;border-radius:15px;animation: fadeInLeft 1s ease forwards;}
+.left h1{color:#e63939;margin-bottom:10px;font-size:26px;}
+.left p{font-size:14px;color:#444;line-height:1.6;}
+@keyframes fadeInLeft{from{opacity:0; transform:translateX(-20px);} to{opacity:1; transform:translateX(0);}}
+.right{position:relative;}
+.form-card{background:rgba(255,255,255,0.95);padding:20px;border-radius:15px;box-shadow:0 5px 20px rgba(0,0,0,0.25);animation: fadeInRight 1s ease forwards;}
+@keyframes fadeInRight{from{opacity:0; transform:translateX(20px);} to{opacity:1; transform:translateX(0);}}
+form input,form textarea{width:100%;padding:8px;margin:6px 0;border-radius:8px;border:1px solid #ccc;font-size:14px;}
+form label{display:flex;align-items:center;gap:6px;font-size:13px;margin:4px 0;}
+.inline-label{display:inline-flex;align-items:center;gap:6px;font-size:13px;white-space:nowrap;cursor:pointer;}
+form button{width:100%;padding:10px;margin:10px 0;border:none;border-radius:20px;font-weight:700;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition: transform 0.2s;}
+form button img{vertical-align:middle;margin-right:6px;height:20px;}
+form button:hover{transform:scale(1.05);}
+.wave{background:#00c28e;color:#fff}
+.orange{background:#ff7900;color:#fff}
+.card{background:#222;color:#fff}
+.paypal{background:#0070ba;color:#fff}
+.mur{margin-top:15px;max-height:220px;overflow-y:auto;border-top:1px solid #ccc;padding-top:8px;}
+.card-don{background:#fff;padding:8px;margin:6px 0;border-radius:10px;display:flex;justify-content:space-between;font-size:13px;box-shadow:0 2px 8px rgba(0,0,0,.15);opacity:0;transform:translateY(10px);transition: all 0.5s ease;}
+.card-don.show{opacity:1;transform:translateY(0);}
+.name{font-weight:700}
+.amount{color:#e63939;font-weight:700}
+</style>
+</head>
+<body>
+
+<a href="index.html" class="btn-retour">🏠 Retour au site</a>
+<canvas id="bg"></canvas>
+
+<div class="container">
+
+<div class="left">
+<h1>❤️ Soutenir GAYA INFO TV</h1>
+<p>Bonjour 👋<br>
+Nous travaillons chaque jour pour informer, valoriser et donner la parole à notre communauté locale.<br>
+Si vous croyez à l’importance d’un média indépendant et de proximité, votre soutien peut faire la différence.<br>
+Ensemble, faisons vivre l’information locale. Merci 🙏
+</p>
+</div>
+
+<div class="right">
+<div class="form-card">
+<form id="donForm">
+<input id="nom" placeholder="Votre nom">
+<label class="inline-label"><input type="checkbox" id="anonyme"> Faire un don anonymement</label>
+<input id="montant" type="number" placeholder="Montant (FCFA)" required min="1">
+<textarea id="message" placeholder="Message (optionnel)"></textarea>
+
+<button type="button" class="wave" onclick="payer('wave')"><img src="logos/wave.png"> Wave</button>
+<button type="button" class="orange" onclick="payer('orange_money')"><img src="logos/omoney.png"> Orange Money</button>
+<button type="button" class="paypal" onclick="payer('paypal')"><img src="logos/paypal.png"> PayPal</button>
+<button type="button" class="card" onclick="payer('carte')"><img src="logos/card.png"> Carte Bancaire</button>
+
+<div class="mur" id="mur">
+<h2 style="font-size:14px;margin-top:8px">🌟 Derniers donateurs</h2>
+<div id="donateurs"></div>
+</div>
+</form>
+</div>
+</div>
+
+</div>
+
+<script src="https://js.stripe.com/v3/"></script>
+<script>
+function payer(methode){
+  const nom = document.getElementById("nom").value || 'Anonyme';
+  const montant = parseInt(document.getElementById("montant").value);
+  const message = document.getElementById("message").value;
+  const anonyme = document.getElementById("anonyme").checked;
+
+  if(!montant || montant <=0){ alert("Veuillez entrer un montant valide."); return; }
+
+  fetch("paiement.php",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({nom, montant, message, anonyme, methode})
+  })
+  .then(res=>res.json())
+  .then(data=>{
+    if(data.url){ window.location.href = data.url; }
+    else if(data.error){ alert("Erreur: "+data.error); }
+    else{ alert("Erreur de paiement"); }
+  })
+  .catch(err=>alert("Erreur réseau: "+err));
+}
+
+function loadDonateurs(){
+  fetch("get_donateurs.php")
+  .then(r=>r.json())
+  .then(data=>{
+    const container=document.getElementById("donateurs");
+    container.innerHTML="";
+    data.forEach((d,i)=>{
+      const div=document.createElement("div");
+      div.className="card-don";
+      div.innerHTML=`<span class="name">${d.nom}</span><span class="amount">${d.montant} FCFA</span>`;
+      container.appendChild(div);
+      setTimeout(()=>div.classList.add("show"),i*100);
+    });
+  });
+}
+loadDonateurs();
+setInterval(loadDonateurs,5000);
+
+/* Canvas animé */
+const canvas=document.getElementById("bg"),ctx=canvas.getContext("2d");
+let w=canvas.width=innerWidth,h=canvas.height=innerHeight;
+onresize=()=>{w=canvas.width=innerWidth;h=canvas.height=innerHeight};
+let p=[...Array(80)].map(()=>({x:Math.random()*w,y:Math.random()*h,r:Math.random()*3+1,dx:(Math.random()-.5)*1.2,dy:(Math.random()-.5)*1.2}));
+(function anim(){
+  ctx.clearRect(0,0,w,h);
+  p.forEach(o=>{
+    ctx.beginPath();
+    ctx.arc(o.x,o.y,o.r,0,Math.PI*2);
+    ctx.fillStyle="rgba(230,57,57,.7)";
+    ctx.fill();
+    o.x+=o.dx;o.y+=o.dy;
+    if(o.x<0||o.x>w)o.dx*=-1;
+    if(o.y<0||o.y>h)o.dy*=-1;
+  });
+  requestAnimationFrame(anim);
+})();
+</script>
+</body>
+</html>
