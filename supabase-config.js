@@ -11,6 +11,7 @@ const GAYA_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJ
   const CMS_TABLE = "gaya_cms";
   const CMS_ID = "main";
   const COMMENTS_TABLE = "gaya_comments_v2";
+  const VIEWS_TABLE = "gaya_views";
   const LOCAL_KEYS = ["gayaCMSData", "gayaCMS", "gayaData", "gaya_cms_v1"];
 
   let _client = null;
@@ -18,6 +19,8 @@ const GAYA_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJ
   let _remoteData = null;
   let _pendingData = null;
   let _listeners = [];
+  let _pendingCommentCountIds = new Set();
+  let _pendingViewCountIds = new Set();
 
   function safeParse(v) {
     if (!v) return null;
@@ -94,6 +97,16 @@ const GAYA_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJ
         .subscribe();
 
       if (_pendingData) { const p = _pendingData; _pendingData = null; await writeCMS(p); }
+      if (_pendingCommentCountIds.size) {
+        const ids = Array.from(_pendingCommentCountIds);
+        _pendingCommentCountIds.clear();
+        window.gayaRefreshCommentCounts(ids);
+      }
+      if (_pendingViewCountIds.size) {
+        const ids = Array.from(_pendingViewCountIds);
+        _pendingViewCountIds.clear();
+        window.gayaRefreshViewCounts(ids);
+      }
       console.log("[GAYA CMS] Supabase connecté ✅");
     } catch(e) {
       console.warn("[GAYA CMS] Init Supabase échouée, fallback localStorage", e);
@@ -117,19 +130,31 @@ const GAYA_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJ
   window.gayaCMSLogout = async function () { try { if (_client) await _client.auth.signOut(); } catch(e) {} };
 
   window.gayaCommentCounts = window.gayaCommentCounts || {};
+  window.gayaViewCounts = window.gayaViewCounts || {};
 
   window.gayaGetCommentCount = function (articleId) {
     return Number(window.gayaCommentCounts[String(articleId)] || 0);
   };
 
+  window.gayaGetViewCount = function (articleId) {
+    return Number(window.gayaViewCounts[String(articleId)] || 0);
+  };
+
+  function normalizeIds(articleIds) {
+    return [...new Set((articleIds || []).filter(Boolean).map(String))];
+  }
+
   window.gayaRefreshCommentCounts = async function (articleIds) {
-    if (!_client || !Array.isArray(articleIds) || !articleIds.length) return;
-    const ids = [...new Set(articleIds.filter(Boolean).map(String))];
+    const ids = normalizeIds(articleIds);
     if (!ids.length) return;
+    if (!_client) {
+      ids.forEach(id => _pendingCommentCountIds.add(id));
+      return;
+    }
 
     const { data, error } = await _client
       .from(COMMENTS_TABLE)
-      .select("article_id")
+      .select("article_id,parent_id")
       .in("article_id", ids);
 
     if (error) {
@@ -141,13 +166,45 @@ const GAYA_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJ
     ids.forEach(id => counts[id] = 0);
     (data || []).forEach(row => {
       const id = String(row.article_id || "");
-      if (id) counts[id] = (counts[id] || 0) + 1;
+      if (id && !row.parent_id) counts[id] = (counts[id] || 0) + 1;
     });
     Object.assign(window.gayaCommentCounts, counts);
 
     document.querySelectorAll("[data-comment-count-id]").forEach(el => {
       const id = el.getAttribute("data-comment-count-id");
       el.textContent = String(window.gayaGetCommentCount(id));
+    });
+  };
+
+  window.gayaRefreshViewCounts = async function (articleIds) {
+    const ids = normalizeIds(articleIds);
+    if (!ids.length) return;
+    if (!_client) {
+      ids.forEach(id => _pendingViewCountIds.add(id));
+      return;
+    }
+
+    const { data, error } = await _client
+      .from(VIEWS_TABLE)
+      .select("article_id,views")
+      .in("article_id", ids);
+
+    if (error) {
+      console.warn("[GAYA CMS] Comptage vues échoué", error);
+      return;
+    }
+
+    const counts = {};
+    ids.forEach(id => counts[id] = 0);
+    (data || []).forEach(row => {
+      const id = String(row.article_id || "");
+      if (id) counts[id] = Number(row.views || 0);
+    });
+    Object.assign(window.gayaViewCounts, counts);
+
+    document.querySelectorAll("[data-view-count-id]").forEach(el => {
+      const id = el.getAttribute("data-view-count-id");
+      el.textContent = String(window.gayaGetViewCount(id));
     });
   };
 
