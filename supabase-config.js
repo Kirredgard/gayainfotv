@@ -75,60 +75,10 @@ const GAYA_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJ
     if (error) console.error("[GAYA CMS] Écriture Supabase refusée/échouée", error);
   }
 
-  async function initSupabase() {
-    try {
-      if (!GAYA_SUPABASE_URL || GAYA_SUPABASE_URL.includes("TON-PROJET") || !GAYA_SUPABASE_ANON_KEY || GAYA_SUPABASE_ANON_KEY.includes("REMPLACE")) {
-        console.warn("[GAYA CMS] Supabase non configuré : remplis GAYA_SUPABASE_URL et GAYA_SUPABASE_ANON_KEY dans supabase-config.js");
-        return;
-      }
-      if (!window.supabase || !window.supabase.createClient) {
-        console.warn("[GAYA CMS] SDK Supabase non disponible");
-        return;
-      }
-      _client = window.supabase.createClient(GAYA_SUPABASE_URL, GAYA_SUPABASE_ANON_KEY);
-      window.gayaSupabase = _client;
-      _ready = true;
-      await fetchCMS();
-
-      _client.channel("gaya_cms_changes")
-        .on("postgres_changes", { event: "*", schema: "public", table: CMS_TABLE, filter: `id=eq.${CMS_ID}` }, payload => {
-          if (payload.new && payload.new.content) applyRemote(payload.new.content);
-        })
-        .subscribe();
-
-      if (_pendingData) { const p = _pendingData; _pendingData = null; await writeCMS(p); }
-      if (_pendingCommentCountIds.size) {
-        const ids = Array.from(_pendingCommentCountIds);
-        _pendingCommentCountIds.clear();
-        window.gayaRefreshCommentCounts(ids);
-      }
-      if (_pendingViewCountIds.size) {
-        const ids = Array.from(_pendingViewCountIds);
-        _pendingViewCountIds.clear();
-        window.gayaRefreshViewCounts(ids);
-      }
-      console.log("[GAYA CMS] Supabase connecté ✅");
-    } catch(e) {
-      console.warn("[GAYA CMS] Init Supabase échouée, fallback localStorage", e);
-    }
-  }
-
-  window.gayaCMSRead = function () { return clone(_remoteData || readLocal() || {}); };
-  window.gayaCMSWrite = function (data) { writeCMS(data); };
-  window.gayaCMSOnUpdate = function (callback) { if (typeof callback === "function") _listeners.push(callback); if (_remoteData) callback(_remoteData); };
-
-  window.gayaCMSLogin = async function (email, password) {
-    if (!_client) await initSupabase();
-    if (!_client) return { ok: false, message: "Supabase n'est pas encore configuré." };
-    const { data, error } = await _client.auth.signInWithPassword({ email: String(email || "").trim(), password: String(password || "") });
-    if (error) return { ok: false, message: "Identifiant ou mot de passe incorrect." };
-    const user = data.user || {};
-    const name = user.user_metadata?.full_name || user.email || "Administrateur";
-    return { ok: true, user, displayName: name, role: "Administrateur" };
-  };
-
-  window.gayaCMSLogout = async function () { try { if (_client) await _client.auth.signOut(); } catch(e) {} };
-
+  /* ============================================================
+     COMPTEURS — définis ICI avant initSupabase()
+     pour être disponibles dès le premier emit()
+     ============================================================ */
   window.gayaCommentCounts = window.gayaCommentCounts || {};
   window.gayaViewCounts = window.gayaViewCounts || {};
 
@@ -207,6 +157,63 @@ const GAYA_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJ
       el.textContent = String(window.gayaGetViewCount(id));
     });
   };
+
+  /* ============================================================
+     INIT SUPABASE
+     ============================================================ */
+  async function initSupabase() {
+    try {
+      if (!GAYA_SUPABASE_URL || GAYA_SUPABASE_URL.includes("TON-PROJET") || !GAYA_SUPABASE_ANON_KEY || GAYA_SUPABASE_ANON_KEY.includes("REMPLACE")) {
+        console.warn("[GAYA CMS] Supabase non configuré : remplis GAYA_SUPABASE_URL et GAYA_SUPABASE_ANON_KEY dans supabase-config.js");
+        return;
+      }
+      if (!window.supabase || !window.supabase.createClient) {
+        console.warn("[GAYA CMS] SDK Supabase non disponible");
+        return;
+      }
+      _client = window.supabase.createClient(GAYA_SUPABASE_URL, GAYA_SUPABASE_ANON_KEY);
+      window.gayaSupabase = _client;
+      _ready = true;
+      await fetchCMS();
+
+      _client.channel("gaya_cms_changes")
+        .on("postgres_changes", { event: "*", schema: "public", table: CMS_TABLE, filter: `id=eq.${CMS_ID}` }, payload => {
+          if (payload.new && payload.new.content) applyRemote(payload.new.content);
+        })
+        .subscribe();
+
+      if (_pendingData) { const p = _pendingData; _pendingData = null; await writeCMS(p); }
+      if (_pendingCommentCountIds.size) {
+        const ids = Array.from(_pendingCommentCountIds);
+        _pendingCommentCountIds.clear();
+        window.gayaRefreshCommentCounts(ids);
+      }
+      if (_pendingViewCountIds.size) {
+        const ids = Array.from(_pendingViewCountIds);
+        _pendingViewCountIds.clear();
+        window.gayaRefreshViewCounts(ids);
+      }
+      console.log("[GAYA CMS] Supabase connecté ✅");
+    } catch(e) {
+      console.warn("[GAYA CMS] Init Supabase échouée, fallback localStorage", e);
+    }
+  }
+
+  window.gayaCMSRead = function () { return clone(_remoteData || readLocal() || {}); };
+  window.gayaCMSWrite = function (data) { writeCMS(data); };
+  window.gayaCMSOnUpdate = function (callback) { if (typeof callback === "function") _listeners.push(callback); if (_remoteData) callback(_remoteData); };
+
+  window.gayaCMSLogin = async function (email, password) {
+    if (!_client) await initSupabase();
+    if (!_client) return { ok: false, message: "Supabase n'est pas encore configuré." };
+    const { data, error } = await _client.auth.signInWithPassword({ email: String(email || "").trim(), password: String(password || "") });
+    if (error) return { ok: false, message: "Identifiant ou mot de passe incorrect." };
+    const user = data.user || {};
+    const name = user.user_metadata?.full_name || user.email || "Administrateur";
+    return { ok: true, user, displayName: name, role: "Administrateur" };
+  };
+
+  window.gayaCMSLogout = async function () { try { if (_client) await _client.auth.signOut(); } catch(e) {} };
 
   window.gayaCMSReadComments = async function (articleId, callback) {
     if (typeof callback === "function") callback([]);
