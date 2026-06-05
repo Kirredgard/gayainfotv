@@ -1,4 +1,4 @@
-/* Article dynamique + commentaires */
+/* Article dynamique + commentaires v2 — Supabase */
 const STORAGE_KEYS = ["gayaCMSData", "gayaCMS", "gayaData", "gaya_cms_v1"];
 
 function getCMSData() {
@@ -13,12 +13,6 @@ function getCMSData() {
     } catch(e) {}
   }
   return { articles: [] };
-}
-
-function saveCMSData(data) {
-  if (window.gayaCMSWrite) { gayaCMSWrite(data); return; }
-  const payload = JSON.stringify(data);
-  STORAGE_KEYS.forEach(key => localStorage.setItem(key, payload));
 }
 
 function esc(v) {
@@ -36,9 +30,7 @@ function gayaFormatDate(value) {
   if (/^\d{4}-\d{2}-\d{2}$/.test(value)) {
     try {
       return new Date(value + "T00:00:00").toLocaleDateString("fr-FR", {
-        day: "2-digit",
-        month: "short",
-        year: "numeric"
+        day: "2-digit", month: "short", year: "numeric"
       });
     } catch(e) {}
   }
@@ -59,23 +51,6 @@ function formatContent(content) {
   return text.split(/\n{2,}/).map(p => `<p>${esc(p)}</p>`).join("");
 }
 
-function commentsKey(id) {
-  return `gaya_article_comments_${id}`;
-}
-
-function getComments(id) {
-  try {
-    return JSON.parse(localStorage.getItem(commentsKey(id)) || "[]");
-  } catch(e) {
-    return [];
-  }
-}
-
-function saveComments(id, comments) {
-  if (window.gayaCMSWriteComments) { gayaCMSWriteComments(id, comments); return; }
-  localStorage.setItem(commentsKey(id), JSON.stringify(comments));
-}
-
 function timeAgo(dateISO) {
   const diff = Math.max(1, Math.floor((Date.now() - new Date(dateISO).getTime()) / 60000));
   if (diff < 60) return `il y a ${diff} minute${diff > 1 ? "s" : ""}`;
@@ -86,12 +61,10 @@ function timeAgo(dateISO) {
 }
 
 /* ============================================================
-   COMPTEUR DE VUES — Supabase dédié (table gaya_views)
+   VUES — table gaya_views
    ============================================================ */
 async function incrementAndDisplayViews(articleId) {
   const el = document.getElementById("article-views-count");
-
-  // 1. Lire le compteur actuel
   let currentViews = 0;
   try {
     if (window.gayaSupabase) {
@@ -104,144 +77,162 @@ async function incrementAndDisplayViews(articleId) {
     }
   } catch(e) {}
 
-  // 2. Incrémenter
   const newViews = currentViews + 1;
-
-  // 3. Afficher immédiatement
   if (el) el.textContent = `${newViews} Lectures`;
 
-  // 4. Sauvegarder dans Supabase
   try {
     if (window.gayaSupabase) {
-      await gayaSupabase
-        .from("gaya_views")
-        .upsert({
-          article_id: String(articleId),
-          views: newViews,
-          updated_at: new Date().toISOString()
-        });
+      await gayaSupabase.from("gaya_views").upsert({
+        article_id: String(articleId),
+        views: newViews,
+        updated_at: new Date().toISOString()
+      });
     }
   } catch(e) {
     console.warn("[GAYA] Vues non enregistrées", e);
   }
 }
 
-function renderComments(articleId) {
-  if (window.gayaCMSReadComments) {
-    gayaCMSReadComments(articleId, (comments) => _renderCommentsList(articleId, comments));
-    return;
+/* ============================================================
+   COMMENTAIRES — table gaya_comments_v2 (une ligne par commentaire)
+   ============================================================ */
+async function loadComments(articleId) {
+  if (!window.gayaSupabase) return [];
+  try {
+    const { data, error } = await gayaSupabase
+      .from("gaya_comments_v2")
+      .select("*")
+      .eq("article_id", String(articleId))
+      .order("created_at", { ascending: true });
+    if (error) throw error;
+    return data || [];
+  } catch(e) {
+    console.warn("[GAYA] Chargement commentaires échoué", e);
+    return [];
   }
-  const comments = getComments(articleId);
-  _renderCommentsList(articleId, comments);
 }
 
-function _renderCommentsList(articleId, comments) {
-  const list = document.getElementById("comments-list");
-  const title = document.getElementById("comments-title");
-  if (!list || !title) return;
-
-  title.textContent = `COMMENTAIRES (${comments.length})`;
-
-  if (!comments.length) {
-    list.innerHTML = `<div class="comment-item"><div class="comment-text">Aucun commentaire pour le moment.</div></div>`;
-    return;
+async function postComment(articleId, name, email, text, parentId = null) {
+  if (!window.gayaSupabase) return null;
+  const { data, error } = await gayaSupabase
+    .from("gaya_comments_v2")
+    .insert({
+      article_id: String(articleId),
+      name: name || "Anonyme",
+      email: email || null,
+      text: text,
+      parent_id: parentId || null
+    })
+    .select()
+    .single();
+  if (error) {
+    console.warn("[GAYA] Commentaire non enregistré", error);
+    return null;
   }
+  return data;
+}
 
-  list.innerHTML = comments.map((comment, index) => `
-    <div class="comment-item">
+function buildCommentHTML(comment, replies) {
+  const replyList = replies.length ? `
+    <div style="margin-top:18px;padding-left:24px;border-left:3px solid #e5e7eb;display:flex;flex-direction:column;gap:14px;">
+      ${replies.map(r => `
+        <div style="background:#fff;padding:12px;border-radius:6px;">
+          <div style="font-weight:900;color:#03082f;font-size:13px;margin-bottom:4px;">${esc(r.name || "Anonyme")}</div>
+          <div style="color:#7b8198;font-size:12px;margin-bottom:8px;">${timeAgo(r.created_at)}</div>
+          <div style="font-size:15px;line-height:1.6;color:#03082f;">${esc(r.text)}</div>
+        </div>
+      `).join("")}
+    </div>
+  ` : "";
+
+  return `
+    <div class="comment-item" data-comment-id="${esc(comment.id)}">
       <div class="comment-head">
         <div class="comment-avatar">${esc((comment.name || "A").charAt(0).toUpperCase())}</div>
         <div>
           <div class="comment-name">${esc(comment.name || "Anonyme")}</div>
-          <div class="comment-time">${timeAgo(comment.createdAt)}</div>
+          <div class="comment-time">${timeAgo(comment.created_at)}</div>
         </div>
       </div>
-
       <div class="comment-text">${esc(comment.text)}</div>
-
       <div style="margin-top:12px;">
-        <button 
-          type="button"
-          class="reply-btn"
-          data-reply="${index}"
-          style="background:#111827;color:#fff;border:none;padding:7px 12px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;"
-        >
+        <button type="button" class="reply-btn" data-parent-id="${esc(comment.id)}"
+          style="background:#111827;color:#fff;border:none;padding:7px 12px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;">
           Répondre
         </button>
       </div>
-
-      ${(comment.replies && comment.replies.length) ? `
-        <div style="margin-top:18px;padding-left:24px;border-left:3px solid #e5e7eb;display:flex;flex-direction:column;gap:14px;">
-          ${comment.replies.map(reply => `
-            <div style="background:#fff;padding:12px;border-radius:6px;">
-              <div style="font-weight:900;color:#03082f;font-size:13px;margin-bottom:4px;">
-                ${esc(reply.name || "Anonyme")}
-              </div>
-              <div style="color:#7b8198;font-size:12px;margin-bottom:8px;">
-                ${timeAgo(reply.createdAt)}
-              </div>
-              <div style="font-size:15px;line-height:1.6;color:#03082f;">
-                ${esc(reply.text)}
-              </div>
-            </div>
-          `).join("")}
-        </div>
-      ` : ""}
-
-      <form 
-        class="reply-form" 
-        data-reply-form="${index}" 
-        style="display:none;margin-top:14px;padding-left:24px;"
-      >
-        <input 
-          type="text" 
-          placeholder="Votre nom"
-          class="reply-name"
-          style="width:100%;padding:9px 10px;border:1px solid #d1d5db;border-radius:6px;margin-bottom:8px;"
-        >
-
-        <textarea 
-          class="reply-text"
-          placeholder="Votre réponse..."
-          required
-          style="width:100%;min-height:90px;padding:10px;border:1px solid #d1d5db;border-radius:6px;"
-        ></textarea>
-
-        <button 
-          type="submit"
-          style="margin-top:8px;background:#c8102e;color:#fff;border:none;padding:9px 14px;border-radius:6px;font-weight:700;cursor:pointer;"
-        >
+      ${replyList}
+      <div class="reply-form" data-reply-form="${esc(comment.id)}" style="display:none;margin-top:14px;padding-left:24px;">
+        <input type="text" class="reply-name" placeholder="Votre nom"
+          style="width:100%;padding:9px 10px;border:1px solid #d1d5db;border-radius:6px;margin-bottom:8px;">
+        <textarea class="reply-text" placeholder="Votre réponse..." required
+          style="width:100%;min-height:90px;padding:10px;border:1px solid #d1d5db;border-radius:6px;"></textarea>
+        <button type="button" class="reply-submit" data-parent-id="${esc(comment.id)}"
+          style="margin-top:8px;background:#c8102e;color:#fff;border:none;padding:9px 14px;border-radius:6px;font-weight:700;cursor:pointer;">
           Envoyer la réponse
         </button>
-      </form>
+      </div>
     </div>
-  `).join("");
+  `;
+}
 
-  list.querySelectorAll("[data-reply]").forEach(btn => {
+async function renderComments(articleId) {
+  const list = document.getElementById("comments-list");
+  const title = document.getElementById("comments-title");
+  if (!list || !title) return;
+
+  list.innerHTML = `<div class="comment-item"><div class="comment-text" style="color:#999;">Chargement des commentaires…</div></div>`;
+
+  const all = await loadComments(articleId);
+
+  // Séparer parents et réponses
+  const parents = all.filter(c => !c.parent_id);
+  const repliesMap = {};
+  all.filter(c => c.parent_id).forEach(r => {
+    if (!repliesMap[r.parent_id]) repliesMap[r.parent_id] = [];
+    repliesMap[r.parent_id].push(r);
+  });
+
+  title.textContent = `COMMENTAIRES (${parents.length})`;
+
+  if (!parents.length) {
+    list.innerHTML = `<div class="comment-item"><div class="comment-text">Aucun commentaire pour le moment.</div></div>`;
+    return;
+  }
+
+  list.innerHTML = parents.map(c => buildCommentHTML(c, repliesMap[c.id] || [])).join("");
+
+  // Boutons "Répondre"
+  list.querySelectorAll(".reply-btn").forEach(btn => {
     btn.addEventListener("click", () => {
-      const index = btn.dataset.reply;
-      const form = list.querySelector(`[data-reply-form="${index}"]`);
+      const form = list.querySelector(`[data-reply-form="${btn.dataset.parentId}"]`);
       if (!form) return;
       form.style.display = form.style.display === "none" ? "block" : "none";
     });
   });
 
-  list.querySelectorAll(".reply-form").forEach(form => {
-    form.addEventListener("submit", (e) => {
-      e.preventDefault();
-      const index = Number(form.dataset.replyForm);
-      const comments = getComments(articleId);
+  // Soumission des réponses
+  list.querySelectorAll(".reply-submit").forEach(btn => {
+    btn.addEventListener("click", async () => {
+      const parentId = btn.dataset.parentId;
+      const form = list.querySelector(`[data-reply-form="${parentId}"]`);
       const name = form.querySelector(".reply-name").value.trim() || "Anonyme";
       const text = form.querySelector(".reply-text").value.trim();
       if (!text) return;
-      comments[index].replies = comments[index].replies || [];
-      comments[index].replies.unshift({
-        name,
-        text,
-        createdAt: new Date().toISOString()
-      });
-      saveComments(articleId, comments);
-      renderComments(articleId);
+
+      btn.disabled = true;
+      btn.textContent = "Envoi…";
+      const result = await postComment(articleId, name, "", text, parentId);
+      if (result) {
+        form.style.display = "none";
+        form.querySelector(".reply-name").value = "";
+        form.querySelector(".reply-text").value = "";
+        await renderComments(articleId);
+      } else {
+        btn.disabled = false;
+        btn.textContent = "Envoyer la réponse";
+        alert("Erreur lors de l'envoi. Réessaie.");
+      }
     });
   });
 }
@@ -250,34 +241,36 @@ function initCommentForm(articleId) {
   const form = document.getElementById("comment-form");
   if (!form) return;
 
-  form.addEventListener("submit", (e) => {
+  form.addEventListener("submit", async (e) => {
     e.preventDefault();
     const name = document.getElementById("comment-name").value.trim() || "Anonyme";
     const email = document.getElementById("comment-email").value.trim();
     const text = document.getElementById("comment-text").value.trim();
     if (!text) return;
-    const comments = getComments(articleId);
-    comments.unshift({
-      name,
-      email,
-      text,
-      createdAt: new Date().toISOString()
-    });
-    saveComments(articleId, comments);
-    form.reset();
-    renderComments(articleId);
+
+    const btn = form.querySelector("button[type=submit]");
+    btn.disabled = true;
+    btn.textContent = "Envoi…";
+
+    const result = await postComment(articleId, name, email, text, null);
+    if (result) {
+      form.reset();
+      await renderComments(articleId);
+    } else {
+      alert("Erreur lors de l'envoi. Réessaie.");
+    }
+    btn.disabled = false;
+    btn.textContent = "Publier le commentaire";
   });
 }
 
 function renderTrending(data, currentId) {
   const root = document.getElementById("article-trending-list");
   if (!root) return;
-
   const top = [...(data.articles || [])]
     .filter(a => String(a.id) !== String(currentId))
     .sort((a,b) => String(b.createdAt || "").localeCompare(String(a.createdAt || "")))
     .slice(0, 5);
-
   root.innerHTML = top.map((a, i) => `
     <div class="trending-item">
       <span class="trending-num">${i + 1}</span>
@@ -289,13 +282,11 @@ function renderTrending(data, currentId) {
 function applyLive(data) {
   const liveTitle = document.getElementById("live-title");
   if (liveTitle) liveTitle.textContent = data.liveTitle || data.live?.title || "GAYA INFO TV — Direct";
-
   const liveContent = document.getElementById("live-content");
   const embed = data.liveEmbed || data.live?.embedUrl || "";
   if (liveContent && embed) {
     liveContent.innerHTML = `<iframe src="${esc(embed)}" allowfullscreen></iframe>`;
   }
-
   const ticker = document.querySelector(".ticker-content span");
   if (ticker && data.ticker) ticker.textContent = " " + data.ticker + " ";
 }
@@ -323,8 +314,6 @@ function renderArticle() {
   }
 
   document.title = `${article.title || "Article"} — GAYA INFO TV`;
-
-  const commentsCount = getComments(article.id).length;
   const author = article.author || "Rédaction";
   const published = gayaFormatDate(article.date || "Aujourd'hui");
   const content = article.content || article.excerpt || "";
@@ -338,23 +327,17 @@ function renderArticle() {
     </div>
 
     <span class="article-category-badge">${esc(article.category || "Actualité")}</span>
-
     <h1 class="article-title-full">${esc(article.title || "Sans titre")}</h1>
-
-    <div class="article-author-line">
-      <strong>Auteur:</strong> ${esc(author)}
-    </div>
+    <div class="article-author-line"><strong>Auteur:</strong> ${esc(author)}</div>
 
     <div class="article-meta-full">
       <span><i class="fa-regular fa-clock"></i> ${esc(published)}</span>
       <span class="reads" id="article-views-count">… Lectures</span>
-      <span><i class="fa-regular fa-comment-dots"></i> ${commentsCount} Commentaires</span>
+      <span><i class="fa-regular fa-comment-dots"></i> <span id="article-comments-count">…</span> Commentaires</span>
     </div>
 
     ${mediaHTML(article.media || article.image || "")}
-
     <div class="article-caption">${esc(article.title || "")}</div>
-
     <div class="article-content-full">${formatContent(content)}</div>
 
     <div class="article-end-meta">
@@ -363,8 +346,7 @@ function renderArticle() {
     </div>
 
     <section class="comments-section">
-      <h2 class="comments-title" id="comments-title">COMMENTAIRES (0)</h2>
-
+      <h2 class="comments-title" id="comments-title">COMMENTAIRES</h2>
       <form class="comment-form" id="comment-form">
         <div class="grid2">
           <input id="comment-name" type="text" placeholder="Votre nom">
@@ -373,28 +355,24 @@ function renderArticle() {
         <textarea id="comment-text" placeholder="Votre commentaire..." required></textarea>
         <button type="submit">Publier le commentaire</button>
       </form>
-
       <div class="comments-list" id="comments-list"></div>
     </section>
   `;
 
-  // Incrémenter et afficher les vues depuis Supabase
-  // Attendre que gayaSupabase soit prêt (supabase-config.js l'initialise au DOMContentLoaded)
+  // Vues
   if (window.gayaSupabase) {
     incrementAndDisplayViews(article.id);
   } else {
     window.addEventListener("gaya-cms-updated", () => {
       if (window.gayaSupabase) incrementAndDisplayViews(article.id);
     }, { once: true });
-    // Fallback si Supabase non configuré
     setTimeout(() => {
-      if (!window.gayaSupabase) {
-        const el = document.getElementById("article-views-count");
-        if (el) el.textContent = `${Number(article.reads || 0)} Lectures`;
-      }
+      const el = document.getElementById("article-views-count");
+      if (el && el.textContent === "… Lectures") el.textContent = `${Number(article.reads || 0)} Lectures`;
     }, 3000);
   }
 
+  // Commentaires
   renderComments(article.id);
   initCommentForm(article.id);
 }
