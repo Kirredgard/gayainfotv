@@ -192,8 +192,16 @@ function getGayaCMSData() {
       </a>
     `).join('');
     const ids = articles.map(a => a.id).filter(Boolean);
-    if (window.gayaRefreshCommentCounts) window.gayaRefreshCommentCounts(ids);
-    if (window.gayaRefreshViewCounts) window.gayaRefreshViewCounts(ids);
+    function doRefreshHome() {
+      if (window.gayaRefreshCommentCounts) window.gayaRefreshCommentCounts(ids);
+      if (window.gayaRefreshViewCounts) window.gayaRefreshViewCounts(ids);
+    }
+    if (window.gayaSupabase) {
+      doRefreshHome();
+    } else {
+      window.addEventListener("gaya-cms-updated", doRefreshHome, { once: true });
+      setTimeout(doRefreshHome, 5000);
+    }
   }
 
   function renderLive(data) {
