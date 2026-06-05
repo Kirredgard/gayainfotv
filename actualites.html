@@ -948,7 +948,17 @@ function renderArticles() {
     }).join('');
   }
 
-  if (window.gayaRefreshCommentCounts) window.gayaRefreshCommentCounts(pageItems.map(a => a.id));
+  const _refreshIds = pageItems.map(a => a.id).filter(Boolean);
+  function doRefreshActus() {
+    if (window.gayaRefreshCommentCounts) window.gayaRefreshCommentCounts(_refreshIds);
+    if (window.gayaRefreshViewCounts) window.gayaRefreshViewCounts(_refreshIds);
+  }
+  if (window.gayaSupabase) {
+    doRefreshActus();
+  } else {
+    window.addEventListener("gaya-cms-updated", doRefreshActus, { once: true });
+    setTimeout(doRefreshActus, 5000);
+  }
 
   // Update pagination
   const totalPages = Math.ceil(filtered.length / ARTICLES_PER_PAGE);
