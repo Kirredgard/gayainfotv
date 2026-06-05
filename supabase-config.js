@@ -1,7 +1,5 @@
 /* ============================================================
    GAYA INFO TV — Supabase Config & Storage Layer
-   1) Remplace les valeurs ci-dessous par celles de ton projet Supabase.
-   2) Exécute le fichier supabase-schema.sql dans Supabase SQL Editor.
    ============================================================ */
 
 const GAYA_SUPABASE_URL = "https://wwxzmcylckgdnowntdzw.supabase.co";
@@ -95,6 +93,7 @@ const GAYA_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJ
         .subscribe();
 
       if (_pendingData) { const p = _pendingData; _pendingData = null; await writeCMS(p); }
+      window.dispatchEvent(new CustomEvent("gaya-supabase-ready"));
       console.log("[GAYA CMS] Supabase connecté ✅");
     } catch(e) {
       console.warn("[GAYA CMS] Init Supabase échouée, fallback localStorage", e);
@@ -126,93 +125,46 @@ const GAYA_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJ
 
   window.gayaGetViewCount = function (articleId, fallback) {
     const id = String(articleId || "");
-    if (Object.prototype.hasOwnProperty.call(window.gayaViewCounts, id)) {
-      return Number(window.gayaViewCounts[id] || 0);
-    }
+    if (Object.prototype.hasOwnProperty.call(window.gayaViewCounts, id)) return Number(window.gayaViewCounts[id] || 0);
     return Number(fallback || 0);
   };
 
-  function updateCounterNodes() {
+  window.gayaRefreshCommentCounts = async function (articleIds) {
+    if (!_client || !Array.isArray(articleIds) || !articleIds.length) return;
+    const ids = [...new Set(articleIds.filter(Boolean).map(String))];
+    if (!ids.length) return;
+    const { data, error } = await _client.from(COMMENTS_TABLE).select("article_id").in("article_id", ids);
+    if (error) { console.warn("[GAYA CMS] Comptage commentaires échoué", error); return; }
+    const counts = {};
+    ids.forEach(id => counts[id] = 0);
+    (data || []).forEach(row => { const id = String(row.article_id || ""); if (id) counts[id] = (counts[id] || 0) + 1; });
+    Object.assign(window.gayaCommentCounts, counts);
     document.querySelectorAll("[data-comment-count-id]").forEach(el => {
       const id = el.getAttribute("data-comment-count-id");
       el.textContent = String(window.gayaGetCommentCount(id));
     });
-    document.querySelectorAll("[data-view-count-id]").forEach(el => {
-      const id = el.getAttribute("data-view-count-id");
-      const fallback = el.getAttribute("data-view-fallback") || 0;
-      el.textContent = String(window.gayaGetViewCount(id, fallback));
-    });
-  }
-
-  window.gayaRefreshCommentCounts = async function (articleIds) {
-    const ids = [...new Set((articleIds || []).filter(Boolean).map(String))];
-    if (!ids.length) return;
-    if (!_client) await initSupabase();
-    if (!_client) {
-      setTimeout(() => window.gayaRefreshCommentCounts(ids), 500);
-      return;
-    }
-
-    const { data, error } = await _client
-      .from(COMMENTS_TABLE)
-      .select("article_id")
-      .in("article_id", ids);
-
-    if (error) {
-      console.warn("[GAYA CMS] Comptage commentaires échoué", error);
-      return;
-    }
-
-    const counts = {};
-    ids.forEach(id => counts[id] = 0);
-    (data || []).forEach(row => {
-      const id = String(row.article_id || "");
-      if (id) counts[id] = (counts[id] || 0) + 1;
-    });
-    Object.assign(window.gayaCommentCounts, counts);
-    updateCounterNodes();
   };
 
   window.gayaRefreshViewCounts = async function (articleIds) {
-    const ids = [...new Set((articleIds || []).filter(Boolean).map(String))];
+    if (!_client || !Array.isArray(articleIds) || !articleIds.length) return;
+    const ids = [...new Set(articleIds.filter(Boolean).map(String))];
     if (!ids.length) return;
-    if (!_client) await initSupabase();
-    if (!_client) {
-      setTimeout(() => window.gayaRefreshViewCounts(ids), 500);
-      return;
-    }
-
-    const { data, error } = await _client
-      .from(VIEWS_TABLE)
-      .select("article_id, views")
-      .in("article_id", ids);
-
-    if (error) {
-      console.warn("[GAYA CMS] Comptage vues échoué", error);
-      return;
-    }
-
+    const { data, error } = await _client.from(VIEWS_TABLE).select("article_id, views").in("article_id", ids);
+    if (error) { console.warn("[GAYA CMS] Comptage vues échoué", error); return; }
     const counts = {};
     ids.forEach(id => counts[id] = 0);
-    (data || []).forEach(row => {
-      const id = String(row.article_id || "");
-      if (id) counts[id] = Number(row.views || 0);
-    });
+    (data || []).forEach(row => { const id = String(row.article_id || ""); if (id) counts[id] = Number(row.views || 0); });
     Object.assign(window.gayaViewCounts, counts);
-    updateCounterNodes();
+    document.querySelectorAll("[data-view-count-id]").forEach(el => {
+      const id = el.getAttribute("data-view-count-id");
+      el.textContent = String(window.gayaGetViewCount(id, 0));
+    });
   };
 
   window.gayaCMSReadComments = async function (articleId, callback) {
     if (typeof callback === "function") callback([]);
-    if (!_client) await initSupabase();
     if (!_client) return;
-
-    const { data, error } = await _client
-      .from(COMMENTS_TABLE)
-      .select("*")
-      .eq("article_id", String(articleId))
-      .order("created_at", { ascending: true });
-
+    const { data, error } = await _client.from(COMMENTS_TABLE).select("*").eq("article_id", String(articleId)).order("created_at", { ascending: true });
     if (!error && Array.isArray(data) && typeof callback === "function") callback(data);
     if (error) console.warn("[GAYA CMS] Lecture commentaires échouée", error);
   };
