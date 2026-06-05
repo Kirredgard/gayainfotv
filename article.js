@@ -31,7 +31,6 @@ function getParam(name) {
   return new URLSearchParams(window.location.search).get(name);
 }
 
-
 function gayaFormatDate(value) {
   if (!value) return "";
   if (/^\d{4}-\d{2}-\d{2}$/.test(value)) {
@@ -86,6 +85,47 @@ function timeAgo(dateISO) {
   return `il y a ${d} jour${d > 1 ? "s" : ""}`;
 }
 
+/* ============================================================
+   COMPTEUR DE VUES — Supabase dédié (table gaya_views)
+   ============================================================ */
+async function incrementAndDisplayViews(articleId) {
+  const el = document.getElementById("article-views-count");
+
+  // 1. Lire le compteur actuel
+  let currentViews = 0;
+  try {
+    if (window.gayaSupabase) {
+      const { data } = await gayaSupabase
+        .from("gaya_views")
+        .select("views")
+        .eq("article_id", String(articleId))
+        .maybeSingle();
+      if (data) currentViews = Number(data.views || 0);
+    }
+  } catch(e) {}
+
+  // 2. Incrémenter
+  const newViews = currentViews + 1;
+
+  // 3. Afficher immédiatement
+  if (el) el.textContent = `${newViews} Lectures`;
+
+  // 4. Sauvegarder dans Supabase
+  try {
+    if (window.gayaSupabase) {
+      await gayaSupabase
+        .from("gaya_views")
+        .upsert({
+          article_id: String(articleId),
+          views: newViews,
+          updated_at: new Date().toISOString()
+        });
+    }
+  } catch(e) {
+    console.warn("[GAYA] Vues non enregistrées", e);
+  }
+}
+
 function renderComments(articleId) {
   if (window.gayaCMSReadComments) {
     gayaCMSReadComments(articleId, (comments) => _renderCommentsList(articleId, comments));
@@ -107,7 +147,6 @@ function _renderCommentsList(articleId, comments) {
     return;
   }
 
-  
   list.innerHTML = comments.map((comment, index) => `
     <div class="comment-item">
       <div class="comment-head">
@@ -183,7 +222,6 @@ function _renderCommentsList(articleId, comments) {
       const index = btn.dataset.reply;
       const form = list.querySelector(`[data-reply-form="${index}"]`);
       if (!form) return;
-
       form.style.display = form.style.display === "none" ? "block" : "none";
     });
   });
@@ -191,27 +229,21 @@ function _renderCommentsList(articleId, comments) {
   list.querySelectorAll(".reply-form").forEach(form => {
     form.addEventListener("submit", (e) => {
       e.preventDefault();
-
       const index = Number(form.dataset.replyForm);
       const comments = getComments(articleId);
-
       const name = form.querySelector(".reply-name").value.trim() || "Anonyme";
       const text = form.querySelector(".reply-text").value.trim();
-
       if (!text) return;
-
       comments[index].replies = comments[index].replies || [];
       comments[index].replies.unshift({
         name,
         text,
         createdAt: new Date().toISOString()
       });
-
       saveComments(articleId, comments);
       renderComments(articleId);
     });
   });
-
 }
 
 function initCommentForm(articleId) {
@@ -223,9 +255,7 @@ function initCommentForm(articleId) {
     const name = document.getElementById("comment-name").value.trim() || "Anonyme";
     const email = document.getElementById("comment-email").value.trim();
     const text = document.getElementById("comment-text").value.trim();
-
     if (!text) return;
-
     const comments = getComments(articleId);
     comments.unshift({
       name,
@@ -294,13 +324,9 @@ function renderArticle() {
 
   document.title = `${article.title || "Article"} — GAYA INFO TV`;
 
-  const reads = Number(article.reads || 0) + 1;
-  article.reads = reads;
-  saveCMSData(data);
-
   const commentsCount = getComments(article.id).length;
   const author = article.author || "Rédaction";
-  const published = gayaFormatDate(article.date || "Aujourd’hui");
+  const published = gayaFormatDate(article.date || "Aujourd'hui");
   const content = article.content || article.excerpt || "";
 
   root.innerHTML = `
@@ -321,8 +347,9 @@ function renderArticle() {
 
     <div class="article-meta-full">
       <span><i class="fa-regular fa-clock"></i> ${esc(published)}</span>
-      <span class="reads">${reads} Lectures</span>
-      <span><i class="fa-regular fa-comment-dots"></i> ${commentsCount} Commentaires</span>    </div>
+      <span class="reads" id="article-views-count">… Lectures</span>
+      <span><i class="fa-regular fa-comment-dots"></i> ${commentsCount} Commentaires</span>
+    </div>
 
     ${mediaHTML(article.media || article.image || "")}
 
@@ -350,6 +377,23 @@ function renderArticle() {
       <div class="comments-list" id="comments-list"></div>
     </section>
   `;
+
+  // Incrémenter et afficher les vues depuis Supabase
+  // Attendre que gayaSupabase soit prêt (supabase-config.js l'initialise au DOMContentLoaded)
+  if (window.gayaSupabase) {
+    incrementAndDisplayViews(article.id);
+  } else {
+    window.addEventListener("gaya-cms-updated", () => {
+      if (window.gayaSupabase) incrementAndDisplayViews(article.id);
+    }, { once: true });
+    // Fallback si Supabase non configuré
+    setTimeout(() => {
+      if (!window.gayaSupabase) {
+        const el = document.getElementById("article-views-count");
+        if (el) el.textContent = `${Number(article.reads || 0)} Lectures`;
+      }
+    }, 3000);
+  }
 
   renderComments(article.id);
   initCommentForm(article.id);
