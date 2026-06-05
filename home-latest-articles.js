@@ -13,6 +13,10 @@ function gayaCommentsCount(articleId) {
 }
 
 function gayaViewsCount(article) {
+  if (window.gayaGetViewCount && article && article.id) {
+    const remote = window.gayaGetViewCount(article.id);
+    if (remote) return remote;
+  }
   return Number(article.reads || article.views || 0);
 }
 
@@ -66,14 +70,16 @@ function esc(v) {
             <p class="article-excerpt">${esc(article.excerpt || "")}</p>
             <div class="article-meta">
               <span><i class="fa-regular fa-calendar"></i> ${esc(gayaFormatDate(article.date || ""))}</span>
-              <span><i class="fa-regular fa-eye"></i> ${gayaViewsCount(article)} vues</span>
+              <span><i class="fa-regular fa-eye"></i> <span data-view-count-id="${esc(article.id)}">${gayaViewsCount(article)}</span> vues</span>
               <span><i class="fa-regular fa-comment-dots"></i> <span data-comment-count-id="${esc(article.id)}">${gayaCommentsCount(article.id)}</span> commentaires</span>
             </div>
           </div>
         </a>
       `;
     }).join("");
-    if (window.gayaRefreshCommentCounts) window.gayaRefreshCommentCounts(articles.map(a => a.id));
+    const ids = articles.map(a => a.id).filter(Boolean);
+    if (window.gayaRefreshCommentCounts) window.gayaRefreshCommentCounts(ids);
+    if (window.gayaRefreshViewCounts) window.gayaRefreshViewCounts(ids);
   }
 
   document.addEventListener("DOMContentLoaded", () => {
