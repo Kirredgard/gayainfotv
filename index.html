@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+  <link rel="apple-touch-icon" sizes="192x192" href="favicon-192x192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="favicon-512x512.png">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GAYA INFO TV — Actualités & Direct</title>
+<meta name="description" content="GAYA INFO TV - Actualités locales de Dagana, Saint-Louis. Émissions, direct TV et radio.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Source+Sans+3:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="style.css">
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#e63946">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="GAYA INFO">
+  <link rel="apple-touch-icon" href="/favicon-192x192.png">
+</head>
+<body>
+
+<!-- BREAKING NEWS TICKER -->
+<div class="ticker-wrap">
+  <div class="ticker-label">INFO</div>
+  <div class="ticker-content">
+    <span> Actualités, analyses et couverture d'événements en direct — suivez tout ici &nbsp;&nbsp;&nbsp;•&nbsp;&nbsp;&nbsp; Service commercial : 77 935 17 86 / 77 605 95 76 </span>
+  </div>
+</div>
+
+<!-- HEADER -->
+<header class="site-header" id="site-header">
+  <div class="header-inner">
+    <a href="index.html" class="logo">
+      <img src="gaya.jpg" alt="GAYA INFO TV" onerror="this.style.display='none'">
+      <div class="logo-text">
+        <span class="logo-name">GAYA INFO TV</span>
+        <span class="logo-tagline">L'information de proximité</span>
+      </div>
+    </a>
+
+    <nav class="main-nav" id="main-nav">
+      <a href="index.html" class="nav-link active">Accueil</a>
+      <a href="actualites.html" class="nav-link">Actualités</a>
+      <div class="nav-dropdown">
+  <a href="#" class="nav-link dropdown-trigger">
+    Émissions <i class="fa-solid fa-chevron-down chevron-icon" style="font-size:10px;"></i>
+  </a>
+  <div class="dropdown-menu">
+    <a href="societe.html"><i class="fa-solid fa-users"></i> Société</a>
+    <a href="economie.html"><i class="fa-solid fa-chart-line"></i> Économie</a>
+    <a href="religion.html"><i class="fa-solid fa-mosque"></i> Religion</a>
+    <a href="sport.html"><i class="fa-solid fa-futbol"></i> Sport</a>
+    <a href="faitsdivers.html"><i class="fa-solid fa-newspaper"></i> Faits divers</a>
+  </div>
+</div>
+      <a href="multimedia.html" class="nav-link">Multimédia</a>
+      <a href="apropos.html" class="nav-link">À propos</a>
+      <a href="contact.html" class="nav-link">Contact</a>
+    </nav>
+
+    <div class="header-actions">
+      <button class="btn-search" id="search-toggle" aria-label="Recherche">
+        <i class="fa-solid fa-magnifying-glass"></i>
+      </button>
+      <a href="#" class="btn-radio">
+        <i class="fa-solid fa-radio"></i> Radio
+      </a>
+      <button type="button" class="btn-live" id="btnLiveDirect">
+        <span class="live-dot"></span> Direct
+      </button>
+      <button class="hamburger" id="hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+
+  <!-- SEARCH BAR -->
+  <div class="search-bar" id="search-bar">
+    <div class="search-inner">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <input type="text" placeholder="Rechercher une actualité, une émission...">
+      <button class="search-close" id="search-close"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+  </div>
+</header>
+
+<!-- SOCIAL BAR -->
+<div class="social-bar">
+  <div class="social-bar-inner">
+    <span class="social-bar-label">Suivez-nous</span>
+    <a href="https://www.facebook.com/gayainfotv" target="_blank" rel="noopener" class="social-icon fb"><i class="fa-brands fa-facebook-f"></i></a>
+    <a href="https://www.youtube.com/@gayainfotv" target="_blank" rel="noopener" class="social-icon yt"><i class="fa-brands fa-youtube"></i></a>
+    <a href="#" class="social-icon ig"><i class="fa-brands fa-instagram"></i></a>
+    <a href="#" class="social-icon tw"><i class="fa-brands fa-x-twitter"></i></a>
+    <div class="social-bar-date" id="current-date"></div>
+  </div>
+</div>
+
+<!-- MAIN CONTENT -->
+<main class="site-main">
+  <div class="container">
+
+    <!-- LEFT: FEATURED + ARTICLES -->
+    <section class="content-main">
+
+      <!-- HERO SLIDER -->
+      <div class="hero-slider" id="slider">
+        
+        <button class="slider-prev" onclick="changeSlide(-1)"><i class="fa-solid fa-chevron-left"></i></button>
+        <button class="slider-next" onclick="changeSlide(1)"><i class="fa-solid fa-chevron-right"></i></button>
+        <div class="slider-dots" id="slider-dots">
+        </div>
+      </div>
+
+      <!-- SECTION: DERNIÈRES ACTUALITÉS -->
+      <div class="section-header">
+        <h2 class="section-title"><span>Dernières actualités</span></h2>
+        <a href="actualites.html" class="section-link">Voir tout <i class="fa-solid fa-arrow-right"></i></a>
+      </div>
+
+      <div class="articles-grid" id="articles-grid">
+        <!-- Articles injected by JS -->
+      </div>
+
+    </section>
+
+    <!-- RIGHT: SIDEBAR -->
+    <aside class="sidebar">
+
+      <!-- LIVE TV -->
+      <div class="sidebar-widget widget-live" id="live">
+        <div class="sidebar-widget widget-live" id="live">
+  <div class="widget-header">
+    <span class="live-indicator">
+      <span class="live-dot"></span> Diffusion en direct
+    </span>
+  </div>
+
+  <div class="live-player-wrap" id="live-content">
+    <p style="text-align:center; padding:1rem; color:#aaa;">
+      Vérification du live...
+    </p>
+  </div>
+
+  <div class="live-now">
+    <div class="live-now-badge">
+      <span class="live-dot"></span> En ce moment
+    </div>
+    <p id="live-title">Chargement...</p>
+  </div>
+</div>
+      </div>
+
+      <!-- CATÉGORIES -->
+      <div class="sidebar-widget">
+        <div class="widget-header">
+          <h3 class="widget-title">Rubriques</h3>
+        </div>
+        <div class="categories-grid">
+          <a href="societe.html" class="cat-card cat-societe">
+            <i class="fa-solid fa-users"></i>
+            <span>Société</span>
+          </a>
+          <a href="economie.html" class="cat-card cat-eco">
+            <i class="fa-solid fa-chart-line"></i>
+            <span>Économie</span>
+          </a>
+          <a href="religion.html" class="cat-card cat-religion">
+            <i class="fa-solid fa-mosque"></i>
+            <span>Religion</span>
+          </a>
+          <a href="sport.html" class="cat-card cat-sport">
+            <i class="fa-solid fa-futbol"></i>
+            <span>Sport</span>
+          </a>
+          <a href="faitsdivers.html" class="cat-card cat-divers">
+            <i class="fa-solid fa-newspaper"></i>
+            <span>Faits divers</span>
+          </a>
+          <a href="multimedia.html" class="cat-card cat-media">
+            <i class="fa-solid fa-photo-film"></i>
+            <span>Multimédia</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- NEWSLETTER -->
+      <div class="sidebar-widget widget-newsletter">
+        <div class="widget-header">
+          <h3 class="widget-title">Newsletter</h3>
+        </div>
+        <p class="newsletter-text">Recevez les dernières actualités directement dans votre boîte mail.</p>
+        <form class="newsletter-form" onsubmit="subscribeNewsletter(event)">
+          <input type="email" placeholder="Votre adresse e-mail" required>
+          <button type="submit">S'inscrire</button>
+        </form>
+        <p class="newsletter-note" id="newsletter-msg" style="display:none; color: var(--color-red); font-size: 12px; margin-top: 8px;"></p>
+      </div>
+
+      <!-- SOUTENIR GAYA -->
+      <div class="sidebar-widget widget-don">
+        <div class="widget-don-inner">
+          <i class="fa-solid fa-heart widget-don-icon"></i>
+          <h3>Soutenez GAYA INFO TV</h3>
+          <p>Aidez-nous à maintenir un journalisme local indépendant et de qualité.</p>
+          <a href="don.html" class="btn-don">Faire un don</a>
+        </div>
+      </div>
+
+    </aside>
+  </div>
+</main>
+
+<!-- FOOTER -->
+<footer class="site-footer">
+  <div class="footer-top">
+    <div class="footer-grid">
+
+      <div class="footer-col footer-brand">
+        <a href="index.html" class="footer-logo">
+          <img src="gaya.jpg" alt="GAYA INFO TV" onerror="this.style.display='none'">
+          <span>GAYA INFO TV</span>
+        </a>
+        <p class="footer-about">Média de proximité dédié à l'information locale, nous couvrons l'actualité avec rigueur et impartialité.</p>
+        <div class="footer-socials">
+          <a href="https://www.facebook.com/gayainfotv" target="_blank" rel="noopener" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+          <a href="https://www.youtube.com/@gayainfotv" target="_blank" rel="noopener" aria-label="YouTube"><i class="fa-brands fa-youtube"></i></a>
+          <a href="#" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+          <a href="#" aria-label="X/Twitter"><i class="fa-brands fa-x-twitter"></i></a>
+        </div>
+      </div>
+
+      <div class="footer-col">
+        <h4>Navigation</h4>
+        <ul>
+          <li><a href="actualites.html">Actualités</a></li>
+          <li><a href="societe.html">Société</a></li>
+          <li><a href="economie.html">Économie</a></li>
+          <li><a href="religion.html">Religion</a></li>
+          <li><a href="sport.html">Sport</a></li>
+          <li><a href="faitsdivers.html">Faits divers</a></li>
+          <li><a href="multimedia.html">Multimédia</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Groupe GAYA INFO</h4>
+        <ul>
+          <li><a href="#">Radio Gaya</a></li>
+          <li><a href="#">GAYA Sport & Culture</a></li>
+        </ul>
+        <h4 style="margin-top: 1.5rem;">Informations</h4>
+        <ul>
+          <li><a href="apropos.html">À propos</a></li>
+          <li><a href="contact.html">Contact</a></li>
+          <li><a href="don.html">Nous soutenir</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col footer-contact">
+        <h4>Nous contacter</h4>
+        <ul class="contact-list">
+          <li><i class="fa-solid fa-location-dot"></i> Gaé, Dagana — 23002 Saint-Louis, Sénégal</li>
+          <li><i class="fa-solid fa-envelope"></i> <a href="mailto:gayainfopdg@gmail.com">gayainfopdg@gmail.com</a></li>
+          <li><i class="fa-solid fa-phone"></i> 77 935 17 86 / 77 605 95 76</li>
+        </ul>
+        <div class="footer-newsletter">
+          <p>Restez informé :</p>
+          <form class="footer-form" onsubmit="subscribeNewsletter(event)">
+            <input type="email" placeholder="Votre e-mail">
+            <button type="submit">OK</button>
+          </form>
+        </div>
+      </div>
+
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="footer-bottom-inner">
+      <span>© 2025 GAYA INFO TV — Tous droits réservés</span>
+      <span>Dev - </i> SKadiar Design</span>
+    </div>
+  </div>
+</footer>
+<!-- TOAST BIENTÔT DISPONIBLE -->
+<div class="toast-soon" id="toast-soon">
+  <div class="toast-soon-icon">
+    <i class="fa-solid fa-radio"></i>
+  </div>
+  <div class="toast-soon-text">
+    <div class="toast-soon-title">Radio Gaya FM</div>
+    <div class="toast-soon-sub">Radio Gaya FM bientôt disponible ✨</div>
+  </div>
+  <button class="toast-soon-close" onclick="hideToast()">
+    <i class="fa-solid fa-xmark"></i>
+  </button>
+</div>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+<script src="script.js?v=16"></script>
+
+
+
+
+
+<script src="home-cms-bridge.js"></script>
+<script src="home-latest-articles.js"></script>
+  <script>
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", function() {
+        navigator.serviceWorker.register("/sw.js")
+          .then(function(reg) { console.log("SW enregistré :", reg.scope); })
+          .catch(function(err) { console.warn("SW échec :", err); });
+      });
+    }
+  </script>
+  <script src="/pwa-install.js"></script>
+</body>
+</html>

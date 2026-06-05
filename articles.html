@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+  <link rel="apple-touch-icon" sizes="192x192" href="favicon-192x192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="favicon-512x512.png">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Articles — GAYA INFO TV</title>
+  <meta name="description" content="Tous les articles de GAYA INFO TV">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .articles-page-wrap {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 36px 24px 70px;
+    }
+    .articles-page-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 16px;
+      margin-bottom: 22px;
+    }
+    .articles-page-head h1 {
+      font-family: var(--font-display, Georgia, serif);
+      font-size: clamp(30px, 4vw, 48px);
+      margin: 0;
+    }
+    .articles-public-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+    .public-card {
+      background: #fff;
+      border: 1px solid var(--color-border, #e8e8f0);
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 6px 24px rgba(0,0,0,.05);
+      transition: transform .18s, box-shadow .18s;
+    }
+    .public-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 34px rgba(0,0,0,.09);
+    }
+    .public-card-media {
+      background: #111;
+      aspect-ratio: 16 / 9;
+      overflow: hidden;
+    }
+    .public-card-media img,
+    .public-card-media video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .public-card-body {
+      padding: 15px;
+    }
+    .public-card-cat {
+      color: var(--color-red, #c8102e);
+      font-size: 10px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+    }
+    .public-card-title {
+      font-family: var(--font-display, Georgia, serif);
+      font-size: 18px;
+      line-height: 1.25;
+      margin: 6px 0;
+    }
+    .public-card-meta {
+      color: var(--color-text-muted, #8888a0);
+      font-size: 12px;
+      margin-bottom: 8px;
+    }
+    .public-card-excerpt {
+      color: var(--color-text-2, #444457);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    .empty-box {
+      background: #fff;
+      border-radius: 14px;
+      padding: 28px;
+      text-align: center;
+      color: #666;
+    }
+    .back-link {
+      color: var(--color-red, #c8102e);
+      font-weight: 800;
+    }
+    @media(max-width: 900px) {
+      .articles-public-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media(max-width: 600px) {
+      .articles-page-wrap { padding: 22px 12px 50px; }
+      .articles-public-grid { grid-template-columns: 1fr; }
+      .articles-page-head { flex-direction: column; align-items: flex-start; }
+    }
+  
+    .articles-admin-tools {
+      display: none;
+      gap: 8px;
+      margin-top: 12px;
+      border-top: 1px solid #eee;
+      padding-top: 10px;
+    }
+    body.admin-mode .articles-admin-tools {
+      display: flex;
+    }
+    .articles-admin-tools button,
+    .articles-admin-tools a {
+      flex: 1;
+      text-align: center;
+      border: 0;
+      border-radius: 8px;
+      padding: 8px 10px;
+      font-weight: 800;
+      font-size: 12px;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .edit-article-btn {
+      background: #111827;
+      color: #fff;
+    }
+    .delete-article-btn {
+      background: #b91c1c;
+      color: #fff;
+    }
+    .admin-notice {
+      display: none;
+      background: #fff7e8;
+      border: 1px solid #f2d29b;
+      color: #5a3b00;
+      border-radius: 10px;
+      padding: 10px 12px;
+      margin-bottom: 14px;
+      font-size: 13px;
+      font-weight: 700;
+    }
+    body.admin-mode .admin-notice {
+      display: block;
+    }
+  </style>
+  <!-- Firebase SDK -->
+  <!-- GAYA CMS Firebase Config -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#e63946">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="GAYA INFO">
+  <link rel="apple-touch-icon" href="/favicon-192x192.png">
+</head>
+<body>
+  <main class="articles-page-wrap">
+    <div class="articles-page-head">
+      <div>
+        <a href="index.html" class="back-link">← Retour à l’accueil</a>
+        <h1>Tous les articles</h1>
+      </div>
+    </div>
+    <div class="admin-notice">Mode admin actif : tu peux modifier ou supprimer les articles depuis cette page.</div>
+    <div id="articlesPublicList" class="articles-public-grid"></div>
+  </main>
+  <script src="articles.js"></script>
+  <script>
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", function() {
+        navigator.serviceWorker.register("/sw.js")
+          .then(function(reg) { console.log("SW enregistré :", reg.scope); })
+          .catch(function(err) { console.warn("SW échec :", err); });
+      });
+    }
+  </script>
+  <script src="/pwa-install.js"></script>
+</body>
+</html>

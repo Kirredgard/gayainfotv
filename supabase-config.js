@@ -1,0 +1,143 @@
+/* ============================================================
+   GAYA INFO TV — Supabase Config & Storage Layer
+   1) Remplace les valeurs ci-dessous par celles de ton projet Supabase.
+   2) Exécute le fichier supabase-schema.sql dans Supabase SQL Editor.
+   ============================================================ */
+
+const GAYA_SUPABASE_URL = "https://wwxzmcylckgdnowntdzw.supabase.co";
+const GAYA_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind3eHptY3lsY2tnZG5vd250ZHp3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA2NzI5NTgsImV4cCI6MjA5NjI0ODk1OH0.amoJR1l2ZttBIHG4Tr5TRMovFniDGHjZp9uyHJQ7GSw";
+
+(function () {
+  const CMS_TABLE = "gaya_cms";
+  const CMS_ID = "main";
+  const COMMENTS_TABLE = "gaya_comments";
+  const LOCAL_KEYS = ["gayaCMSData", "gayaCMS", "gayaData", "gaya_cms_v1"];
+
+  let _client = null;
+  let _ready = false;
+  let _remoteData = null;
+  let _pendingData = null;
+  let _listeners = [];
+
+  function safeParse(v) {
+    if (!v) return null;
+    if (typeof v === "object") return v;
+    try { return JSON.parse(v); } catch(e) { return null; }
+  }
+
+  function clone(v) { return safeParse(JSON.stringify(v || {})) || {}; }
+
+  function readLocal() {
+    for (const key of LOCAL_KEYS) {
+      try { const parsed = safeParse(localStorage.getItem(key)); if (parsed) return parsed; } catch(e) {}
+    }
+    return null;
+  }
+
+  function writeLocal(data) {
+    const payload = JSON.stringify(data || {});
+    LOCAL_KEYS.forEach(k => { try { localStorage.setItem(k, payload); } catch(e) {} });
+  }
+
+  function emit(data) {
+    _listeners.forEach(fn => { try { fn(data); } catch(e) {} });
+    window.dispatchEvent(new CustomEvent("gaya-cms-updated", { detail: data }));
+  }
+
+  function applyRemote(payload) {
+    const incoming = safeParse(payload);
+    if (!incoming) return;
+    _remoteData = incoming;
+    writeLocal(incoming);
+    emit(incoming);
+  }
+
+  async function fetchCMS() {
+    if (!_client) return;
+    const { data, error } = await _client.from(CMS_TABLE).select("content").eq("id", CMS_ID).maybeSingle();
+    if (error) { console.warn("[GAYA CMS] Lecture Supabase échouée", error); return; }
+    if (data && data.content) applyRemote(data.content);
+  }
+
+  async function writeCMS(data) {
+    const payload = clone(data || {});
+    delete payload.__forceReplace;
+    payload.__cmsUpdatedAt = Date.now();
+    _remoteData = payload;
+    writeLocal(payload);
+    emit(payload);
+
+    if (!_ready || !_client) { _pendingData = payload; return; }
+    const { error } = await _client.from(CMS_TABLE).upsert({ id: CMS_ID, content: payload, updated_at: new Date().toISOString() });
+    if (error) console.error("[GAYA CMS] Écriture Supabase refusée/échouée", error);
+  }
+
+  async function initSupabase() {
+    try {
+      if (!GAYA_SUPABASE_URL || GAYA_SUPABASE_URL.includes("TON-PROJET") || !GAYA_SUPABASE_ANON_KEY || GAYA_SUPABASE_ANON_KEY.includes("REMPLACE")) {
+        console.warn("[GAYA CMS] Supabase non configuré : remplis GAYA_SUPABASE_URL et GAYA_SUPABASE_ANON_KEY dans supabase-config.js");
+        return;
+      }
+      if (!window.supabase || !window.supabase.createClient) {
+        console.warn("[GAYA CMS] SDK Supabase non disponible");
+        return;
+      }
+      _client = window.supabase.createClient(GAYA_SUPABASE_URL, GAYA_SUPABASE_ANON_KEY);
+      window.gayaSupabase = _client;
+      _ready = true;
+      await fetchCMS();
+
+      _client.channel("gaya_cms_changes")
+        .on("postgres_changes", { event: "*", schema: "public", table: CMS_TABLE, filter: `id=eq.${CMS_ID}` }, payload => {
+          if (payload.new && payload.new.content) applyRemote(payload.new.content);
+        })
+        .subscribe();
+
+      if (_pendingData) { const p = _pendingData; _pendingData = null; await writeCMS(p); }
+      console.log("[GAYA CMS] Supabase connecté ✅");
+    } catch(e) {
+      console.warn("[GAYA CMS] Init Supabase échouée, fallback localStorage", e);
+    }
+  }
+
+  window.gayaCMSRead = function () { return clone(_remoteData || readLocal() || {}); };
+  window.gayaCMSWrite = function (data) { writeCMS(data); };
+  window.gayaCMSOnUpdate = function (callback) { if (typeof callback === "function") _listeners.push(callback); if (_remoteData) callback(_remoteData); };
+
+  window.gayaCMSLogin = async function (email, password) {
+    if (!_client) await initSupabase();
+    if (!_client) return { ok: false, message: "Supabase n'est pas encore configuré." };
+    const { data, error } = await _client.auth.signInWithPassword({ email: String(email || "").trim(), password: String(password || "") });
+    if (error) return { ok: false, message: "Identifiant ou mot de passe incorrect." };
+    const user = data.user || {};
+    const name = user.user_metadata?.full_name || user.email || "Administrateur";
+    return { ok: true, user, displayName: name, role: "Administrateur" };
+  };
+
+  window.gayaCMSLogout = async function () { try { if (_client) await _client.auth.signOut(); } catch(e) {} };
+
+  window.gayaCMSReadComments = async function (articleId, callback) {
+    const localKey = `gaya_article_comments_${articleId}`;
+    let local = [];
+    try { local = JSON.parse(localStorage.getItem(localKey) || "[]"); } catch(e) {}
+    if (typeof callback === "function") callback(local);
+    if (!_client) return;
+    const { data, error } = await _client.from(COMMENTS_TABLE).select("comments").eq("article_id", String(articleId)).maybeSingle();
+    if (!error && data && Array.isArray(data.comments)) {
+      localStorage.setItem(localKey, JSON.stringify(data.comments));
+      if (typeof callback === "function") callback(data.comments);
+    }
+  };
+
+  window.gayaCMSWriteComments = async function (articleId, comments) {
+    const localKey = `gaya_article_comments_${articleId}`;
+    const arr = Array.isArray(comments) ? comments : [];
+    localStorage.setItem(localKey, JSON.stringify(arr));
+    if (!_client) return;
+    const { error } = await _client.from(COMMENTS_TABLE).upsert({ article_id: String(articleId), comments: arr, updated_at: new Date().toISOString() });
+    if (error) console.warn("[GAYA CMS] Commentaires non enregistrés sur Supabase", error);
+  };
+
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", initSupabase);
+  else initSupabase();
+})();
