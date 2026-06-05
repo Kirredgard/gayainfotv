@@ -799,11 +799,7 @@
 
 
 function gayaCommentsCount(articleId) {
-  try {
-    return JSON.parse(localStorage.getItem(`gaya_article_comments_${articleId}`) || "[]").length;
-  } catch(e) {
-    return 0;
-  }
+  return window.gayaGetCommentCount ? window.gayaGetCommentCount(articleId) : 0;
 }
 
 function gayaViewsCount(article) {
@@ -943,7 +939,7 @@ function renderArticles() {
               <span><i class="fa-regular fa-calendar"></i> ${gayaFormatDate(a.date)}</span>
               <span><i class="fa-regular fa-user"></i> ${a.author}</span>
               <span><i class="fa-regular fa-eye"></i> ${gayaViewsCount(a)} vues</span>
-              <span><i class="fa-regular fa-comment-dots"></i> ${gayaCommentsCount(a.id)} commentaires</span>
+              <span><i class="fa-regular fa-comment-dots"></i> <span data-comment-count-id="${a.id}">${gayaCommentsCount(a.id)}</span> commentaires</span>
             </div>
             <a class="actu-card-link" href="${a.link || (a.id ? `article.html?id=${a.id}` : '#')}">Lire l'article <i class="fa-solid fa-arrow-right"></i></a>
           </div>
@@ -951,6 +947,8 @@ function renderArticles() {
       `;
     }).join('');
   }
+
+  if (window.gayaRefreshCommentCounts) window.gayaRefreshCommentCounts(pageItems.map(a => a.id));
 
   // Update pagination
   const totalPages = Math.ceil(filtered.length / ARTICLES_PER_PAGE);
