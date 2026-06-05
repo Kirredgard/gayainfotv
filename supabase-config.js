@@ -10,7 +10,7 @@ const GAYA_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJ
 (function () {
   const CMS_TABLE = "gaya_cms";
   const CMS_ID = "main";
-  const COMMENTS_TABLE = "gaya_comments";
+  const COMMENTS_TABLE = "gaya_comments_v2";
   const LOCAL_KEYS = ["gayaCMSData", "gayaCMS", "gayaData", "gaya_cms_v1"];
 
   let _client = null;
@@ -116,26 +116,55 @@ const GAYA_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJ
 
   window.gayaCMSLogout = async function () { try { if (_client) await _client.auth.signOut(); } catch(e) {} };
 
-  window.gayaCMSReadComments = async function (articleId, callback) {
-    const localKey = `gaya_article_comments_${articleId}`;
-    let local = [];
-    try { local = JSON.parse(localStorage.getItem(localKey) || "[]"); } catch(e) {}
-    if (typeof callback === "function") callback(local);
-    if (!_client) return;
-    const { data, error } = await _client.from(COMMENTS_TABLE).select("comments").eq("article_id", String(articleId)).maybeSingle();
-    if (!error && data && Array.isArray(data.comments)) {
-      localStorage.setItem(localKey, JSON.stringify(data.comments));
-      if (typeof callback === "function") callback(data.comments);
+  window.gayaCommentCounts = window.gayaCommentCounts || {};
+
+  window.gayaGetCommentCount = function (articleId) {
+    return Number(window.gayaCommentCounts[String(articleId)] || 0);
+  };
+
+  window.gayaRefreshCommentCounts = async function (articleIds) {
+    if (!_client || !Array.isArray(articleIds) || !articleIds.length) return;
+    const ids = [...new Set(articleIds.filter(Boolean).map(String))];
+    if (!ids.length) return;
+
+    const { data, error } = await _client
+      .from(COMMENTS_TABLE)
+      .select("article_id")
+      .in("article_id", ids);
+
+    if (error) {
+      console.warn("[GAYA CMS] Comptage commentaires échoué", error);
+      return;
     }
+
+    const counts = {};
+    ids.forEach(id => counts[id] = 0);
+    (data || []).forEach(row => {
+      const id = String(row.article_id || "");
+      if (id) counts[id] = (counts[id] || 0) + 1;
+    });
+    Object.assign(window.gayaCommentCounts, counts);
+
+    document.querySelectorAll("[data-comment-count-id]").forEach(el => {
+      const id = el.getAttribute("data-comment-count-id");
+      el.textContent = String(window.gayaGetCommentCount(id));
+    });
+  };
+
+  window.gayaCMSReadComments = async function (articleId, callback) {
+    if (typeof callback === "function") callback([]);
+    if (!_client) return;
+    const { data, error } = await _client
+      .from(COMMENTS_TABLE)
+      .select("*")
+      .eq("article_id", String(articleId))
+      .order("created_at", { ascending: true });
+    if (!error && Array.isArray(data) && typeof callback === "function") callback(data);
+    if (error) console.warn("[GAYA CMS] Lecture commentaires échouée", error);
   };
 
   window.gayaCMSWriteComments = async function (articleId, comments) {
-    const localKey = `gaya_article_comments_${articleId}`;
-    const arr = Array.isArray(comments) ? comments : [];
-    localStorage.setItem(localKey, JSON.stringify(arr));
-    if (!_client) return;
-    const { error } = await _client.from(COMMENTS_TABLE).upsert({ article_id: String(articleId), comments: arr, updated_at: new Date().toISOString() });
-    if (error) console.warn("[GAYA CMS] Commentaires non enregistrés sur Supabase", error);
+    console.warn("[GAYA CMS] gayaCMSWriteComments est conservé pour compatibilité. Les nouveaux commentaires doivent utiliser article.js/postComment.");
   };
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", initSupabase);
