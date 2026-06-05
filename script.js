@@ -4,8 +4,8 @@ function gayaCommentsCount(articleId) {
 }
 
 function gayaViewsCount(article) {
-  const fallback = Number(article.reads || article.views || 0);
-  return window.gayaGetViewCount ? window.gayaGetViewCount(article.id, fallback) : fallback;
+  if (window.gayaGetViewCount) return window.gayaGetViewCount(article && article.id, Number((article && (article.reads || article.views)) || 0));
+  return Number((article && (article.reads || article.views)) || 0);
 }
 
 function gayaFormatDate(value) {
@@ -181,8 +181,8 @@ function getGayaCMSData() {
           <p class="article-excerpt">${escapeHTML(article.excerpt)}</p>
           <div class="article-meta">
             <span><i class="fa-regular fa-calendar"></i> ${escapeHTML(gayaFormatDate(article.date || ''))}</span>
-            <span><i class="fa-regular fa-eye"></i> <span data-view-count-id="${escapeHTML(article.id || "")}" data-view-fallback="${gayaViewsCount(article)}">${gayaViewsCount(article)}</span> vues</span>
-            <span><i class="fa-regular fa-comment-dots"></i> <span data-comment-count-id="${escapeHTML(article.id || "")}">${gayaCommentsCount(article.id)}</span> commentaires</span>
+            <span><i class="fa-regular fa-eye"></i> <span data-view-count-id="${escapeHTML(article.id || '')}">${gayaViewsCount(article)}</span> vues</span>
+            <span><i class="fa-regular fa-comment-dots"></i> <span data-comment-count-id="${escapeHTML(article.id || '')}">${gayaCommentsCount(article.id)}</span> commentaires</span>
           </div>
         </div>
       </a>
@@ -503,6 +503,7 @@ function getGayaCMSData() {
   });
   window.addEventListener('gaya-cms-updated', applyGayaPublicCMS);
   window.addEventListener('storage', applyGayaPublicCMS);
+  window.addEventListener('gaya-supabase-ready', applyGayaPublicCMS);
   if (window.gayaCMSOnUpdate) window.gayaCMSOnUpdate(applyGayaPublicCMS);
 })();
 
