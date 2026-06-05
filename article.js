@@ -372,11 +372,12 @@ function renderArticle() {
     }, 3000);
   }
 
-  // Commentaires + Realtime
-  function startComments() {
-    renderComments(article.id);
-    initCommentForm(article.id);
+  // Commentaires
+  renderComments(article.id);
+  initCommentForm(article.id);
 
+  // Realtime — mise à jour automatique quand un nouveau commentaire est posté
+  if (window.gayaSupabase) {
     gayaSupabase
       .channel("comments_" + article.id)
       .on("postgres_changes", {
@@ -388,20 +389,22 @@ function renderArticle() {
         renderComments(article.id);
       })
       .subscribe();
-  }
-
-  if (window.gayaSupabase) {
-    startComments();
   } else {
-    // Attendre que Supabase soit prêt (mobile plus lent)
     window.addEventListener("gaya-cms-updated", () => {
-      if (window.gayaSupabase) startComments();
+      if (window.gayaSupabase) {
+        gayaSupabase
+          .channel("comments_" + article.id)
+          .on("postgres_changes", {
+            event: "INSERT",
+            schema: "public",
+            table: "gaya_comments_v2",
+            filter: `article_id=eq.${article.id}`
+          }, () => {
+            renderComments(article.id);
+          })
+          .subscribe();
+      }
     }, { once: true });
-
-    // Fallback après 5 secondes si l'événement ne se déclenche pas
-    setTimeout(() => {
-      if (window.gayaSupabase) startComments();
-    }, 5000);
   }
 }
 
