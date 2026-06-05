@@ -61,23 +61,6 @@ function timeAgo(dateISO) {
 }
 
 /* ============================================================
-   Attendre que gayaSupabase soit prêt
-   ============================================================ */
-function waitForSupabase(callback, timeout = 10000) {
-  if (window.gayaSupabase) { callback(); return; }
-  const start = Date.now();
-  const interval = setInterval(() => {
-    if (window.gayaSupabase) {
-      clearInterval(interval);
-      callback();
-    } else if (Date.now() - start > timeout) {
-      clearInterval(interval);
-      callback(); // tenter quand même
-    }
-  }, 100);
-}
-
-/* ============================================================
    VUES — table gaya_views
    ============================================================ */
 async function incrementAndDisplayViews(articleId) {
@@ -111,7 +94,7 @@ async function incrementAndDisplayViews(articleId) {
 }
 
 /* ============================================================
-   COMMENTAIRES — table gaya_comments_v2
+   COMMENTAIRES — table gaya_comments_v2 (une ligne par commentaire)
    ============================================================ */
 async function loadComments(articleId) {
   if (!window.gayaSupabase) return [];
@@ -202,6 +185,7 @@ async function renderComments(articleId) {
 
   const all = await loadComments(articleId);
 
+  // Séparer parents et réponses
   const parents = all.filter(c => !c.parent_id);
   const repliesMap = {};
   all.filter(c => c.parent_id).forEach(r => {
@@ -220,6 +204,7 @@ async function renderComments(articleId) {
 
   list.innerHTML = parents.map(c => buildCommentHTML(c, repliesMap[c.id] || [])).join("");
 
+  // Boutons "Répondre"
   list.querySelectorAll(".reply-btn").forEach(btn => {
     btn.addEventListener("click", () => {
       const form = list.querySelector(`[data-reply-form="${btn.dataset.parentId}"]`);
@@ -228,6 +213,7 @@ async function renderComments(articleId) {
     });
   });
 
+  // Soumission des réponses
   list.querySelectorAll(".reply-submit").forEach(btn => {
     btn.addEventListener("click", async () => {
       const parentId = btn.dataset.parentId;
@@ -235,6 +221,7 @@ async function renderComments(articleId) {
       const name = form.querySelector(".reply-name").value.trim() || "Anonyme";
       const text = form.querySelector(".reply-text").value.trim();
       if (!text) return;
+
       btn.disabled = true;
       btn.textContent = "Envoi…";
       const result = await postComment(articleId, name, "", text, parentId);
@@ -255,15 +242,18 @@ async function renderComments(articleId) {
 function initCommentForm(articleId) {
   const form = document.getElementById("comment-form");
   if (!form) return;
+
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
     const name = document.getElementById("comment-name").value.trim() || "Anonyme";
     const email = document.getElementById("comment-email").value.trim();
     const text = document.getElementById("comment-text").value.trim();
     if (!text) return;
+
     const btn = form.querySelector("button[type=submit]");
     btn.disabled = true;
     btn.textContent = "Envoi…";
+
     const result = await postComment(articleId, name, email, text, null);
     if (result) {
       form.reset();
@@ -337,21 +327,26 @@ function renderArticle() {
       <span>${esc(article.category || "Actualité")}</span><span>•</span>
       <span>Post</span>
     </div>
+
     <span class="article-category-badge">${esc(article.category || "Actualité")}</span>
     <h1 class="article-title-full">${esc(article.title || "Sans titre")}</h1>
     <div class="article-author-line"><strong>Auteur:</strong> ${esc(author)}</div>
+
     <div class="article-meta-full">
       <span><i class="fa-regular fa-clock"></i> ${esc(published)}</span>
       <span class="reads" id="article-views-count">… Lectures</span>
       <span><i class="fa-regular fa-comment-dots"></i> <span id="article-comments-count">…</span> Commentaires</span>
     </div>
+
     ${mediaHTML(article.media || article.image || "")}
     <div class="article-caption">${esc(article.title || "")}</div>
     <div class="article-content-full">${formatContent(content)}</div>
+
     <div class="article-end-meta">
       <div><strong>Auteur:</strong> ${esc(author)}</div>
       <div><strong>Publié le:</strong> ${esc(published)}</div>
     </div>
+
     <section class="comments-section">
       <h2 class="comments-title" id="comments-title">COMMENTAIRES</h2>
       <form class="comment-form" id="comment-form">
@@ -366,13 +361,25 @@ function renderArticle() {
     </section>
   `;
 
-  // Attendre Supabase puis tout lancer
-  waitForSupabase(() => {
+  // Vues
+  if (window.gayaSupabase) {
     incrementAndDisplayViews(article.id);
-    renderComments(article.id);
-    initCommentForm(article.id);
+  } else {
+    window.addEventListener("gaya-cms-updated", () => {
+      if (window.gayaSupabase) incrementAndDisplayViews(article.id);
+    }, { once: true });
+    setTimeout(() => {
+      const el = document.getElementById("article-views-count");
+      if (el && el.textContent === "… Lectures") el.textContent = `${Number(article.reads || 0)} Lectures`;
+    }, 3000);
+  }
 
-    // Realtime commentaires
+  // Commentaires
+  renderComments(article.id);
+  initCommentForm(article.id);
+
+  // Realtime — mise à jour automatique quand un nouveau commentaire est posté
+  if (window.gayaSupabase) {
     gayaSupabase
       .channel("comments_" + article.id)
       .on("postgres_changes", {
@@ -384,7 +391,23 @@ function renderArticle() {
         renderComments(article.id);
       })
       .subscribe();
-  });
+  } else {
+    window.addEventListener("gaya-cms-updated", () => {
+      if (window.gayaSupabase) {
+        gayaSupabase
+          .channel("comments_" + article.id)
+          .on("postgres_changes", {
+            event: "INSERT",
+            schema: "public",
+            table: "gaya_comments_v2",
+            filter: `article_id=eq.${article.id}`
+          }, () => {
+            renderComments(article.id);
+          })
+          .subscribe();
+      }
+    }, { once: true });
+  }
 }
 
 document.addEventListener("DOMContentLoaded", renderArticle);
