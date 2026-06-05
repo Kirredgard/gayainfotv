@@ -4,8 +4,8 @@
    Network-first pour les pages HTML (contenu frais).
    ============================================================ */
 
-const CACHE_NAME = 'gaya-pwa-v3';
-const CACHE_STATIC = 'gaya-static-v3';
+const CACHE_NAME = 'gaya-pwa-v4';
+const CACHE_STATIC = 'gaya-static-v4';
 
 /* Assets à mettre en cache dès l'installation */
 const PRECACHE_ASSETS = [
