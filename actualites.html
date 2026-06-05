@@ -799,10 +799,17 @@
 
 
 function gayaCommentsCount(articleId) {
-  return window.gayaGetCommentCount ? window.gayaGetCommentCount(articleId) : 0;
+  if (window.gayaGetCommentCount) return window.gayaGetCommentCount(articleId);
+  try {
+    return JSON.parse(localStorage.getItem(`gaya_article_comments_${articleId}`) || "[]").length;
+  } catch(e) { return 0; }
 }
 
 function gayaViewsCount(article) {
+  if (window.gayaGetViewCount && article && article.id) {
+    const remote = window.gayaGetViewCount(article.id);
+    if (remote) return remote;
+  }
   return Number(article.reads || article.views || 0);
 }
 
@@ -948,23 +955,18 @@ function renderArticles() {
     }).join('');
   }
 
-  const _refreshIds = pageItems.map(a => a.id).filter(Boolean);
-  if (_refreshIds.length) {
+  // Update pagination
+  // Refresh compteurs Supabase
+  const _ids = pageItems.map(a => a.id).filter(Boolean);
+  if (_ids.length) {
     function doRefreshActus() {
-      if (window.gayaRefreshCommentCounts) window.gayaRefreshCommentCounts(_refreshIds);
-      if (window.gayaRefreshViewCounts) window.gayaRefreshViewCounts(_refreshIds);
+      if (window.gayaRefreshCommentCounts) window.gayaRefreshCommentCounts(_ids);
+      if (window.gayaRefreshViewCounts) window.gayaRefreshViewCounts(_ids);
     }
-    if (window.gayaSupabase) {
-      doRefreshActus();
-    } else {
-      window.addEventListener("gaya-cms-updated", doRefreshActus, { once: true });
-    }
-    // Fallback garanti après 3s et 8s
-    setTimeout(doRefreshActus, 3000);
-    setTimeout(doRefreshActus, 8000);
+    if (window.gayaSupabase) { doRefreshActus(); }
+    else { window.addEventListener("gaya-cms-updated", doRefreshActus, { once: true }); setTimeout(doRefreshActus, 4000); }
   }
 
-  // Update pagination
   const totalPages = Math.ceil(filtered.length / ARTICLES_PER_PAGE);
   renderPagination(totalPages);
 }
@@ -994,6 +996,17 @@ function changePage(dir) {
     const matchSearch = !searchQuery || a.title.toLowerCase().includes(searchQuery.toLowerCase()) || a.excerpt.toLowerCase().includes(searchQuery.toLowerCase());
     return matchCat && matchSearch;
   });
+  // Refresh compteurs Supabase
+  const _ids = pageItems.map(a => a.id).filter(Boolean);
+  if (_ids.length) {
+    function doRefreshActus() {
+      if (window.gayaRefreshCommentCounts) window.gayaRefreshCommentCounts(_ids);
+      if (window.gayaRefreshViewCounts) window.gayaRefreshViewCounts(_ids);
+    }
+    if (window.gayaSupabase) { doRefreshActus(); }
+    else { window.addEventListener("gaya-cms-updated", doRefreshActus, { once: true }); setTimeout(doRefreshActus, 4000); }
+  }
+
   const totalPages = Math.ceil(filtered.length / ARTICLES_PER_PAGE);
   const newPage = currentPage + dir;
   if (newPage >= 1 && newPage <= totalPages) setPage(newPage);
@@ -1169,7 +1182,7 @@ updateFilterCounts();
 renderArticles();
 renderTrending();
 
-// Quand Supabase charge les données CMS, recharger les articles et les compteurs
+// Quand Supabase charge les données, recharger articles + compteurs
 window.addEventListener('gaya-cms-updated', function() {
   const fresh = getCMSArticlesForActualites();
   allArticles.length = 0;
