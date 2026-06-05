@@ -194,6 +194,8 @@ async function renderComments(articleId) {
   });
 
   title.textContent = `COMMENTAIRES (${parents.length})`;
+  const metaCount = document.getElementById("article-comments-count");
+  if (metaCount) metaCount.textContent = String(parents.length);
 
   if (!parents.length) {
     list.innerHTML = `<div class="comment-item"><div class="comment-text">Aucun commentaire pour le moment.</div></div>`;
