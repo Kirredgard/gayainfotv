@@ -1,6 +1,9 @@
 
 function gayaCommentsCount(articleId) {
-  return window.gayaGetCommentCount ? window.gayaGetCommentCount(articleId) : 0;
+  if (window.gayaGetCommentCount) return window.gayaGetCommentCount(articleId);
+  try {
+    return JSON.parse(localStorage.getItem(`gaya_article_comments_${articleId}`) || "[]").length;
+  } catch(e) { return 0; }
 }
 
 function gayaViewsCount(article) {
@@ -158,7 +161,6 @@ function getGayaCMSData() {
     const cmsData = getGayaCMSData ? getGayaCMSData() : {};
     let articles = Array.isArray(cmsData.articles) && cmsData.articles.length
       ? cmsData.articles.map(a => ({
-          id: a.id || '',
           category: a.category || 'Actualités',
           title: a.title || 'Sans titre',
           excerpt: a.excerpt || '',
@@ -185,23 +187,12 @@ function getGayaCMSData() {
           <p class="article-excerpt">${escapeHTML(article.excerpt)}</p>
           <div class="article-meta">
             <span><i class="fa-regular fa-calendar"></i> ${escapeHTML(gayaFormatDate(article.date || ''))}</span>
-            <span><i class="fa-regular fa-eye"></i> <span data-view-count-id="${escapeHTML(article.id || "")}">${gayaViewsCount(article)}</span> vues</span>
-            <span><i class="fa-regular fa-comment-dots"></i> <span data-comment-count-id="${escapeHTML(article.id || "")}">${gayaCommentsCount(article.id)}</span> commentaires</span>
+            <span><i class="fa-regular fa-eye"></i> ${gayaViewsCount(article)} vues</span>
+            <span><i class="fa-regular fa-comment-dots"></i> ${gayaCommentsCount(article.id)} commentaires</span>
           </div>
         </div>
       </a>
     `).join('');
-    const ids = articles.map(a => a.id).filter(Boolean);
-    function doRefreshHome() {
-      if (window.gayaRefreshCommentCounts) window.gayaRefreshCommentCounts(ids);
-      if (window.gayaRefreshViewCounts) window.gayaRefreshViewCounts(ids);
-    }
-    if (window.gayaSupabase) {
-      doRefreshHome();
-    } else {
-      window.addEventListener("gaya-cms-updated", doRefreshHome, { once: true });
-      setTimeout(doRefreshHome, 5000);
-    }
   }
 
   function renderLive(data) {
