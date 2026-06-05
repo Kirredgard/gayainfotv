@@ -949,15 +949,19 @@ function renderArticles() {
   }
 
   const _refreshIds = pageItems.map(a => a.id).filter(Boolean);
-  function doRefreshActus() {
-    if (window.gayaRefreshCommentCounts) window.gayaRefreshCommentCounts(_refreshIds);
-    if (window.gayaRefreshViewCounts) window.gayaRefreshViewCounts(_refreshIds);
-  }
-  if (window.gayaSupabase) {
-    doRefreshActus();
-  } else {
-    window.addEventListener("gaya-cms-updated", doRefreshActus, { once: true });
-    setTimeout(doRefreshActus, 5000);
+  if (_refreshIds.length) {
+    function doRefreshActus() {
+      if (window.gayaRefreshCommentCounts) window.gayaRefreshCommentCounts(_refreshIds);
+      if (window.gayaRefreshViewCounts) window.gayaRefreshViewCounts(_refreshIds);
+    }
+    if (window.gayaSupabase) {
+      doRefreshActus();
+    } else {
+      window.addEventListener("gaya-cms-updated", doRefreshActus, { once: true });
+    }
+    // Fallback garanti après 3s et 8s
+    setTimeout(doRefreshActus, 3000);
+    setTimeout(doRefreshActus, 8000);
   }
 
   // Update pagination
@@ -1164,6 +1168,16 @@ function subscribeNewsletter(e) {
 updateFilterCounts();
 renderArticles();
 renderTrending();
+
+// Quand Supabase charge les données CMS, recharger les articles et les compteurs
+window.addEventListener('gaya-cms-updated', function() {
+  const fresh = getCMSArticlesForActualites();
+  allArticles.length = 0;
+  if (fresh.length) allArticles.unshift(...fresh.sort((a,b)=>(b.featured===true)-(a.featured===true)));
+  updateFilterCounts();
+  renderArticles();
+  renderTrending();
+});
 </script>
   <script>
     if ("serviceWorker" in navigator) {
