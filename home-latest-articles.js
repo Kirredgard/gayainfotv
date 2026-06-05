@@ -13,11 +13,8 @@ function gayaCommentsCount(articleId) {
 }
 
 function gayaViewsCount(article) {
-  if (window.gayaGetViewCount && article && article.id) {
-    const remote = window.gayaGetViewCount(article.id);
-    if (remote) return remote;
-  }
-  return Number(article.reads || article.views || 0);
+  const fallback = Number(article.reads || article.views || 0);
+  return window.gayaGetViewCount ? window.gayaGetViewCount(article.id, fallback) : fallback;
 }
 
 function gayaFormatDate(value) {
@@ -70,7 +67,7 @@ function esc(v) {
             <p class="article-excerpt">${esc(article.excerpt || "")}</p>
             <div class="article-meta">
               <span><i class="fa-regular fa-calendar"></i> ${esc(gayaFormatDate(article.date || ""))}</span>
-              <span><i class="fa-regular fa-eye"></i> <span data-view-count-id="${esc(article.id)}">${gayaViewsCount(article)}</span> vues</span>
+              <span><i class="fa-regular fa-eye"></i> <span data-view-count-id="${esc(article.id)}" data-view-fallback="${gayaViewsCount(article)}">${gayaViewsCount(article)}</span> vues</span>
               <span><i class="fa-regular fa-comment-dots"></i> <span data-comment-count-id="${esc(article.id)}">${gayaCommentsCount(article.id)}</span> commentaires</span>
             </div>
           </div>
