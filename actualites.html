@@ -794,7 +794,7 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="supabase-config.js"></script>
-<script src="script.js?v=16"></script>
+<script src="script.js?v=17"></script>
 <script>
 
 
@@ -803,8 +803,8 @@ function gayaCommentsCount(articleId) {
 }
 
 function gayaViewsCount(article) {
-  const fallback = Number(article.reads || article.views || 0);
-  return window.gayaGetViewCount ? window.gayaGetViewCount(article.id, fallback) : fallback;
+  if (window.gayaGetViewCount) return window.gayaGetViewCount(article && article.id, Number((article && (article.reads || article.views)) || 0));
+  return Number((article && (article.reads || article.views)) || 0);
 }
 
 function gayaFormatDate(value) {
@@ -939,8 +939,8 @@ function renderArticles() {
             <div class="actu-card-meta">
               <span><i class="fa-regular fa-calendar"></i> ${gayaFormatDate(a.date)}</span>
               <span><i class="fa-regular fa-user"></i> ${a.author}</span>
-              <span><i class="fa-regular fa-eye"></i> <span data-view-count-id="${a.id}" data-view-fallback="${gayaViewsCount(a)}">${gayaViewsCount(a)}</span> vues</span>
-              <span><i class="fa-regular fa-comment-dots"></i> <span data-comment-count-id="${a.id}">${gayaCommentsCount(a.id)}</span> commentaires</span>
+              <span><i class="fa-regular fa-eye"></i> <span data-view-count-id="${a.id || ''}">${gayaViewsCount(a)}</span> vues</span>
+              <span><i class="fa-regular fa-comment-dots"></i> <span data-comment-count-id="${a.id || ''}">${gayaCommentsCount(a.id)}</span> commentaires</span>
             </div>
             <a class="actu-card-link" href="${a.link || (a.id ? `article.html?id=${a.id}` : '#')}">Lire l'article <i class="fa-solid fa-arrow-right"></i></a>
           </div>
@@ -948,10 +948,6 @@ function renderArticles() {
       `;
     }).join('');
   }
-
-  const ids = pageItems.map(a => a.id).filter(Boolean);
-  if (window.gayaRefreshCommentCounts) window.gayaRefreshCommentCounts(ids);
-  if (window.gayaRefreshViewCounts) window.gayaRefreshViewCounts(ids);
 
   // Update pagination
   const totalPages = Math.ceil(filtered.length / ARTICLES_PER_PAGE);
@@ -974,6 +970,7 @@ function renderPagination(totalPages) {
 function setPage(n) {
   currentPage = n;
   renderArticles();
+  refreshArticleCounters();
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
@@ -996,6 +993,7 @@ document.querySelectorAll('.filter-btn').forEach(btn => {
     activeFilter = btn.dataset.filter;
     currentPage = 1;
     renderArticles();
+    refreshArticleCounters();
   });
 });
 
@@ -1004,6 +1002,7 @@ document.getElementById('live-search').addEventListener('input', (e) => {
   searchQuery = e.target.value;
   currentPage = 1;
   renderArticles();
+  refreshArticleCounters();
 });
 
 function filterByTag(tag) {
@@ -1011,6 +1010,7 @@ function filterByTag(tag) {
   searchQuery = tag;
   currentPage = 1;
   renderArticles();
+  refreshArticleCounters();
   // Highlight active tag
   document.querySelectorAll('.tag, .tag-main, .tag-sub').forEach(el => el.classList.remove('active'));
   document.querySelectorAll('[data-tag="' + tag + '"]').forEach(el => el.classList.add('active'));
@@ -1153,10 +1153,19 @@ function subscribeNewsletter(e) {
   e.target.reset();
 }
 
+
+function refreshArticleCounters() {
+  const ids = allArticles.map(a => a.id).filter(Boolean);
+  if (window.gayaRefreshCommentCounts) window.gayaRefreshCommentCounts(ids);
+  if (window.gayaRefreshViewCounts) window.gayaRefreshViewCounts(ids);
+}
+window.addEventListener("gaya-supabase-ready", refreshArticleCounters);
+
 // INIT
 updateFilterCounts();
 renderArticles();
 renderTrending();
+refreshArticleCounters();
 </script>
   <script>
     if ("serviceWorker" in navigator) {
