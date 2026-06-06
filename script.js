@@ -487,18 +487,6 @@ function getGayaCMSData() {
     searchToggle?.addEventListener('click', () => searchBar?.classList.add('open'));
     searchClose?.addEventListener('click', () => searchBar?.classList.remove('open'));
 
-
-    document.addEventListener('click', function(e) {
-      const donBtn = e.target.closest('.gaya-don-trigger, .btn-don, a[href="#nous-soutenir"], a[href="don.html"]');
-      if (!donBtn) return;
-      e.preventDefault();
-      e.stopPropagation();
-      nav?.classList.remove('open');
-      hamburger?.classList.remove('open');
-      hamburger?.setAttribute('aria-expanded', 'false');
-      openDonModal();
-    }, true);
-
     // --- MENU MOBILE (version robuste, prioritaire sur emissions.js) ---
     window._mobileNavFixLoaded = true;
     if (hamburger && nav) {
@@ -611,7 +599,7 @@ function getGayaCMSData() {
     }, true);
 
     document.addEventListener('keydown', function(e) {
-      if (e.key === 'Escape') { closeLiveModal(); }
+      if (e.key === 'Escape') { closeLiveModal(); closeDonModal(); }
       if (e.key === 'Escape' && nav && hamburger) {
         nav.classList.remove('open');
         hamburger.classList.remove('open');
