@@ -322,6 +322,151 @@ function getGayaCMSData() {
     document.body.classList.remove('gaya-modal-open');
   }
 
+  function ensureDonModal() {
+    let modal = document.getElementById('gayaDonModal');
+
+    let oldStyle = document.getElementById('gayaDonModalStyle');
+    if (oldStyle) oldStyle.remove();
+
+    if (!document.getElementById('gayaDonModalStyleClean')) {
+      const style = document.createElement('style');
+      style.id = 'gayaDonModalStyleClean';
+      style.textContent = `
+        #gayaDonModal{
+          position:fixed !important;
+          left:50% !important;
+          top:50% !important;
+          transform:translate(-50%,-50%) !important;
+          z-index:2147483647 !important;
+          display:none !important;
+          width:min(520px,calc(100% - 40px)) !important;
+          max-height:92vh !important;
+          overflow:auto !important;
+          background:#fff !important;
+          border-radius:24px !important;
+          padding:34px 24px 24px !important;
+          box-shadow:0 24px 80px rgba(0,0,0,.22) !important;
+          text-align:center !important;
+          color:#111827 !important;
+          box-sizing:border-box !important;
+        }
+        #gayaDonModal.open{display:block !important;}
+        #gayaDonModal *{box-sizing:border-box !important;}
+        #gayaDonModal .gdm-close{
+          position:absolute !important;
+          top:12px !important;
+          right:12px !important;
+          z-index:10 !important;
+          width:36px !important;
+          height:36px !important;
+          display:flex !important;
+          align-items:center !important;
+          justify-content:center !important;
+          border:0 !important;
+          border-radius:999px !important;
+          background:#f3f4f6 !important;
+          color:#111827 !important;
+          font-size:28px !important;
+          line-height:1 !important;
+          cursor:pointer !important;
+        }
+        #gayaDonModal .gdm-close:hover{background:#e5e7eb !important;}
+        #gayaDonModal h2{margin:0 0 12px !important;color:#111827 !important;font-size:28px !important;font-weight:800 !important;}
+        #gayaDonModal .gdm-text{margin:0 !important;color:#4b5563 !important;font-size:16px !important;line-height:1.6 !important;}
+        #gayaDonModal .gdm-payments{display:grid !important;grid-template-columns:1fr 1fr !important;gap:14px !important;margin-top:22px !important;}
+        #gayaDonModal .gdm-paycard{
+          border:1px solid #ececec !important;
+          border-radius:18px !important;
+          padding:16px !important;
+          background:#fff !important;
+          display:flex !important;
+          flex-direction:column !important;
+          align-items:center !important;
+          justify-content:center !important;
+          text-align:center !important;
+          gap:10px !important;
+          box-shadow:0 8px 24px rgba(0,0,0,.05) !important;
+        }
+        #gayaDonModal .gdm-paycard img{height:58px !important;max-width:150px !important;object-fit:contain !important;}
+        #gayaDonModal .gdm-paycard strong{font-size:17px !important;color:#111827 !important;}
+        #gayaDonModal .gdm-paycard span{font-size:17px !important;color:#111827 !important;font-weight:800 !important;letter-spacing:.3px !important;}
+        @media(max-width:520px){
+          #gayaDonModal{padding:34px 18px 20px !important;}
+          #gayaDonModal .gdm-payments{grid-template-columns:1fr !important;}
+        }
+      `;
+      document.head.appendChild(style);
+    }
+
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'gayaDonModal';
+      modal.setAttribute('aria-hidden', 'true');
+      document.body.appendChild(modal);
+    }
+
+    modal.className = '';
+    modal.innerHTML = `
+      <button type="button" class="gdm-close" aria-label="Fermer">×</button>
+      <h2>Nous soutenir</h2>
+      <p class="gdm-text">
+        Votre soutien nous aide à continuer notre mission d’information, de sensibilisation et de valorisation des initiatives locales.
+      </p>
+      <div class="gdm-payments">
+        <div class="gdm-paycard">
+          <img src="logos/wave.png" alt="Wave">
+          <strong>Wave</strong>
+          <span>77 262 43 69</span>
+        </div>
+        <div class="gdm-paycard">
+          <img src="logos/omoney.png" alt="Orange Money">
+          <strong>Orange Money</strong>
+          <span>77 262 43 69</span>
+        </div>
+      </div>
+    `;
+
+    const closeBtn = modal.querySelector('.gdm-close');
+    if (closeBtn) closeBtn.onclick = closeDonModal;
+
+    if (!window.__gayaDonOutsideCloseReady) {
+      window.__gayaDonOutsideCloseReady = true;
+      document.addEventListener('click', function(e) {
+        const current = document.getElementById('gayaDonModal');
+        if (!current || !current.classList.contains('open')) return;
+        if (current.contains(e.target)) return;
+        if (e.target.closest('.gaya-don-trigger, .btn-don, a[href="#nous-soutenir"], a[href="don.html"]')) return;
+        closeDonModal();
+      });
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' || e.key === 'Esc') closeDonModal();
+      });
+    }
+
+    return modal;
+  }
+
+  function openDonModal() {
+    const modal = ensureDonModal();
+    modal.classList.add('open');
+    modal.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = '';
+    document.documentElement.style.overflow = '';
+    document.body.classList.remove('gaya-modal-open');
+  }
+
+  function closeDonModal() {
+    const modal = document.getElementById('gayaDonModal');
+    if (!modal) return;
+    modal.classList.remove('open');
+    modal.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+    document.documentElement.style.overflow = '';
+    document.body.classList.remove('gaya-modal-open');
+  }
+
+
+
   function initInteractions() {
     const header = document.getElementById('site-header');
     const hamburger = document.getElementById('hamburger');
@@ -341,6 +486,18 @@ function getGayaCMSData() {
 
     searchToggle?.addEventListener('click', () => searchBar?.classList.add('open'));
     searchClose?.addEventListener('click', () => searchBar?.classList.remove('open'));
+
+
+    document.addEventListener('click', function(e) {
+      const donBtn = e.target.closest('.gaya-don-trigger, .btn-don, a[href="#nous-soutenir"], a[href="don.html"]');
+      if (!donBtn) return;
+      e.preventDefault();
+      e.stopPropagation();
+      nav?.classList.remove('open');
+      hamburger?.classList.remove('open');
+      hamburger?.setAttribute('aria-expanded', 'false');
+      openDonModal();
+    }, true);
 
     // --- MENU MOBILE (version robuste, prioritaire sur emissions.js) ---
     window._mobileNavFixLoaded = true;
