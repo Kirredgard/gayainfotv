@@ -122,6 +122,7 @@
         </div>
       </div>
       <button class="admin-nav-btn" data-view="multimediaView">Multimédia</button>
+      <button class="admin-nav-btn" data-view="blogsView">✍️ Blogs</button>
       <button class="admin-nav-btn" data-view="contactView">Contact</button>
       <button class="admin-nav-btn" data-view="editorsView">👥 Éditeurs</button>
     </nav>
@@ -446,6 +447,43 @@
     </section>
 
 
+    <section class="admin-view" id="blogsView">
+      <section class="panel compact-panel">
+        <div class="panel-title-row">
+          <div>
+            <h2>✍️ Blogs & Contributions</h2>
+            <p class="hint">Gérez les articles de blog et contributions. Chaque article apparaît sur la page Blogs.</p>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center;">
+            <button id="addBlogBtn" type="button">+ Créer un blog</button>
+            <a href="blogs.html" target="_blank" class="view-article">Voir la page</a>
+          </div>
+        </div>
+
+        <div class="rubrique-tabs" id="blogCatTabs">
+          <button class="rubrique-tab active" data-blogcat="all">Tous</button>
+          <button class="rubrique-tab" data-blogcat="vie-locale">Vie locale</button>
+          <button class="rubrique-tab" data-blogcat="culture">Culture</button>
+          <button class="rubrique-tab" data-blogcat="evenements">Événements</button>
+          <button class="rubrique-tab" data-blogcat="interviews">Interviews</button>
+          <button class="rubrique-tab" data-blogcat="agriculture">Agriculture</button>
+          <button class="rubrique-tab" data-blogcat="economie">Économie locale</button>
+          <button class="rubrique-tab" data-blogcat="portraits">Portraits</button>
+          <button class="rubrique-tab" data-blogcat="sport">Sport & loisirs</button>
+          <button class="rubrique-tab" data-blogcat="environnement">Environnement</button>
+          <button class="rubrique-tab" data-blogcat="innovations">Innovations</button>
+          <button class="rubrique-tab" data-blogcat="opinions">Opinions</button>
+          <button class="rubrique-tab" data-blogcat="patrimoine">Patrimoine</button>
+          <button class="rubrique-tab" data-blogcat="sante">Santé</button>
+          <button class="rubrique-tab" data-blogcat="education">Éducation</button>
+          <button class="rubrique-tab" data-blogcat="technologie">Technologie</button>
+          <button class="rubrique-tab" data-blogcat="lifestyle">Lifestyle</button>
+        </div>
+
+        <div id="blogsList" class="editor-list"></div>
+      </section>
+    </section>
+
     <section class="admin-view" id="contactView">
       <section class="panel compact-panel">
         <div class="panel-title-row">
@@ -686,6 +724,85 @@
           </label>
           <label>Importer photo/vidéo
             <input class="media-upload" type="file" accept="image/*,video/*">
+          </label>
+        </div>
+        <div class="media-preview"></div>
+      </div>
+    </article>
+  </template>
+
+  <template id="blogTemplate">
+    <article class="editor-card blog-card-admin">
+      <div class="card-top">
+        <strong>Blog</strong>
+        <div class="mini-actions">
+          <button type="button" class="toggle-blog">Modifier</button>
+          <button type="button" class="view-blog">Voir</button>
+          <button type="button" class="save-blog">Enregistrer</button>
+          <button type="button" class="remove danger-small">Supprimer</button>
+        </div>
+      </div>
+
+      <div class="blog-fields" style="display:none;">
+        <div class="grid4">
+          <label>Catégorie
+            <select data-field="category">
+              <option value="vie-locale">Vie locale</option>
+              <option value="culture">Culture &amp; découvertes</option>
+              <option value="evenements">Événements</option>
+              <option value="interviews">Interviews</option>
+              <option value="agriculture">Agriculture &amp; Élevage</option>
+              <option value="economie">Économie locale</option>
+              <option value="portraits">Portraits d'habitants</option>
+              <option value="sport">Sport &amp; loisirs</option>
+              <option value="environnement">Environnement</option>
+              <option value="innovations">Innovations &amp; projets</option>
+              <option value="opinions">Opinions &amp; tribunes</option>
+              <option value="patrimoine">Histoires &amp; patrimoine</option>
+              <option value="sante">Santé &amp; bien-être</option>
+              <option value="education">Éducation &amp; jeunesse</option>
+              <option value="technologie">Technologie</option>
+              <option value="lifestyle">Tendances &amp; lifestyle</option>
+            </select>
+          </label>
+          <label>Date
+            <input data-field="date" type="date">
+          </label>
+          <label>Auteur
+            <input data-field="author" type="text" placeholder="Prénom Nom">
+          </label>
+          <label>ID
+            <input data-field="id" type="text" readonly>
+          </label>
+        </div>
+
+        <label>Titre
+          <input data-field="title" type="text" placeholder="Titre de l'article blog">
+        </label>
+
+        <label>Résumé (extrait affiché dans la liste)
+          <textarea data-field="excerpt" rows="2"></textarea>
+        </label>
+
+        <label>Contenu complet
+          <textarea data-field="content" rows="6" class="big-text"></textarea>
+        </label>
+
+        <div class="grid2">
+          <label>Photo de l'auteur (URL)
+            <input data-field="authorPhoto" type="text" placeholder="https://... ou laisser vide">
+          </label>
+          <label>Importer photo auteur
+            <input class="author-photo-upload" type="file" accept="image/*">
+          </label>
+        </div>
+
+        <div class="grid2">
+          <label>Image d'illustration (URL)
+            <input data-field="media" type="text" placeholder="image.jpg ou https://...">
+          </label>
+          <label>Importer image
+            <input class="media-upload" type="file" accept="image/*">
           </label>
         </div>
         <div class="media-preview"></div>

@@ -19,7 +19,8 @@ const defaultData = {
     faitsdivers: { episodes: [], programmes: [], featuredEpisodeId: "" }
   },
   multimedia: { videos: [], podcasts: [], photos: [] },
-  editors: []
+  editors: [],
+  blogs: []
 };
 
 let data = loadData();
@@ -73,6 +74,7 @@ function normalizeData(input) {
   out.liveEmbed = out.liveEmbed || out.live?.embedUrl || "";
   out.featuredArticleId = out.featuredArticleId || out.actualitesFeaturedArticleId || "";
   out.articles = out.articles.map(a => ({ ...a, id: a.id || uid(), createdAt: a.createdAt || new Date().toISOString() }));
+  out.blogs = Array.isArray(out.blogs) ? out.blogs.map(b => ({ ...b, id: b.id || uid(), createdAt: b.createdAt || new Date().toISOString() })) : [];
   return out;
 }
 
@@ -192,6 +194,9 @@ function saveData(msg = "Tout est enregistré ✅") {
   collectGeneral();
   collectSlidesFromDOM();
   collectArticlesFromDOM();
+  if (!window.__skipBlogCollectOnce) {
+    try { collectBlogsFromDOM(); } catch(e) { console.warn("Collect blogs échoué", e); }
+  } else { window.__skipBlogCollectOnce = false; }
   if (window.__skipEmissionCollectOnce) window.__skipEmissionCollectOnce = false;
   else if (typeof window.collectCurrentEmissionCMS === "function") {
     try { window.collectCurrentEmissionCMS(); } catch(e) { console.warn("Collect émissions échoué", e); }
@@ -3004,3 +3009,195 @@ document.addEventListener("click", function(e) {
     setTimeout(function(){ patchEditorLogin(); patchSaveDelete(); patchActivityUI(); renderActivity(); }, 700);
   });
 })();
+
+// =============================================
+// BLOGS CMS — Gestion des articles de blog
+// =============================================
+
+let activeBlogCat = "all";
+
+function getFilteredBlogs() {
+  const blogs = Array.isArray(data.blogs) ? data.blogs : [];
+  if (activeBlogCat === "all") return blogs;
+  return blogs.filter(b => b.category === activeBlogCat);
+}
+
+function renderBlogs() {
+  const list = document.getElementById("blogsList");
+  const template = document.getElementById("blogTemplate");
+  if (!list || !template) return;
+  list.innerHTML = "";
+  const blogs = getFilteredBlogs();
+  if (!blogs.length) {
+    list.innerHTML = '<div class="editor-card">Aucun article dans cette catégorie. Cliquez sur "+ Créer un blog" pour commencer.</div>';
+    return;
+  }
+  blogs.forEach((blog, idx) => {
+    if (!blog.id) blog.id = uid();
+    const node = template.content.cloneNode(true).querySelector("article");
+    node.querySelector("strong").textContent = blog.title || `Blog ${idx + 1}`;
+    node.querySelectorAll("[data-field]").forEach(input => {
+      if (input.tagName === "SELECT") {
+        input.value = blog[input.dataset.field] || input.options[0]?.value || "";
+      } else {
+        input.value = blog[input.dataset.field] || "";
+      }
+      input.addEventListener("input", () => {
+        blog[input.dataset.field] = input.value;
+        if (input.dataset.field === "title") node.querySelector("strong").textContent = input.value || `Blog ${idx + 1}`;
+        markDirty();
+      });
+      input.addEventListener("change", () => { blog[input.dataset.field] = input.value; markDirty(); });
+    });
+    const toggle = node.querySelector(".toggle-blog");
+    const fields = node.querySelector(".blog-fields");
+    if (toggle && fields) {
+      toggle.addEventListener("click", () => {
+        const open = fields.style.display !== "none";
+        fields.style.display = open ? "none" : "block";
+        toggle.textContent = open ? "Modifier" : "Fermer";
+      });
+    }
+    const view = node.querySelector(".view-blog");
+    if (view) view.addEventListener("click", () => {
+      collectBlogsFromDOM();
+      window.__skipBlogCollectOnce = true;
+      saveData("Blog enregistré ✅");
+      window.open(`https://gayainfotv.com/blog-article.html?id=${encodeURIComponent(blog.id)}`, "_blank");
+    });
+    const save = node.querySelector(".save-blog");
+    if (save) save.addEventListener("click", () => {
+      collectBlogsFromDOM();
+      window.__skipBlogCollectOnce = true;
+      saveData("Blog enregistré ✅");
+    });
+    const remove = node.querySelector(".remove");
+    if (remove) remove.onclick = () => confirmCMSDelete("Supprimer ce blog ?", () => {
+      data.blogs = data.blogs.filter(b => String(b.id) !== String(blog.id));
+      renderBlogs();
+      window.__skipBlogCollectOnce = true;
+      saveData("Blog supprimé ✅");
+    });
+    // Image upload
+    const mediaUpload = node.querySelector(".media-upload");
+    if (mediaUpload) mediaUpload.addEventListener("change", e => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = ev => {
+        const url = ev.target.result;
+        node.querySelector("[data-field='media']").value = url;
+        blog.media = url;
+        updatePreview(node, url);
+        markDirty();
+      };
+      reader.readAsDataURL(file);
+    });
+    const authorPhotoUpload = node.querySelector(".author-photo-upload");
+    if (authorPhotoUpload) authorPhotoUpload.addEventListener("change", e => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = ev => {
+        node.querySelector("[data-field='authorPhoto']").value = ev.target.result;
+        blog.authorPhoto = ev.target.result;
+        markDirty();
+      };
+      reader.readAsDataURL(file);
+    });
+    updatePreview(node, blog.media);
+    list.appendChild(node);
+  });
+}
+
+function addBlog() {
+  collectBlogsFromDOM();
+  const cat = activeBlogCat === "all" ? "opinions" : activeBlogCat;
+  if (!Array.isArray(data.blogs)) data.blogs = [];
+  data.blogs.unshift({
+    id: uid(),
+    category: cat,
+    title: "",
+    excerpt: "",
+    content: "",
+    author: "",
+    authorPhoto: "",
+    media: "",
+    date: new Date().toISOString().slice(0, 10),
+    createdAt: new Date().toISOString()
+  });
+  renderBlogs();
+}
+
+function collectBlogsFromDOM() {
+  if (window.__skipBlogCollectOnce) { window.__skipBlogCollectOnce = false; return; }
+  const list = document.getElementById("blogsList");
+  if (!list) return;
+  const nodes = list.querySelectorAll(".blog-card-admin");
+  const displayed = getFilteredBlogs();
+  nodes.forEach((node, i) => {
+    const blog = displayed[i];
+    if (!blog) return;
+    const target = Array.isArray(data.blogs)
+      ? data.blogs.find(b => String(b.id) === String(blog.id)) || blog
+      : blog;
+    node.querySelectorAll("[data-field]").forEach(input => {
+      target[input.dataset.field] = input.value;
+    });
+  });
+}
+
+function initBlogCatTabs() {
+  const tabs = document.querySelectorAll("[data-blogcat]");
+  tabs.forEach(tab => {
+    tab.onclick = () => {
+      collectBlogsFromDOM();
+      tabs.forEach(t => t.classList.remove("active"));
+      tab.classList.add("active");
+      activeBlogCat = tab.dataset.blogcat;
+      renderBlogs();
+    };
+  });
+}
+
+document.getElementById("addBlogBtn")?.addEventListener("click", addBlog);
+
+// Initialiser les blogs quand la vue est activée
+(function() {
+  const origNormalize = normalizeData;
+  // Patch normalizeData to include blogs[]
+  const _orig = window.normalizeData;
+})();
+
+// Intégrer blogs dans normalizeData et saveData
+const _origNormalizeData = normalizeData;
+// Patch: ensure blogs[] is always preserved in data
+window.addEventListener('gaya-cms-updated', function(e) {
+  if (e.detail && Array.isArray(e.detail.blogs)) {
+    data.blogs = e.detail.blogs.map(b => ({ ...b, id: b.id || uid() }));
+    renderBlogs();
+  }
+});
+
+// Patch collectGeneral to also collect blogs before save
+const _origCollectGeneral = window.collectGeneral;
+const _origSaveData = window.saveData;
+
+// Ensure blogs are collected when saving
+const blogSaveIntercept = function() {
+  if (!window.__skipBlogCollectOnce) {
+    try { collectBlogsFromDOM(); } catch(e) {}
+  }
+};
+document.addEventListener('DOMContentLoaded', function() {
+  // Ensure blogs loaded into data from CMS
+  if (!Array.isArray(data.blogs)) data.blogs = [];
+  initBlogCatTabs();
+  // Re-render blogs when blogsView is activated
+  document.querySelectorAll('[data-view="blogsView"]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (!Array.isArray(data.blogs)) data.blogs = [];
+      renderBlogs();
+    });
+  });
+});

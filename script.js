@@ -380,7 +380,7 @@ function getGayaCMSData() {
 
 
 
-    function showRadioSoonToast() {
+    function showRadioSoonToast(e) {
       let toast = document.getElementById('toast-soon');
       if (!toast) {
         toast = document.createElement('div');
@@ -400,6 +400,9 @@ function getGayaCMSData() {
       const sub = toast.querySelector('.toast-soon-sub');
       if (title) title.textContent = 'Radio Gaya FM';
       if (sub) sub.textContent = 'Radio Gaya FM bientôt disponible ✨';
+      if (e && window.__gayaPositionToast) window.__gayaPositionToast(toast, e);
+      toast.classList.remove('show');
+      void toast.offsetWidth;
       toast.classList.add('show');
       clearTimeout(window.__gayaRadioToastTimer);
       window.__gayaRadioToastTimer = setTimeout(() => toast.classList.remove('show'), 3800);
@@ -418,7 +421,7 @@ function getGayaCMSData() {
       nav?.classList.remove('open');
       hamburger?.classList.remove('open');
       hamburger?.setAttribute('aria-expanded', 'false');
-      showRadioSoonToast();
+      showRadioSoonToast(e);
     }, true);
     function handleLiveTrigger(e) {
       e.preventDefault();
@@ -529,10 +532,31 @@ function getGayaCMSData() {
     }
     return toast;
   }
-  function showRadioToast(){
+  function positionToast(toast, e){
+    var margin = 10;
+    toast.style.visibility = 'hidden';
+    toast.style.display = 'flex';
+    var tw = toast.offsetWidth || 280;
+    var th = toast.offsetHeight || 60;
+    toast.style.visibility = '';
+    toast.style.display = '';
+    var x = e.clientX + margin;
+    var y = e.clientY + margin;
+    if (x + tw > window.innerWidth - margin) x = e.clientX - tw - margin;
+    if (y + th > window.innerHeight - margin) y = e.clientY - th - margin;
+    if (x < margin) x = margin;
+    if (y < margin) y = margin;
+    toast.style.left = x + 'px';
+    toast.style.top = y + 'px';
+    toast.style.right = 'auto';
+    toast.style.bottom = 'auto';
+  }
+  window.__gayaPositionToast = positionToast;
+  function showRadioToast(e){
     var toast = ensureRadioToast();
     toast.classList.remove('show');
     void toast.offsetWidth;
+    if (e) positionToast(toast, e);
     toast.classList.add('show');
     clearTimeout(window.__gayaRadioToastV15);
     window.__gayaRadioToastV15 = setTimeout(function(){ toast.classList.remove('show'); }, 4200);
@@ -554,12 +578,51 @@ function getGayaCMSData() {
     if (typeof e.stopImmediatePropagation === 'function') e.stopImmediatePropagation();
     document.getElementById('main-nav')?.classList.remove('open');
     document.getElementById('hamburger')?.classList.remove('open');
-    showRadioToast();
+    showRadioToast(e);
   }
   ['pointerdown','touchend','click'].forEach(function(type){
     document.addEventListener(type, handler, true);
   });
   window.hideToast = function(){ document.getElementById('toast-soon')?.classList.remove('show'); };
+})();
+
+/* === GAYA Sport & Culture — bientôt disponible === */
+(function(){
+  function showSportToast(e) {
+    var toast = document.getElementById('toast-soon');
+    if (!toast) {
+      toast = document.createElement('div');
+      toast.id = 'toast-soon';
+      toast.className = 'toast-soon';
+      toast.innerHTML = '<div class="toast-soon-icon"><i class="fa-solid fa-futbol"></i></div><div class="toast-soon-text"><div class="toast-soon-title">GAYA Sport & Culture</div><div class="toast-soon-sub">Bientôt disponible ✨</div></div><button class="toast-soon-close" type="button" aria-label="Fermer">×</button>';
+      document.body.appendChild(toast);
+      toast.querySelector('.toast-soon-close').addEventListener('click', function(){ toast.classList.remove('show'); });
+    } else {
+      var t = toast.querySelector('.toast-soon-title');
+      var s = toast.querySelector('.toast-soon-sub');
+      if (t) t.textContent = 'GAYA Sport & Culture';
+      if (s) s.textContent = 'Bientôt disponible ✨';
+    }
+    document.getElementById('main-nav')?.classList.remove('open');
+    document.getElementById('hamburger')?.classList.remove('open');
+    if (e && window.__gayaPositionToast) window.__gayaPositionToast(toast, e);
+    toast.classList.remove('show');
+    void toast.offsetWidth;
+    toast.classList.add('show');
+    clearTimeout(window.__gayaSportToastTimer);
+    window.__gayaSportToastTimer = setTimeout(function(){ toast.classList.remove('show'); }, 3800);
+  }
+  function handler(e) {
+    var btn = e.target && e.target.closest ? e.target.closest('.gaya-sport-soon') : null;
+    if (!btn) return;
+    e.preventDefault();
+    e.stopPropagation();
+    if (typeof e.stopImmediatePropagation === 'function') e.stopImmediatePropagation();
+    showSportToast(e);
+  }
+  ['pointerdown','touchend','click'].forEach(function(type){
+    document.addEventListener(type, handler, true);
+  });
 })();
 
 
@@ -573,21 +636,20 @@ function getGayaCMSData() {
       var style = document.createElement('style');
       style.id = 'gayaDonModalStyleClean';
       style.textContent = `
-        #gayaDonBackdrop{position:fixed !important;inset:0 !important;background:rgba(3,6,14,.62) !important;z-index:2147483646 !important;display:none !important;}
+        #gayaDonBackdrop{position:fixed !important;inset:0 !important;background:rgba(3,6,14,.55) !important;z-index:2147483646 !important;display:none !important;}
         #gayaDonBackdrop.open{display:block !important;}
-        #gayaDonModal{position:fixed !important;left:50% !important;top:50% !important;transform:translate(-50%,-50%) !important;z-index:2147483647 !important;display:none !important;width:min(780px,calc(100% - 24px)) !important;max-height:92vh !important;overflow:auto !important;background:#fff !important;border-radius:28px !important;padding:52px 36px 36px !important;box-shadow:0 24px 80px rgba(0,0,0,.25) !important;text-align:center !important;color:#111827 !important;box-sizing:border-box !important;}
+        #gayaDonModal{position:fixed !important;left:50% !important;top:50% !important;transform:translate(-50%,-50%) !important;z-index:2147483647 !important;display:none !important;width:min(340px,calc(100% - 24px)) !important;max-height:92vh !important;overflow:auto !important;background:#fff !important;border-radius:16px !important;padding:32px 20px 20px !important;box-shadow:0 8px 32px rgba(0,0,0,.18) !important;text-align:center !important;color:#111827 !important;box-sizing:border-box !important;}
         #gayaDonModal.open{display:block !important;}
         #gayaDonModal *{box-sizing:border-box !important;}
-        #gayaDonModal .gdm-close{position:absolute !important;top:18px !important;right:18px !important;width:54px !important;height:54px !important;border:0 !important;border-radius:999px !important;background:#f3f4f6 !important;color:#111827 !important;font-size:38px !important;line-height:1 !important;cursor:pointer !important;display:flex !important;align-items:center !important;justify-content:center !important;}
+        #gayaDonModal .gdm-close{position:absolute !important;top:10px !important;right:10px !important;width:28px !important;height:28px !important;border:0 !important;border-radius:999px !important;background:#f3f4f6 !important;color:#111827 !important;font-size:18px !important;line-height:1 !important;cursor:pointer !important;display:flex !important;align-items:center !important;justify-content:center !important;}
         #gayaDonModal .gdm-close:hover{background:#e5e7eb !important;}
-        #gayaDonModal h2{margin:0 0 24px !important;color:#111827 !important;font-size:38px !important;font-weight:900 !important;line-height:1.1 !important;}
-        #gayaDonModal .gdm-text{margin:0 auto !important;max-width:680px !important;color:#4b5563 !important;font-size:24px !important;line-height:1.6 !important;}
-        #gayaDonModal .gdm-payments{display:grid !important;grid-template-columns:1fr 1fr !important;gap:22px !important;margin-top:36px !important;}
-        #gayaDonModal .gdm-paycard{border:1px solid #ececec !important;border-radius:24px !important;padding:28px 22px !important;background:#fff !important;display:flex !important;flex-direction:column !important;align-items:center !important;justify-content:center !important;text-align:center !important;gap:16px !important;box-shadow:0 10px 28px rgba(0,0,0,.06) !important;min-height:210px !important;}
-        #gayaDonModal .gdm-paycard img{height:88px !important;max-width:190px !important;object-fit:contain !important;}
-        #gayaDonModal .gdm-paycard strong{font-size:24px !important;color:#111827 !important;font-weight:900 !important;}
-        #gayaDonModal .gdm-paycard span{font-size:24px !important;color:#111827 !important;font-weight:900 !important;letter-spacing:.3px !important;}
-        @media(max-width:620px){#gayaDonModal{padding:48px 18px 24px !important;border-radius:22px !important;}#gayaDonModal h2{font-size:30px !important;}#gayaDonModal .gdm-text{font-size:18px !important;}#gayaDonModal .gdm-payments{grid-template-columns:1fr !important;}#gayaDonModal .gdm-close{width:46px !important;height:46px !important;font-size:32px !important;}}
+        #gayaDonModal h2{margin:0 0 8px !important;color:#111827 !important;font-size:16px !important;font-weight:800 !important;line-height:1.2 !important;}
+        #gayaDonModal .gdm-text{margin:0 auto 12px !important;color:#6b7280 !important;font-size:12px !important;line-height:1.5 !important;}
+        #gayaDonModal .gdm-payments{display:grid !important;grid-template-columns:1fr 1fr !important;gap:10px !important;margin-top:0 !important;}
+        #gayaDonModal .gdm-paycard{border:1px solid #ececec !important;border-radius:12px !important;padding:12px 8px !important;background:#fff !important;display:flex !important;flex-direction:column !important;align-items:center !important;justify-content:center !important;text-align:center !important;gap:6px !important;box-shadow:0 2px 8px rgba(0,0,0,.06) !important;min-height:auto !important;}
+        #gayaDonModal .gdm-paycard img{height:32px !important;max-width:80px !important;object-fit:contain !important;}
+        #gayaDonModal .gdm-paycard strong{font-size:12px !important;color:#111827 !important;font-weight:700 !important;}
+        #gayaDonModal .gdm-paycard span{font-size:11px !important;color:#374151 !important;font-weight:600 !important;letter-spacing:.2px !important;}
       `;
       document.head.appendChild(style);
     }

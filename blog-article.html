@@ -6,6 +6,10 @@
   <link rel="apple-touch-icon" sizes="192x192" href="favicon-192x192.png">
   <link rel="icon" type="image/png" sizes="512x512" href="favicon-512x512.png">
 <meta charset="UTF-8">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Article — GAYA INFO TV</title>
 <meta name="description" content="Article GAYA INFO TV">
@@ -259,7 +263,6 @@
 </style>
   <!-- Firebase SDK -->
   <!-- GAYA CMS Firebase Config -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="supabase-config.js"></script>
   <link rel="manifest" href="/manifest.json">
   <meta name="theme-color" content="#e63946">
@@ -291,7 +294,7 @@
     </a>
     <nav class="main-nav" id="main-nav">
       <a href="index.html" class="nav-link">Accueil</a>
-      <a href="actualites.html" class="nav-link active">Actualités</a>
+      <a href="actualites.html" class="nav-link">Actualités</a>
       <div class="nav-dropdown">
         <a href="#" class="nav-link dropdown-trigger">Émissions <i class="fa-solid fa-chevron-down" style="font-size:10px;"></i></a>
         <div class="dropdown-menu">
@@ -304,7 +307,7 @@
       </div>
       <a href="multimedia.html" class="nav-link">Multimédia</a>
       <a href="apropos.html" class="nav-link">À propos</a>
-      <a href="blogs.html" class="nav-link">Blogs</a>
+      <a href="blogs.html" class="nav-link active">Blogs</a>
       <a href="contact.html" class="nav-link">Contact</a>
     </nav>
     <div class="header-actions">
@@ -413,7 +416,6 @@
           <li><a href="sport.html">Sport</a></li>
           <li><a href="faitsdivers.html">Faits divers</a></li>
           <li><a href="multimedia.html">Multimédia</a></li>
-          <li><a href="blogs.html">Blogs</a></li>
         </ul>
       </div>
 
@@ -457,17 +459,23 @@
   </div>
 </footer>
 
-<script src="script.js?v=17"></script>
-<script src="article.js?v=2"></script>
+<script src="script.js?v=18"></script>
+<script src="article.js"></script>
   <script>
     if ("serviceWorker" in navigator) {
       window.addEventListener("load", function() {
-        navigator.serviceWorker.register("/sw.js")
+        navigator.serviceWorker.register("/sw.js?v=7-don", { updateViaCache: "none" })
           .then(function(reg) { console.log("SW enregistré :", reg.scope); })
           .catch(function(err) { console.warn("SW échec :", err); });
       });
     }
   </script>
   <script src="/pwa-install.js"></script>
+
+
+
+
+
+
 </body>
 </html>
