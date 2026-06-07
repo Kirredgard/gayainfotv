@@ -1,326 +1,243 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-  <link rel="icon" type="image/x-icon" href="/favicon.ico">
-  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-  <link rel="apple-touch-icon" sizes="192x192" href="/favicon-192x192.png">
-  <link rel="icon" type="image/png" sizes="512x512" href="/favicon-512x512.png">
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GAYA INFO TV — Actualités & Direct</title>
-<meta name="description" content="GAYA INFO TV - Actualités locales de Dagana, Saint-Louis. Émissions, direct TV et radio.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Source+Sans+3:wght@300;400;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-<link rel="stylesheet" href="/style.css">
-  <link rel="manifest" href="/manifest.json">
-  <meta name="theme-color" content="#e63946">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="GAYA INFO">
-  <link rel="apple-touch-icon" href="/favicon-192x192.png">
-</head>
-<body>
+/* GAYA CMS — Page Émissions Société */
+const GAYA_STORAGE_KEYS = ["gayaCMSData", "gayaCMS", "gayaData", "gaya_cms_v1"];
 
-<!-- BREAKING NEWS TICKER -->
-<div class="ticker-wrap">
-  <div class="ticker-label">INFO</div>
-  <div class="ticker-content">
-    <span> Actualités, analyses et couverture d'événements en direct — suivez tout ici &nbsp;&nbsp;&nbsp;•&nbsp;&nbsp;&nbsp; Service commercial : 77 935 17 86 / 77 605 95 76 </span>
-  </div>
-</div>
+function gayaReadCMS() {
+  if (window.gayaCMSRead) { const d = gayaCMSRead(); if (d) return d; }
+  const keys = ["gayaCMSData", "gayaCMS", "gayaData", "gaya_cms_v1"];
+  for (const key of keys) { try { const raw = localStorage.getItem(key); if (raw) return JSON.parse(raw); } catch(e) {} }
+  return {};
+}
 
-<!-- HEADER -->
-<header class="site-header" id="site-header">
-  <div class="header-inner">
-    <a href="/" class="logo">
-      <img src="/gaya.jpg" alt="GAYA INFO TV" onerror="this.style.display='none'">
-      <div class="logo-text">
-        <span class="logo-name">GAYA INFO TV</span>
-        <span class="logo-tagline">L'information de proximité</span>
-      </div>
-    </a>
+function gayaEsc(v) {
+  return String(v || "").replace(/[&<>'"]/g, c => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#039;", '"': "&quot;"
+  }[c]));
+}
 
-    <nav class="main-nav" id="main-nav">
-      <a href="/" class="nav-link active">Accueil</a>
-      <a href="/actualites/" class="nav-link">Actualités</a>
-      <div class="nav-dropdown">
-  <a href="#" class="nav-link dropdown-trigger">
-    Émissions <i class="fa-solid fa-chevron-down chevron-icon" style="font-size:10px;"></i>
-  </a>
-  <div class="dropdown-menu">
-    <a href="/societe/"><i class="fa-solid fa-users"></i> Société</a>
-    <a href="/economie/"><i class="fa-solid fa-chart-line"></i> Économie</a>
-    <a href="/religion/"><i class="fa-solid fa-mosque"></i> Religion</a>
-    <a href="/sport/"><i class="fa-solid fa-futbol"></i> Sport</a>
-    <a href="/faitsdivers/"><i class="fa-solid fa-newspaper"></i> Faits divers</a>
-  </div>
-</div>
-      <a href="/multimedia/" class="nav-link">Multimédia</a>
-      <a href="/apropos/" class="nav-link">À propos</a>
-      <a href="/blogs/" class="nav-link">Blogs</a>
-      <a href="/contact/" class="nav-link">Contact</a>
-    </nav>
+function gayaFormatDate(value) {
+  if (!value) return "";
+  if (/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+    try {
+      return new Date(value + "T00:00:00").toLocaleDateString("fr-FR", {
+        day: "2-digit", month: "short", year: "numeric"
+      });
+    } catch(e) {}
+  }
+  return value;
+}
 
-    <div class="header-actions">
-      <button class="btn-search" id="search-toggle" aria-label="Recherche">
-        <i class="fa-solid fa-magnifying-glass"></i>
-      </button>
-      <a href="#" class="btn-radio">
-        <i class="fa-solid fa-radio"></i> Radio
-      </a>
-      <button type="button" class="btn-live" id="btnLiveDirect">
-        <span class="live-dot"></span> Direct
-      </button>
-      <button class="hamburger" id="hamburger" aria-label="Menu">
-        <span></span><span></span><span></span>
-      </button>
-    </div>
-  </div>
+function gayaThumb(image, icon = "fa-users") {
+  if (image) return `<img src="${gayaEsc(image)}" alt="">`;
+  return `<span class="ep-icon"><i class="fa-solid ${icon}"></i></span>`;
+}
 
-  <!-- SEARCH BAR -->
-  <div class="search-bar" id="search-bar">
-    <div class="search-inner">
-      <i class="fa-solid fa-magnifying-glass"></i>
-      <input type="text" placeholder="Rechercher une actualité, une émission...">
-      <button class="search-close" id="search-close"><i class="fa-solid fa-xmark"></i></button>
-    </div>
-  </div>
-</header>
+function openSocieteMedia(episode) {
+  const lb = document.getElementById("video-lightbox");
+  const iframe = document.getElementById("lightbox-iframe");
+  const titleEl = document.getElementById("lightbox-video-title");
+  if (!lb || !iframe) return;
 
-<!-- SOCIAL BAR -->
-<div class="social-bar">
-  <div class="social-bar-inner">
-    <span class="social-bar-label">Suivez-nous</span>
-    <a href="https://www.facebook.com/gayainfotv" target="_blank" rel="noopener" class="social-icon fb"><i class="fa-brands fa-facebook-f"></i></a>
-    <a href="https://www.youtube.com/@gayainfotv" target="_blank" rel="noopener" class="social-icon yt"><i class="fa-brands fa-youtube"></i></a>
-    <a href="#" class="social-icon ig"><i class="fa-brands fa-instagram"></i></a>
-    <a href="#" class="social-icon tw"><i class="fa-brands fa-x-twitter"></i></a>
-    <div class="social-bar-date" id="current-date"></div>
-  </div>
-</div>
+  if (episode.videoFile) {
+    iframe.outerHTML = `<video id="lightbox-iframe" src="${episode.videoFile}" controls autoplay style="width:100%;aspect-ratio:16/9;border-radius:var(--radius-lg);background:#000;display:block;"></video>`;
+  } else {
+    const videoId = episode.videoId || "dQw4w9WgXcQ";
+    iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`;
+  }
 
-<!-- MAIN CONTENT -->
-<main class="site-main">
-  <div class="container">
+  const newTitle = document.getElementById("lightbox-video-title");
+  if (newTitle) newTitle.textContent = episode.title || "";
+  lb.classList.add("open");
+  document.body.style.overflow = "hidden";
+}
 
-    <!-- LEFT: FEATURED + ARTICLES -->
-    <section class="content-main">
+function resetLightboxCloseForVideo() {
+  const closeBtn = document.querySelector(".lightbox-close");
+  if (!closeBtn) return;
+  closeBtn.onclick = () => {
+    const lb = document.getElementById("video-lightbox");
+    const media = document.getElementById("lightbox-iframe");
+    if (lb) lb.classList.remove("open");
+    if (media) {
+      if (media.tagName === "VIDEO") {
+        media.pause();
+        media.outerHTML = `<iframe id="lightbox-iframe" allowfullscreen></iframe>`;
+      } else {
+        media.src = "";
+      }
+    }
+    document.body.style.overflow = "";
+  };
+}
 
-      <!-- HERO SLIDER -->
-      <div class="hero-slider" id="slider">
-        
-        <button class="slider-prev" onclick="changeSlide(-1)"><i class="fa-solid fa-chevron-left"></i></button>
-        <button class="slider-next" onclick="changeSlide(1)"><i class="fa-solid fa-chevron-right"></i></button>
-        <div class="slider-dots" id="slider-dots">
+function applySocieteCMS() {
+  const data = gayaReadCMS();
+  const societe = data.emissions?.societe;
+  applySocieteProgrammesCMS(data);
+  if (!societe) return;
+
+  resetLightboxCloseForVideo();
+
+  const ticker = document.querySelector(".ticker-content span");
+  if (ticker && data.ticker) ticker.textContent = " " + data.ticker + " ";
+
+  const liveTitle = document.getElementById("live-title");
+  if (liveTitle) liveTitle.textContent = data.liveTitle || data.live?.title || "GAYA INFO TV — Direct";
+
+  const liveContent = document.getElementById("live-content");
+  const embed = data.liveEmbed || data.live?.embedUrl || "";
+  if (liveContent && embed) {
+    liveContent.innerHTML = `<iframe src="${gayaEsc(embed)}" allowfullscreen></iframe>`;
+  }
+
+  const episodes = [...(societe.episodes || [])]
+    .sort((a,b) => String(b.createdAt || "").localeCompare(String(a.createdAt || "")));
+
+  const featured = episodes.find(e => String(e.id) === String(societe.featuredEpisodeId)) || episodes[0];
+
+  const featuredBox = document.querySelector(".emission-featured");
+  if (featuredBox && featured) {
+    const media = featuredBox.querySelector(".emission-featured-media");
+    if (media) {
+      media.onclick = () => openSocieteMedia(featured);
+      media.innerHTML = `
+        <div class="placeholder-bg">${gayaThumb(featured.image, "fa-users")}</div>
+        <div class="featured-play-btn"><div class="play-circle"><i class="fa-solid fa-play"></i></div></div>
+        <span class="featured-badge">À la une</span>
+      `;
+    }
+
+    const label = featuredBox.querySelector(".emission-ep-label");
+    if (label) label.textContent = "Émission phare • Société";
+
+    const title = featuredBox.querySelector(".emission-featured-title");
+    if (title) title.textContent = featured.title || "";
+
+    const desc = featuredBox.querySelector(".emission-featured-desc");
+    if (desc) desc.textContent = featured.desc || "";
+
+    const meta = featuredBox.querySelector(".emission-meta-row");
+    if (meta) {
+      meta.innerHTML = `
+        <span><i class="fa-regular fa-calendar"></i> ${gayaFormatDate(featured.date)}</span>
+        <span><i class="fa-regular fa-clock"></i> ${gayaEsc(featured.duration || "")}</span>
+        <span><i class="fa-regular fa-eye"></i> ${gayaEsc(featured.views || "0")} vues</span>
+      `;
+    }
+  }
+
+  const grid = document.getElementById("episodes-grid");
+  const list = document.getElementById("episodes-list");
+
+  const mainEpisodes = episodes.slice(0, 6);
+  const moreEpisodes = episodes.slice(6);
+
+  if (grid) {
+    grid.innerHTML = mainEpisodes.map((e, index) => `
+      <div class="episode-card" data-societe-episode="${index}">
+        <div class="episode-thumb">
+          ${gayaThumb(e.image, "fa-users")}
+          <div class="ep-play-overlay"><div class="ep-play-sm"><i class="fa-solid fa-play"></i></div></div>
+          <span class="ep-duration">${gayaEsc(e.duration || "")}</span>
+          <span class="ep-num-badge">${gayaEsc(e.ep || "")}</span>
+        </div>
+        <div class="episode-info">
+          <h3 class="episode-title">${gayaEsc(e.title || "")}</h3>
+          <div class="episode-meta">
+            <span><i class="fa-regular fa-calendar"></i>${gayaFormatDate(e.date)}</span>
+            <span><i class="fa-regular fa-eye"></i>${gayaEsc(e.views || "0")}</span>
+          </div>
         </div>
       </div>
+    `).join("");
 
-      <!-- SECTION: DERNIÈRES ACTUALITÉS -->
-      <div class="section-header">
-        <h2 class="section-title"><span>Dernières actualités</span></h2>
-        <a href="/actualites/" class="section-link">Voir tout <i class="fa-solid fa-arrow-right"></i></a>
-      </div>
+    grid.querySelectorAll("[data-societe-episode]").forEach(card => {
+      card.addEventListener("click", () => {
+        openSocieteMedia(mainEpisodes[Number(card.dataset.societeEpisode)]);
+      });
+    });
+  }
 
-      <div class="articles-grid" id="articles-grid">
-        <!-- Articles injected by JS -->
-      </div>
-
-    </section>
-
-    <!-- RIGHT: SIDEBAR -->
-    <aside class="sidebar">
-
-      <!-- LIVE TV -->
-      <div class="sidebar-widget widget-live" id="live">
-        <div class="sidebar-widget widget-live" id="live">
-  <div class="widget-header">
-    <span class="live-indicator">
-      <span class="live-dot"></span> Diffusion en direct
-    </span>
-  </div>
-
-  <div class="live-player-wrap" id="live-content">
-    <p style="text-align:center; padding:1rem; color:#aaa;">
-      Vérification du live...
-    </p>
-  </div>
-
-  <div class="live-now">
-    <div class="live-now-badge">
-      <span class="live-dot"></span> En ce moment
-    </div>
-    <p id="live-title">Chargement...</p>
-  </div>
-</div>
-      </div>
-
-      <!-- CATÉGORIES -->
-      <div class="sidebar-widget">
-        <div class="widget-header">
-          <h3 class="widget-title">Rubriques</h3>
+  if (list) {
+    if (!moreEpisodes.length) {
+      list.innerHTML = "";
+    } else {
+      list.innerHTML = moreEpisodes.map((e, i) => `
+        <div class="episode-list-item" data-societe-list-episode="${i}">
+          <div class="episode-list-thumb">${gayaThumb(e.image, "fa-users")}</div>
+          <div class="episode-list-info">
+            <div class="episode-list-ep">${gayaEsc(e.ep || "")}</div>
+            <div class="episode-list-title">${gayaEsc(e.title || "")}</div>
+            <div class="episode-list-meta">${gayaFormatDate(e.date)} · ${gayaEsc(e.duration || "")}</div>
+          </div>
         </div>
-        <div class="categories-grid">
-          <a href="/societe/" class="cat-card cat-societe">
-            <i class="fa-solid fa-users"></i>
-            <span>Société</span>
-          </a>
-          <a href="/economie/" class="cat-card cat-eco">
-            <i class="fa-solid fa-chart-line"></i>
-            <span>Économie</span>
-          </a>
-          <a href="/religion/" class="cat-card cat-religion">
-            <i class="fa-solid fa-mosque"></i>
-            <span>Religion</span>
-          </a>
-          <a href="/sport/" class="cat-card cat-sport">
-            <i class="fa-solid fa-futbol"></i>
-            <span>Sport</span>
-          </a>
-          <a href="/faitsdivers/" class="cat-card cat-divers">
-            <i class="fa-solid fa-newspaper"></i>
-            <span>Faits divers</span>
-          </a>
-          <a href="/multimedia/" class="cat-card cat-media">
-            <i class="fa-solid fa-photo-film"></i>
-            <span>Multimédia</span>
-          </a>
-        </div>
-      </div>
+      `).join("");
 
-      <!-- NEWSLETTER -->
-      <div class="sidebar-widget widget-newsletter">
-        <div class="widget-header">
-          <h3 class="widget-title">Newsletter</h3>
-        </div>
-        <p class="newsletter-text">Recevez les dernières actualités directement dans votre boîte mail.</p>
-        <form class="newsletter-form" onsubmit="subscribeNewsletter(event)">
-          <input type="email" placeholder="Votre adresse e-mail" required>
-          <button type="submit">S'inscrire</button>
-        </form>
-        <p class="newsletter-note" id="newsletter-msg" style="display:none; color: var(--color-red); font-size: 12px; margin-top: 8px;"></p>
-      </div>
-
-      <!-- SOUTENIR GAYA -->
-      <div class="sidebar-widget widget-don">
-        <div class="widget-don-inner">
-          <i class="fa-solid fa-heart widget-don-icon"></i>
-          <h3>Soutenez GAYA INFO TV</h3>
-          <p>Aidez-nous à maintenir un journalisme local indépendant et de qualité.</p>
-          <a href="#nous-soutenir" class="btn-don gaya-don-trigger">Faire un don</a>
-        </div>
-      </div>
-
-    </aside>
-  </div>
-</main>
-
-<!-- FOOTER -->
-<footer class="site-footer">
-  <div class="footer-top">
-    <div class="footer-grid">
-
-      <div class="footer-col footer-brand">
-        <a href="/" class="footer-logo">
-          <img src="/gaya.jpg" alt="GAYA INFO TV" onerror="this.style.display='none'">
-          <span>GAYA INFO TV</span>
-        </a>
-        <p class="footer-about">Média de proximité dédié à l'information locale, nous couvrons l'actualité avec rigueur et impartialité.</p>
-        <div class="footer-socials">
-          <a href="https://www.facebook.com/gayainfotv" target="_blank" rel="noopener" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
-          <a href="https://www.youtube.com/@gayainfotv" target="_blank" rel="noopener" aria-label="YouTube"><i class="fa-brands fa-youtube"></i></a>
-          <a href="#" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
-          <a href="#" aria-label="X/Twitter"><i class="fa-brands fa-x-twitter"></i></a>
-        </div>
-      </div>
-
-      <div class="footer-col">
-        <h4>Navigation</h4>
-        <ul>
-          <li><a href="/actualites/">Actualités</a></li>
-          <li><a href="/societe/">Société</a></li>
-          <li><a href="/economie/">Économie</a></li>
-          <li><a href="/religion/">Religion</a></li>
-          <li><a href="/sport/">Sport</a></li>
-          <li><a href="/faitsdivers/">Faits divers</a></li>
-          <li><a href="/multimedia/">Multimédia</a></li>
-          <li><a href="/blogs/">Blogs</a></li>
-        </ul>
-      </div>
-
-      <div class="footer-col">
-        <h4>Groupe GAYA INFO</h4>
-        <ul>
-          <li><a href="#">Radio Gaya</a></li>
-          <li><a href="#" class="gaya-sport-soon">GAYA Sport & Culture</a></li>
-        </ul>
-        <h4 style="margin-top: 1.5rem;">Informations</h4>
-        <ul>
-          <li><a href="/apropos/">À propos</a></li>
-          <li><a href="/contact/">Contact</a></li>
-          <li><a href="#nous-soutenir" class="gaya-don-trigger">Nous soutenir</a></li>
-        </ul>
-      </div>
-
-      <div class="footer-col footer-contact">
-        <h4>Nous contacter</h4>
-        <ul class="contact-list">
-          <li><i class="fa-solid fa-location-dot"></i> Gaé, Dagana — 23002 Saint-Louis, Sénégal</li>
-          <li><i class="fa-solid fa-envelope"></i> <a href="mailto:gayainfopdg@gmail.com">gayainfopdg@gmail.com</a></li>
-          <li><i class="fa-solid fa-phone"></i> 77 935 17 86 / 77 605 95 76</li>
-        </ul>
-        <div class="footer-newsletter">
-          <p>Restez informé :</p>
-          <form class="footer-form" onsubmit="subscribeNewsletter(event)">
-            <input type="email" placeholder="Votre e-mail">
-            <button type="submit">OK</button>
-          </form>
-        </div>
-      </div>
-
-    </div>
-  </div>
-  <div class="footer-bottom">
-    <div class="footer-bottom-inner">
-      <span>© 2025 GAYA INFO TV — Tous droits réservés</span>
-      <span>Dev - </i> SKadiar Design</span>
-    </div>
-  </div>
-</footer>
-<!-- TOAST BIENTÔT DISPONIBLE -->
-<div class="toast-soon" id="toast-soon">
-  <div class="toast-soon-icon">
-    <i class="fa-solid fa-radio"></i>
-  </div>
-  <div class="toast-soon-text">
-    <div class="toast-soon-title">Radio Gaya FM</div>
-    <div class="toast-soon-sub">Radio Gaya FM bientôt disponible ✨</div>
-  </div>
-  <button class="toast-soon-close" onclick="hideToast()">
-    <i class="fa-solid fa-xmark"></i>
-  </button>
-</div>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="/supabase-config.js?v=9"></script>
-<script src="/script.js?v=18"></script>
-
-
-
-
-
-<script src="/home-cms-bridge.js"></script>
-<script src="/home-latest-articles.js?v=2"></script>
-  <script>
-    if ("serviceWorker" in navigator) {
-      window.addEventListener("load", function() {
-        navigator.serviceWorker.register("/sw.js?v=9", { updateViaCache: "none" })
-          .then(function(reg) { console.log("SW enregistré :", reg.scope); })
-          .catch(function(err) { console.warn("SW échec :", err); });
+      list.querySelectorAll("[data-societe-list-episode]").forEach(item => {
+        item.addEventListener("click", () => {
+          openSocieteMedia(moreEpisodes[Number(item.dataset.societeListEpisode)]);
+        });
       });
     }
-  </script>
-  <script src="/pwa-install.js"></script>
-</body>
-</html>
+  }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  applySocieteCMS();
+  setTimeout(applySocieteCMS, 250);
+  setTimeout(applySocieteCMS, 900);
+});
+window.addEventListener("pageshow", applySocieteCMS);
+window.addEventListener("storage", applySocieteCMS);
+
+
+/* === Programme de la semaine depuis le CMS === */
+function gayaDayLabel(dateStr) {
+  if (!dateStr) return "";
+  const days = ["DIM","LUN","MAR","MER","JEU","VEN","SAM"];
+  try { return days[new Date(dateStr + "T00:00:00").getDay()]; } catch(e) { return ""; }
+}
+
+function applySocieteProgrammesCMS(data) {
+  const list = document.querySelector(".schedule-list");
+  const programmes = data.emissions?.societe?.programmes || [];
+  if (!list || !programmes.length) return;
+
+  const today = new Date();
+  today.setHours(0,0,0,0);
+
+  const visible = programmes
+    .filter(p => {
+      if (!p.date) return true;
+      const d = new Date(p.date + "T00:00:00");
+      return d >= today;
+    })
+    .sort((a,b) => String(a.date + a.startTime).localeCompare(String(b.date + b.startTime)))
+    .slice(0, 6);
+
+  list.innerHTML = (visible.length ? visible : []).map(p => `
+    <div class="schedule-item">
+      <span class="schedule-day">${gayaDayLabel(p.date)}</span>
+      <div>
+        <div class="schedule-show">${gayaEsc(p.title || "Émission")}</div>
+        <div class="schedule-time">${gayaEsc(p.startTime || "")}${p.endTime ? " – " + gayaEsc(p.endTime) : ""}</div>
+      </div>
+    </div>
+  `).join("") || `
+    <div class="schedule-item">
+      <span class="schedule-day">—</span>
+      <div>
+        <div class="schedule-show">Aucun programme à venir</div>
+        <div class="schedule-time">Ajoute un programme depuis le CMS</div>
+      </div>
+    </div>
+  `;
+}
+
+
+/* Synchronisation Firebase temps réel */
+(function(){
+  function rerender(){ try { if (typeof applySocieteCMS === "function") applySocieteCMS(); } catch(e) { console.warn("Sync CMS échouée", e); } }
+  window.addEventListener("gaya-cms-updated", rerender);
+  window.addEventListener("storage", rerender);
+  if (window.gayaCMSOnUpdate) window.gayaCMSOnUpdate(rerender);
+})();

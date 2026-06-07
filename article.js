@@ -294,6 +294,7 @@ function applyLive(data) {
 }
 
 function renderArticle() {
+  window.__gayaArticleLastRender = Date.now();
   const data = getCMSData();
   const id = getParam("id");
   const article = (data.articles || []).find(a => String(a.id) === String(id));
@@ -310,7 +311,7 @@ function renderArticle() {
         <span>Article introuvable</span>
       </div>
       <h1 class="article-title-full">Article introuvable</h1>
-      <p class="article-content-full">Retourne dans le CMS, crée un article et ouvre-le depuis la page Actualités.</p>
+      <p class="article-content-full">L’article demandé n’a pas encore été trouvé dans les données CMS chargées sur cette page. Réessaie depuis la page Actualités ou vide le cache si l’article vient d’être publié.</p>
     `;
     return;
   }
@@ -410,4 +411,22 @@ function renderArticle() {
   }
 }
 
-document.addEventListener("DOMContentLoaded", renderArticle);
+
+(function(){
+  let lastId = null;
+  function rerenderArticleFromCMS(){
+    const id = getParam("id");
+    if (!id) return;
+    lastId = id;
+    try { renderArticle(); } catch(e) { console.warn("[GAYA] Rechargement article échoué", e); }
+  }
+  document.addEventListener("DOMContentLoaded", function(){
+    rerenderArticleFromCMS();
+    setTimeout(rerenderArticleFromCMS, 600);
+    setTimeout(rerenderArticleFromCMS, 1800);
+  });
+  window.addEventListener("gaya-cms-updated", rerenderArticleFromCMS);
+  window.addEventListener("storage", rerenderArticleFromCMS);
+  window.addEventListener("pageshow", rerenderArticleFromCMS);
+  if (window.gayaCMSOnUpdate) window.gayaCMSOnUpdate(rerenderArticleFromCMS);
+})();
