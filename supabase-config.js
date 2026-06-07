@@ -17,6 +17,9 @@ const GAYA_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJ
   let _remoteData = null;
   let _pendingData = null;
   let _listeners = [];
+  let _readyResolve = null;
+  window.__gayaCMSRemoteLoaded = false;
+  window.gayaCMSReadyPromise = new Promise(resolve => { _readyResolve = resolve; });
 
   function safeParse(v) {
     if (!v) return null;
@@ -54,6 +57,7 @@ const GAYA_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJ
   async function fetchCMS() {
     if (!_client) return;
     const { data, error } = await _client.from(CMS_TABLE).select("content").eq("id", CMS_ID).maybeSingle();
+    window.__gayaCMSRemoteLoaded = true;
     if (error) { console.warn("[GAYA CMS] Lecture Supabase échouée", error); return; }
     if (data && data.content) applyRemote(data.content);
   }
@@ -94,8 +98,11 @@ const GAYA_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJ
 
       if (_pendingData) { const p = _pendingData; _pendingData = null; await writeCMS(p); }
       window.dispatchEvent(new CustomEvent("gaya-supabase-ready"));
+      if (_readyResolve) _readyResolve(_remoteData || readLocal() || {});
       console.log("[GAYA CMS] Supabase connecté ✅");
     } catch(e) {
+      window.__gayaCMSRemoteLoaded = true;
+      if (_readyResolve) _readyResolve(readLocal() || {});
       console.warn("[GAYA CMS] Init Supabase échouée, fallback localStorage", e);
     }
   }

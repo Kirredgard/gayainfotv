@@ -304,6 +304,18 @@ function renderArticle() {
   renderTrending(data, id);
 
   if (!article) {
+    if (!window.__gayaCMSRemoteLoaded && window.supabase) {
+      root.innerHTML = `
+        <div class="article-breadcrumb">
+          <a href="/">Accueil</a><i class="fa-solid fa-chevron-right"></i>
+          <a href="/actualites/">Actualités</a><i class="fa-solid fa-chevron-right"></i>
+          <span>Chargement</span>
+        </div>
+        <h1 class="article-title-full">Chargement de l’article…</h1>
+        <p class="article-content-full">Connexion au CMS en cours. La page va s’actualiser automatiquement.</p>
+      `;
+      return;
+    }
     root.innerHTML = `
       <div class="article-breadcrumb">
         <a href="/">Accueil</a><i class="fa-solid fa-chevron-right"></i>
@@ -422,8 +434,8 @@ function renderArticle() {
   }
   document.addEventListener("DOMContentLoaded", function(){
     rerenderArticleFromCMS();
-    setTimeout(rerenderArticleFromCMS, 600);
-    setTimeout(rerenderArticleFromCMS, 1800);
+    if (window.gayaCMSReadyPromise) window.gayaCMSReadyPromise.then(rerenderArticleFromCMS);
+    setTimeout(rerenderArticleFromCMS, 1200);
   });
   window.addEventListener("gaya-cms-updated", rerenderArticleFromCMS);
   window.addEventListener("storage", rerenderArticleFromCMS);

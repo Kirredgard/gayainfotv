@@ -789,8 +789,8 @@
 </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="/supabase-config.js?v=9"></script>
-<script src="/script.js?v=17"></script>
+  <script src="/supabase-config.js?v=50"></script>
+<script src="/script.js?v=50"></script>
 <script>
 
 
@@ -868,11 +868,25 @@ function getCMSArticlesForActualites() {
 }
 
 // ---- DATA ----
-const allArticles = [];
+let allArticles = [];
 
-const cmsArticles = getCMSArticlesForActualites();
-if (cmsArticles.length) {
-  allArticles.unshift(...cmsArticles.sort((a,b)=>(b.featured===true)-(a.featured===true)));
+function showActualitesLoading() {
+  const list = document.getElementById('articles-list');
+  const empty = document.getElementById('empty-state');
+  if (empty) empty.style.display = 'none';
+  if (list) list.innerHTML = '<div style="padding:38px 0;color:#7b8198;font-weight:800;">Chargement des actualités depuis le CMS…</div>';
+}
+
+function reloadActualitesFromCMS() {
+  if (!window.__gayaCMSRemoteLoaded && window.supabase) {
+    showActualitesLoading();
+    return;
+  }
+  allArticles = getCMSArticlesForActualites().sort((a,b)=>(b.featured===true)-(a.featured===true));
+  currentPage = 1;
+  updateFilterCounts();
+  renderArticles();
+  refreshArticleCounters();
 }
 
 const catClasses = {
@@ -1158,15 +1172,18 @@ function refreshArticleCounters() {
 window.addEventListener("gaya-supabase-ready", refreshArticleCounters);
 
 // INIT
-updateFilterCounts();
-renderArticles();
 renderTrending();
-refreshArticleCounters();
+reloadActualitesFromCMS();
+window.addEventListener('gaya-cms-updated', reloadActualitesFromCMS);
+window.addEventListener('gaya-supabase-ready', reloadActualitesFromCMS);
+window.addEventListener('storage', reloadActualitesFromCMS);
+if (window.gayaCMSOnUpdate) window.gayaCMSOnUpdate(reloadActualitesFromCMS);
+if (window.gayaCMSReadyPromise) window.gayaCMSReadyPromise.then(reloadActualitesFromCMS);
 </script>
   <script>
     if ("serviceWorker" in navigator) {
       window.addEventListener("load", function() {
-        navigator.serviceWorker.register("/sw.js?v=9", { updateViaCache: "none" })
+        navigator.serviceWorker.register("/sw.js?v=50", { updateViaCache: "none" })
           .then(function(reg) { console.log("SW enregistré :", reg.scope); })
           .catch(function(err) { console.warn("SW échec :", err); });
       });

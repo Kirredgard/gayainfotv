@@ -820,6 +820,31 @@
   .filters-bar { gap: 6px; }
 }
 
+@media (max-width: 768px) {
+  html, body { max-width: 100%; overflow-x: hidden; }
+  .container, .blogs-page, .blogs-layout, .blog-main, .blog-sidebar { width: 100%; max-width: 100%; min-width: 0; }
+  .blogs-page { padding-left: 0; padding-right: 0; }
+  .blogs-layout { display: block; }
+  .blog-main { overflow: hidden; }
+  .blog-search-wrap, .filters-bar, .sort-row, .blog-featured, .blog-card { max-width: 100%; box-sizing: border-box; }
+  .filters-bar { display: flex; overflow-x: auto; flex-wrap: nowrap; padding-bottom: 8px; -webkit-overflow-scrolling: touch; }
+  .filters-bar .filter-chip, .cat-select { flex: 0 0 auto; }
+  .blog-featured, .blog-card { cursor: pointer; }
+  .blog-card { grid-template-columns: 1fr; }
+  .blog-card-img { width: 100%; height: 180px; }
+  .blog-title, .blog-title-sm, .blog-excerpt { overflow-wrap: anywhere; word-break: break-word; }
+  .blog-meta { flex-wrap: wrap; gap: 6px 10px; }
+  .page-hero-inner { padding-left: 16px; padding-right: 16px; }
+}
+
+@media (max-width: 480px) {
+  .page-hero h1 { font-size: 28px; line-height: 1.08; }
+  .blog-featured-body, .blog-card-body { padding: 16px; }
+  .blog-featured-img, .blog-card-img { height: 170px; }
+  .blog-title { font-size: 22px; }
+  .blog-title-sm { font-size: 19px; }
+}
+
 </style>
 </head>
 <body>
@@ -1134,9 +1159,9 @@
   </button>
 </div>
 
-<script src="/script.js?v=18"></script>
+<script src="/script.js?v=50"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="/supabase-config.js?v=9"></script>
+<script src="/supabase-config.js?v=50"></script>
 <script>
 /* ============================================================
    GAYA INFO TV — Blogs CMS Bridge
@@ -1493,6 +1518,13 @@
   // ── Initialisation depuis CMS ────────────────────
   function applyBlogsCMS() {
     const data = gayaReadCMS();
+    if (!window.__gayaCMSRemoteLoaded && window.supabase) {
+      const lc = document.getElementById('blog-list-container');
+      if (lc) lc.innerHTML = `<div style="padding:40px 0;text-align:center;color:var(--color-text-muted);font-size:14px;">Chargement des blogs depuis le CMS…</div>`;
+      const fc = document.getElementById('blog-featured-container');
+      if (fc) fc.innerHTML = '';
+      return;
+    }
     if (!data) {
       // Pas encore de données
       const lc = document.getElementById('blog-list-container');
@@ -1521,12 +1553,13 @@
   })();
 
   document.addEventListener('DOMContentLoaded', applyBlogsCMS);
+  if (window.gayaCMSReadyPromise) window.gayaCMSReadyPromise.then(applyBlogsCMS);
   window.addEventListener('pageshow', applyBlogsCMS);
 </script>
 <script>
   if ("serviceWorker" in navigator) {
     window.addEventListener("load", function() {
-      navigator.serviceWorker.register("/sw.js?v=9", { updateViaCache: "none" })
+      navigator.serviceWorker.register("/sw.js?v=50", { updateViaCache: "none" })
         .then(function(reg) { console.log("SW enregistré :", reg.scope); })
         .catch(function(err) { console.warn("SW échec :", err); });
     });
