@@ -276,7 +276,7 @@ if (window.gayaCMSOnUpdate) window.gayaCMSOnUpdate(applyEmissionCMS);
   const SOCIETE_ALIASES = ["societe", "société", "Société", "emissionSociete", "emissionsSociete"];
 
   function asArray(v){ return Array.isArray(v) ? v : []; }
-  function isSocietePage(){ return (location.pathname.split('/').pop() || 'societe.html').replace('.html','') === 'societe'; }
+  function isSocietePage(){ return (location.pathname.split('/').pop() || '/societe/').replace('.html','') === 'societe'; }
   function esc(v){ return String(v || '').replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#039;','"':'&quot;'}[c])); }
   function fmtDate(v){ if(!v) return ''; try { return new Date(v + 'T00:00:00').toLocaleDateString('fr-FR',{day:'2-digit',month:'short',year:'numeric'}); } catch(e){ return v || ''; } }
   function normalizeEpisode(ep){

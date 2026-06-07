@@ -16,7 +16,7 @@ const GAYA_SUPABASE_ANON_KEY = "REMPLACE_PAR_TA_CLE_ANON_PUBLIC";
 par les valeurs de **Project Settings > API** dans Supabase.
 
 ## 3. Connexion admin
-La page `admin.html` utilise maintenant Supabase Auth.
+La page `/admin/` utilise maintenant Supabase Auth.
 
 Utilise l'adresse e-mail et le mot de passe créés dans Supabase.
 Les anciens mots de passe en dur ont été retirés du code.
@@ -27,6 +27,6 @@ Tu peux envoyer ce dossier sur GitHub. Conseil : commence avec un dépôt privé
 ## 5. Hébergement
 Pour un site statique : GitHub Pages, Netlify ou Vercel fonctionnent.
 Après déploiement, vérifie :
-- `index.html` charge les contenus ;
-- `admin.html` permet la connexion ;
+- `/` charge les contenus ;
+- `/admin/` permet la connexion ;
 - un enregistrement depuis l'admin met bien à jour le site.

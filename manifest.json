@@ -2,7 +2,7 @@
   "name": "GAYA INFO TV",
   "short_name": "GAYA INFO",
   "description": "Actualités locales de Dagana, Saint-Louis. Émissions, direct TV et radio.",
-  "start_url": "/index.html",
+  "start_url": "/",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#0a0a0a",
@@ -27,13 +27,13 @@
     {
       "name": "Actualités",
       "short_name": "Actualités",
-      "url": "/actualites.html",
+      "url": "/actualites/",
       "icons": [{ "src": "favicon-192x192.png", "sizes": "192x192" }]
     },
     {
       "name": "Direct",
       "short_name": "Direct",
-      "url": "/live.html",
+      "url": "/live/",
       "icons": [{ "src": "favicon-192x192.png", "sizes": "192x192" }]
     },
     {

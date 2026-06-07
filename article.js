@@ -276,7 +276,7 @@ function renderTrending(data, currentId) {
   root.innerHTML = top.map((a, i) => `
     <div class="trending-item">
       <span class="trending-num">${i + 1}</span>
-      <a href="article.html?id=${encodeURIComponent(a.id)}">${esc(a.title || "Sans titre")}</a>
+      <a href="/article/?id=${encodeURIComponent(a.id)}">${esc(a.title || "Sans titre")}</a>
     </div>
   `).join("");
 }
@@ -305,8 +305,8 @@ function renderArticle() {
   if (!article) {
     root.innerHTML = `
       <div class="article-breadcrumb">
-        <a href="index.html">Accueil</a><i class="fa-solid fa-chevron-right"></i>
-        <a href="actualites.html">Actualités</a><i class="fa-solid fa-chevron-right"></i>
+        <a href="/">Accueil</a><i class="fa-solid fa-chevron-right"></i>
+        <a href="/actualites/">Actualités</a><i class="fa-solid fa-chevron-right"></i>
         <span>Article introuvable</span>
       </div>
       <h1 class="article-title-full">Article introuvable</h1>
@@ -322,8 +322,8 @@ function renderArticle() {
 
   root.innerHTML = `
     <div class="article-breadcrumb">
-      <a href="index.html">Accueil</a><span>•</span>
-      <a href="actualites.html">News</a><span>•</span>
+      <a href="/">Accueil</a><span>•</span>
+      <a href="/actualites/">News</a><span>•</span>
       <span>${esc(article.category || "Actualité")}</span><span>•</span>
       <span>Post</span>
     </div>

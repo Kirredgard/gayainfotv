@@ -160,7 +160,7 @@ function getGayaCMSData() {
           excerpt: a.excerpt || '',
           date: a.date || '',
           image: a.media || a.image || '',
-          link: a.id ? `article.html?id=${a.id}` : (a.link || '#'),
+          link: a.id ? `/article/?id=${a.id}` : (a.link || '#'),
           createdAt: a.createdAt || ''
         }))
       : (data.articles || []);

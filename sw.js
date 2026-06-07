@@ -10,18 +10,18 @@ const CACHE_STATIC = 'gaya-static-v8-fresh';
 /* Assets à mettre en cache dès l'installation */
 const PRECACHE_ASSETS = [
   '/',
-  '/index.html',
-  '/actualites.html',
-  '/live.html',
+  '/',
+  '/actualites/',
+  '/live/',
   '/emissions.js',
-  '/multimedia.html',
-  '/societe.html',
-  '/sport.html',
-  '/economie.html',
-  '/religion.html',
-  '/faitsdivers.html',
-  '/apropos.html',
-  '/contact.html',
+  '/multimedia/',
+  '/societe/',
+  '/sport/',
+  '/economie/',
+  '/religion/',
+  '/faitsdivers/',
+  '/apropos/',
+  '/contact/',
   '/style.css?v=16',
   '/script.js?v=18',
   '/emissions.css',
@@ -77,7 +77,7 @@ self.addEventListener('fetch', event => {
           caches.open(CACHE_NAME).then(cache => cache.put(request, clone));
           return response;
         })
-        .catch(() => caches.match(request).then(r => r || caches.match('/index.html')))
+        .catch(() => caches.match(request).then(r => r || caches.match('/')))
     );
     return;
   }

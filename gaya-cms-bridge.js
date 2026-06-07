@@ -1,1 +1,1 @@
-// Bridge CMS intégré directement dans actualites.html
+// Bridge CMS intégré directement dans /actualites/

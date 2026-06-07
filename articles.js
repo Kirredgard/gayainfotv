@@ -48,7 +48,7 @@ function renderArticles() {
 
   root.innerHTML = articles.map(article => `
     <div class="public-card" data-id="${escapeHTML(article.id)}">
-      <a href="article.html?id=${encodeURIComponent(article.id)}">
+      <a href="/article/?id=${encodeURIComponent(article.id)}">
         ${mediaHTML(article.media)}
         <div class="public-card-body">
           <div class="public-card-cat">${escapeHTML(article.category || "Actualité")}</div>
@@ -61,7 +61,7 @@ function renderArticles() {
       </a>
 
       <div class="articles-admin-tools">
-        <a class="edit-article-btn" href="admin.html?editArticle=${encodeURIComponent(article.id)}">Modifier</a>
+        <a class="edit-article-btn" href="/admin/?editArticle=${encodeURIComponent(article.id)}">Modifier</a>
         <button class="delete-article-btn" type="button" data-delete-id="${escapeHTML(article.id)}">Supprimer</button>
       </div>
     </div>

@@ -91,7 +91,7 @@
     dots.innerHTML = "";
 
     slidesData.forEach((slide, i) => {
-      const link = slide.link || (slide.articleId ? `article.html?id=${slide.articleId}` : "#");
+      const link = slide.link || (slide.articleId ? `/article/?id=${slide.articleId}` : "#");
       const el = document.createElement("div");
       el.className = `slide ${i === 0 ? "active" : ""}`;
       el.style.background = slide.image

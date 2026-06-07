@@ -157,7 +157,7 @@ function collectSlidesFromDOM() {
     card.querySelectorAll("[data-field]").forEach(input => {
       obj[input.dataset.field] = input.value.trim();
     });
-    if (obj.articleId) obj.link = `article.html?id=${obj.articleId}`;
+    if (obj.articleId) obj.link = `/article/?id=${obj.articleId}`;
     if (!obj.link) obj.link = "#";
     return obj;
   });
@@ -305,7 +305,7 @@ function renderSlides() {
         slide[field] = input.value;
         if (field === "title") node.querySelector("strong").textContent = input.value || `Slide accueil ${index + 1}`;
         if (field === "articleId" && input.value) {
-          slide.link = `article.html?id=${input.value}`;
+          slide.link = `/article/?id=${input.value}`;
           const linkInput = node.querySelector('[data-field="link"]');
           if (linkInput) linkInput.value = slide.link;
         }
@@ -316,7 +316,7 @@ function renderSlides() {
       input.addEventListener("change", () => {
         slide[field] = input.value;
         if (field === "articleId" && input.value) {
-          slide.link = `article.html?id=${input.value}`;
+          slide.link = `/article/?id=${input.value}`;
           const linkInput = node.querySelector('[data-field="link"]');
           if (linkInput) linkInput.value = slide.link;
         }
@@ -337,7 +337,7 @@ function renderSlides() {
       view.onclick = () => {
         collectSlidesFromDOM();
         saveData("Slide enregistré ✅");
-        window.open("index.html", "_blank");
+        window.open("/", "_blank");
       };
     }
 
@@ -427,7 +427,7 @@ function renderArticles() {
         collectArticlesFromDOM();
         saveData("Actualité enregistrée ✅");
         const id = node.querySelector('[data-field="id"]')?.value || article.id;
-        window.open(`article.html?id=${encodeURIComponent(id)}`, "_blank");
+        window.open(`/article/?id=${encodeURIComponent(id)}`, "_blank");
       };
     }
 
@@ -536,7 +536,7 @@ function articleToSlide(article) {
     title: article.title || "Sans titre",
     excerpt: article.excerpt || "",
     image: article.media || "",
-    link: article.id ? `article.html?id=${article.id}` : "#",
+    link: article.id ? `/article/?id=${article.id}` : "#",
     articleId: article.id || ""
   };
 }
@@ -703,7 +703,7 @@ function renderSocieteEpisodes() {
       collectSocieteFeatured();
       collectSocieteEpisodesFromDOM();
       saveData("Épisode Société enregistré ✅");
-      window.open("societe.html", "_blank");
+      window.open("/societe/", "_blank");
     };
 
     node.querySelector(".save-societe-episode").onclick = () => {
@@ -1322,11 +1322,11 @@ setTimeout(() => {
     faitsdivers: "Faits divers"
   };
   const EMISSION_FILES = {
-    societe: "societe.html",
-    economie: "economie.html",
-    religion: "religion.html",
-    sport: "sport.html",
-    faitsdivers: "faitsdivers.html"
+    societe: "/societe/",
+    economie: "/economie/",
+    religion: "/religion/",
+    sport: "/sport/",
+    faitsdivers: "/faitsdivers/"
   };
   const EMISSION_KEYS = ["societe","economie","religion","sport","faitsdivers"];
   let currentEmission = "societe";
@@ -3063,7 +3063,7 @@ function renderBlogs() {
       collectBlogsFromDOM();
       window.__skipBlogCollectOnce = true;
       saveData("Blog enregistré ✅");
-      window.open(`https://gayainfotv.com/blog-article.html?id=${encodeURIComponent(blog.id)}`, "_blank");
+      window.open(`https://gayainfotv.com/blog-article/?id=${encodeURIComponent(blog.id)}`, "_blank");
     });
     const save = node.querySelector(".save-blog");
     if (save) save.addEventListener("click", () => {

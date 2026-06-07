@@ -57,7 +57,7 @@ function esc(v) {
       .slice(0, 6);
 
     grid.innerHTML = articles.map(article => {
-      const link = article.id ? `article.html?id=${article.id}` : "#";
+      const link = article.id ? `/article/?id=${article.id}` : "#";
       return `
         <a class="article-card" href="${esc(link)}">
           <div class="article-card-img">${mediaHTML(article.media || article.image || "")}</div>
