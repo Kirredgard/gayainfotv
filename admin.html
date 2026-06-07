@@ -840,8 +840,11 @@
           date: new Date().toISOString().slice(0, 10),
           createdAt: new Date().toISOString()
         });
+        if (typeof markDirty === 'function') markDirty();
+        window.__skipBlogCollectOnce = true;
         _renderBlogs();
         if (typeof saveData === 'function') saveData('Nouveau blog créé ✅');
+        setTimeout(function(){ if (typeof gayaCMSDirty !== 'undefined') gayaCMSDirty = false; }, 3000);
       };
     }
     (function bindBtn() {
