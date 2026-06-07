@@ -68,7 +68,7 @@ const GAYA_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJ
 
     if (!_ready || !_client) { _pendingData = payload; return; }
     const { error } = await _client.from(CMS_TABLE).upsert({ id: CMS_ID, content: payload, updated_at: new Date().toISOString() });
-    if (error) console.error("[GAYA CMS] Écriture Supabase refusée/échouée", error);
+    if (error) { console.error("[GAYA CMS] Écriture Supabase refusée/échouée", error); throw error; }
   }
 
   async function initSupabase() {
@@ -101,7 +101,7 @@ const GAYA_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJ
   }
 
   window.gayaCMSRead = function () { return clone(_remoteData || readLocal() || {}); };
-  window.gayaCMSWrite = function (data) { writeCMS(data); };
+  window.gayaCMSWrite = function (data) { return writeCMS(data); };
   window.gayaCMSOnUpdate = function (callback) { if (typeof callback === "function") _listeners.push(callback); if (_remoteData) callback(_remoteData); };
 
   window.gayaCMSLogin = async function (email, password) {

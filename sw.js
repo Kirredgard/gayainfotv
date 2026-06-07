@@ -4,8 +4,8 @@
    Network-first pour les pages HTML (contenu frais).
    ============================================================ */
 
-const CACHE_NAME = 'gaya-pwa-v7-don';
-const CACHE_STATIC = 'gaya-static-v7-don';
+const CACHE_NAME = 'gaya-pwa-v8-fresh';
+const CACHE_STATIC = 'gaya-static-v8-fresh';
 
 /* Assets à mettre en cache dès l'installation */
 const PRECACHE_ASSETS = [
@@ -82,7 +82,22 @@ self.addEventListener('fetch', event => {
     return;
   }
 
-  /* Assets (CSS, JS, images) → Cache-first */
+  /* JS/CSS → Network-first pour éviter les versions CMS obsolètes selon le navigateur */
+  if (/\.(js|css)$/i.test(url.pathname)) {
+    event.respondWith(
+      fetch(request, { cache: 'no-store' })
+        .then(response => {
+          if (!response || response.status !== 200 || response.type === 'opaque') return response;
+          const clone = response.clone();
+          caches.open(CACHE_STATIC).then(cache => cache.put(request, clone));
+          return response;
+        })
+        .catch(() => caches.match(request))
+    );
+    return;
+  }
+
+  /* Images/assets lourds → Cache-first */
   event.respondWith(
     caches.match(request).then(cached => {
       if (cached) return cached;

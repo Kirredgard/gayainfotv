@@ -260,7 +260,7 @@
   <!-- Firebase SDK -->
   <!-- GAYA CMS Firebase Config -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="supabase-config.js"></script>
+  <script src="supabase-config.js?v=8"></script>
   <link rel="manifest" href="/manifest.json">
   <meta name="theme-color" content="#e63946">
   <meta name="mobile-web-app-capable" content="yes">
@@ -462,7 +462,7 @@
   <script>
     if ("serviceWorker" in navigator) {
       window.addEventListener("load", function() {
-        navigator.serviceWorker.register("/sw.js")
+        navigator.serviceWorker.register("/sw.js?v=8", { updateViaCache: "none" })
           .then(function(reg) { console.log("SW enregistré :", reg.scope); })
           .catch(function(err) { console.warn("SW échec :", err); });
       });
