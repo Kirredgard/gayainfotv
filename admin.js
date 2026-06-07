@@ -3146,6 +3146,7 @@ function addBlog() {
   setTimeout(() => { gayaCMSDirty = false; }, 3000);
 }
 window.addBlog = addBlog;
+window.renderBlogs = renderBlogs;
 
 function collectBlogsFromDOM() {
   if (window.__skipBlogCollectOnce) { window.__skipBlogCollectOnce = false; return; }
