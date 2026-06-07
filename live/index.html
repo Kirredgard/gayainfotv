@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <base href="/">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Direct — GAYA INFO TV</title>
+  <meta name="description" content="Regarder le direct de GAYA INFO TV.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .live-page-hero{min-height:calc(100vh - 150px);padding:64px 20px;background:radial-gradient(circle at top left,rgba(200,16,46,.32),transparent 34%),linear-gradient(135deg,#08070b,#17101b 55%,#0b0b12);color:#fff;}
+    .live-page-inner{max-width:1120px;margin:0 auto;}
+    .live-page-head{display:flex;justify-content:space-between;gap:24px;align-items:flex-end;margin-bottom:26px;}
+    .live-page-kicker{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:999px;background:rgba(200,16,46,.18);border:1px solid rgba(255,255,255,.12);font-weight:800;text-transform:uppercase;letter-spacing:.06em;font-size:12px;}
+    .live-page-title{font-size:clamp(34px,6vw,72px);line-height:.95;margin:16px 0 10px;font-weight:900;letter-spacing:-.05em;}
+    .live-page-sub{max-width:620px;color:rgba(255,255,255,.72);font-size:17px;line-height:1.65;}
+    .live-card{position:relative;border-radius:30px;overflow:hidden;background:#050506;border:1px solid rgba(255,255,255,.12);box-shadow:0 30px 90px rgba(0,0,0,.45);}
+    .live-card::before{content:"";display:block;padding-top:56.25%;}
+    .live-card iframe,.live-empty{position:absolute;inset:0;width:100%;height:100%;border:0;}
+    .live-empty{display:flex;align-items:center;justify-content:center;text-align:center;padding:32px;background:linear-gradient(135deg,rgba(200,16,46,.18),rgba(255,255,255,.04));}
+    .live-empty-box{max-width:560px;}
+    .live-empty-icon{width:74px;height:74px;border-radius:24px;margin:0 auto 18px;display:flex;align-items:center;justify-content:center;background:rgba(200,16,46,.22);font-size:30px;color:#ff5b70;}
+    .live-empty h2{font-size:28px;margin:0 0 10px;}
+    .live-empty p{color:rgba(255,255,255,.7);line-height:1.6;margin:0;}
+    .live-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:22px;}
+    .live-actions a{display:inline-flex;align-items:center;gap:8px;padding:12px 18px;border-radius:999px;text-decoration:none;font-weight:800;}
+    .live-actions .primary{background:#c8102e;color:#fff;}.live-actions .secondary{background:rgba(255,255,255,.08);color:#fff;border:1px solid rgba(255,255,255,.14);}
+    @media(max-width:760px){.live-page-head{display:block}.live-page-hero{padding:38px 16px}.live-card{border-radius:20px}}
+  </style>
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#e63946">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="GAYA INFO">
+  <link rel="apple-touch-icon" href="/favicon-192x192.png">
+</head>
+<body>
+<div class="top-ticker"><div class="ticker-track"><span>Actualités, analyses et couverture d'événements en direct — GAYA INFO TV</span></div></div>
+<header class="site-header" id="site-header">
+  <div class="header-inner">
+    <a href="/" class="logo"><img src="gaya.jpg" alt="GAYA INFO TV" onerror="this.style.display='none'"><div class="logo-text"><span class="logo-name">GAYA INFO TV</span><span class="logo-tagline">L'information de proximité</span></div></a>
+    <nav class="main-nav" id="main-nav">
+      <a href="/" class="nav-link">Accueil</a><a href="/actualites/" class="nav-link">Actualités</a>
+      <div class="nav-dropdown"><a href="#" class="nav-link dropdown-trigger">Émissions <i class="fa-solid fa-chevron-down" style="font-size:10px;"></i></a><div class="dropdown-menu"><a href="/societe/"><i class="fa-solid fa-users"></i> Société</a><a href="/economie/"><i class="fa-solid fa-chart-line"></i> Économie</a><a href="/religion/"><i class="fa-solid fa-mosque"></i> Religion</a><a href="/sport/"><i class="fa-solid fa-futbol"></i> Sport</a><a href="/faitsdivers/"><i class="fa-solid fa-newspaper"></i> Faits divers</a></div></div>
+      <a href="/multimedia/" class="nav-link">Multimédia</a><a href="/apropos/" class="nav-link">À propos</a><a href="/blogs/" class="nav-link">Blogs</a>
+      <a href="/contact/" class="nav-link">Contact</a>
+    </nav>
+    <div class="header-actions"><button class="btn-search" id="search-toggle"><i class="fa-solid fa-magnifying-glass"></i></button><a href="#" class="btn-radio"><i class="fa-solid fa-radio"></i> Radio</a><button type="button" class="btn-live" id="btnLiveDirect"><span class="live-dot"></span> Direct</button><button class="hamburger" id="hamburger"><span></span><span></span><span></span></button></div>
+  </div>
+  <div class="search-bar" id="search-bar"><div class="search-inner"><i class="fa-solid fa-magnifying-glass"></i><input type="text" placeholder="Rechercher..."><button class="search-close" id="search-close"><i class="fa-solid fa-xmark"></i></button></div></div>
+</header>
+<main class="live-page-hero">
+  <div class="live-page-inner">
+    <div class="live-page-head"><div><div class="live-page-kicker"><span class="live-dot"></span> Direct</div><h1 class="live-page-title">GAYA INFO TV<br>en live</h1><p class="live-page-sub" id="live-subtitle">Suivez le direct dès qu'il est disponible. La vidéo se charge automatiquement depuis le CMS.</p></div><div class="live-actions"><a class="primary" href="/"><i class="fa-solid fa-house"></i> Accueil</a><a class="secondary" href="/multimedia/"><i class="fa-solid fa-play"></i> Multimédia</a></div></div>
+    <section class="live-card" id="live-card"><div class="live-empty"><div class="live-empty-box"><div class="live-empty-icon"><i class="fa-solid fa-satellite-dish"></i></div><h2>Vérification du direct...</h2><p>Patientez pendant le chargement de la configuration du live.</p></div></div></section>
+  </div>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js?v=8"></script>
+<script src="script.js?v=16"></script>
+<script>
+(function(){
+  function esc(s){return String(s||'').replace(/[&<>'"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c];});}
+  function normalizeYouTube(url){
+    url=String(url||'').trim(); if(!url) return '';
+    if(url.includes('/embed/')) return url;
+    var m=url.match(/[?&]v=([^&]+)/) || url.match(/youtu\.be\/([^?&]+)/) || url.match(/youtube\.com\/live\/([^?&]+)/);
+    if(m && m[1]) return 'https://www.youtube.com/embed/'+encodeURIComponent(m[1])+'?autoplay=1&rel=0';
+    return url;
+  }
+  function render(data){
+    var card=document.getElementById('live-card'); if(!card) return;
+    data=data||{}; var live=data.live||{}; var title=live.title||data.liveTitle||'GAYA INFO TV — Direct'; var url=normalizeYouTube(live.embedUrl||data.liveEmbed||'');
+    document.title=title+' — GAYA INFO TV';
+    if(!url){card.innerHTML='<div class="live-empty"><div class="live-empty-box"><div class="live-empty-icon"><i class="fa-solid fa-video-slash"></i></div><h2>Pas de live disponible pour le moment</h2><p>Le direct n’est pas encore paramétré dans le CMS. Revenez bientôt ou consultez nos dernières vidéos.</p></div></div>';return;}
+    card.innerHTML='<iframe src="'+esc(url)+'" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen title="'+esc(title)+'"></iframe>';
+  }
+  function start(){try{render(window.gayaCMSRead?window.gayaCMSRead():JSON.parse(localStorage.getItem('gayaCMSData')||'{}'));}catch(e){render({});} if(window.gayaCMSOnUpdate) window.gayaCMSOnUpdate(render);}
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',start); else start();
+})();
+</script>
+  <script>
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", function() {
+        navigator.serviceWorker.register("/sw.js?v=8", { updateViaCache: "none" })
+          .then(function(reg) { console.log("SW enregistré :", reg.scope); })
+          .catch(function(err) { console.warn("SW échec :", err); });
+      });
+    }
+  </script>
+  <script src="/pwa-install.js"></script>
+</body>
+</html>
