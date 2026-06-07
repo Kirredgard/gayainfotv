@@ -520,6 +520,7 @@ function exportJSON() {
 function resetData() {
   confirmCMSDelete("Vider tout le contenu du CMS et du site ?", () => {
     data = normalizeData(defaultData);
+    window.__gayaData = data;
     window.__skipArticleCollectOnce = true;
     window.__skipSocieteCollectOnce = true;
     window.__skipEmissionCollectOnce = true;
@@ -815,12 +816,14 @@ function fillForm() {
 function refreshCMSFromRemote(remoteData) {
   if (!remoteData || gayaCMSDirty) return;
   data = normalizeData(remoteData);
+  window.__gayaData = data; // keep reference in sync
   if (typeof window.ensureAllEmissionsData === "function") window.ensureAllEmissionsData();
   if (typeof fillForm === "function") fillForm();
   if (typeof window.renderEmissionCMS === "function") window.renderEmissionCMS();
   if (typeof renderSocieteEpisodes === "function") renderSocieteEpisodes();
   if (typeof renderSocieteProgrammes === "function") renderSocieteProgrammes();
   if (typeof window.initMultimediaCMS === "function") window.initMultimediaCMS();
+  if (typeof renderBlogs === "function") renderBlogs(); // sync blogs section too
   setStatus("Synchronisé avec Firebase ✅");
 }
 
