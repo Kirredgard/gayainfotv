@@ -296,7 +296,8 @@ function applyLive(data) {
 function renderArticle() {
   const data = getCMSData();
   const id = getParam("id");
-  const article = (data.articles || []).find(a => String(a.id) === String(id));
+  const article = (data.articles || []).find(a => String(a.id) === String(id))
+             || (data.blogs || []).find(b => String(b.id) === String(id));
   const root = document.getElementById("article-content-root");
 
   applyLive(data);

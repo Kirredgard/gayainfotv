@@ -3127,6 +3127,7 @@ function addBlog() {
     createdAt: new Date().toISOString()
   });
   renderBlogs();
+  saveData("Nouveau blog créé ✅");
 }
 
 function collectBlogsFromDOM() {
