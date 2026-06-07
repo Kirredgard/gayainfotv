@@ -3129,6 +3129,7 @@ function addBlog() {
   renderBlogs();
   saveData("Nouveau blog créé ✅");
 }
+window.addBlog = addBlog;
 
 function collectBlogsFromDOM() {
   if (window.__skipBlogCollectOnce) { window.__skipBlogCollectOnce = false; return; }
