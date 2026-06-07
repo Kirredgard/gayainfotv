@@ -5,7 +5,7 @@
    ============================================================ */
 
 const CACHE_NAME = 'gaya-pwa-v8-fresh';
-const CACHE_STATIC = 'gaya-static-v8-fresh';
+const CACHE_STATIC = 'gaya-static-v9-fresh';
 
 /* Assets à mettre en cache dès l'installation */
 const PRECACHE_ASSETS = [
