@@ -46,16 +46,47 @@ const GAYA_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJ
     window.dispatchEvent(new CustomEvent("gaya-cms-updated", { detail: data }));
   }
 
+  function resolveReady(data) {
+    if (_readyResolve) { _readyResolve(data); _readyResolve = null; }
+  }
+
   function applyRemote(payload) {
     const incoming = safeParse(payload);
     if (!incoming) return;
     _remoteData = incoming;
     writeLocal(incoming);
     emit(incoming);
+    resolveReady(incoming);
   }
+
+  const CACHE_TTL_MS = 60_000; // 60 secondes : pas de re-fetch si données récentes
 
   async function fetchCMS() {
     if (!_client) return;
+
+    // Stale-while-revalidate : si on a des données locales de moins de 60s,
+    // on les émet immédiatement (rendu instantané) et on re-fetch en arrière-plan.
+    const local = readLocal();
+    const localAge = local && local.__cmsUpdatedAt ? Date.now() - local.__cmsUpdatedAt : Infinity;
+    if (local && localAge < CACHE_TTL_MS) {
+      // Données fraîches : rendu immédiat, pas de requête réseau
+      _remoteData = local;
+      window.__gayaCMSRemoteLoaded = true;
+      emit(local);
+      if (_readyResolve) { _readyResolve(local); _readyResolve = null; }
+      console.log("[GAYA CMS] Cache local frais (" + Math.round(localAge/1000) + "s), pas de re-fetch ✅");
+      return;
+    }
+
+    // Données absentes ou périmées : fetch réseau
+    // Si on a quand même des données locales, on les émet d'abord pour un rendu immédiat
+    if (local) {
+      _remoteData = local;
+      window.__gayaCMSRemoteLoaded = true;
+      emit(local);
+      if (_readyResolve) { _readyResolve(local); _readyResolve = null; }
+    }
+
     const { data, error } = await _client.from(CMS_TABLE).select("content").eq("id", CMS_ID).maybeSingle();
     window.__gayaCMSRemoteLoaded = true;
     if (error) { console.warn("[GAYA CMS] Lecture Supabase échouée", error); return; }
@@ -98,11 +129,11 @@ const GAYA_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJ
 
       if (_pendingData) { const p = _pendingData; _pendingData = null; await writeCMS(p); }
       window.dispatchEvent(new CustomEvent("gaya-supabase-ready"));
-      if (_readyResolve) _readyResolve(_remoteData || readLocal() || {});
+      resolveReady(_remoteData || readLocal() || {});
       console.log("[GAYA CMS] Supabase connecté ✅");
     } catch(e) {
       window.__gayaCMSRemoteLoaded = true;
-      if (_readyResolve) _readyResolve(readLocal() || {});
+      resolveReady(readLocal() || {});
       console.warn("[GAYA CMS] Init Supabase échouée, fallback localStorage", e);
     }
   }
