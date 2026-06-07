@@ -24,7 +24,6 @@ const defaultData = {
 };
 
 let data = loadData();
-window.__gayaData = data; // expose pour les scripts inline
 
 const els = {
   ticker: document.getElementById("ticker"),
@@ -520,7 +519,6 @@ function exportJSON() {
 function resetData() {
   confirmCMSDelete("Vider tout le contenu du CMS et du site ?", () => {
     data = normalizeData(defaultData);
-    window.__gayaData = data;
     window.__skipArticleCollectOnce = true;
     window.__skipSocieteCollectOnce = true;
     window.__skipEmissionCollectOnce = true;
@@ -816,14 +814,12 @@ function fillForm() {
 function refreshCMSFromRemote(remoteData) {
   if (!remoteData || gayaCMSDirty) return;
   data = normalizeData(remoteData);
-  window.__gayaData = data; // keep reference in sync
   if (typeof window.ensureAllEmissionsData === "function") window.ensureAllEmissionsData();
   if (typeof fillForm === "function") fillForm();
   if (typeof window.renderEmissionCMS === "function") window.renderEmissionCMS();
   if (typeof renderSocieteEpisodes === "function") renderSocieteEpisodes();
   if (typeof renderSocieteProgrammes === "function") renderSocieteProgrammes();
   if (typeof window.initMultimediaCMS === "function") window.initMultimediaCMS();
-  if (typeof renderBlogs === "function") renderBlogs(); // sync blogs section too
   setStatus("Synchronisé avec Firebase ✅");
 }
 
@@ -3019,7 +3015,6 @@ document.addEventListener("click", function(e) {
 // =============================================
 
 let activeBlogCat = "all";
-window.__activeBlogCat = "all"; // expose pour les scripts inline
 
 function getFilteredBlogs() {
   const blogs = Array.isArray(data.blogs) ? data.blogs : [];
@@ -3062,11 +3057,6 @@ function renderBlogs() {
         fields.style.display = open ? "none" : "block";
         toggle.textContent = open ? "Modifier" : "Fermer";
       });
-    }
-    // Auto-ouvrir si c'est un nouveau blog sans titre
-    if (!blog.title && idx === 0 && fields && toggle) {
-      fields.style.display = "block";
-      toggle.textContent = "Fermer";
     }
     const view = node.querySelector(".view-blog");
     if (view) view.addEventListener("click", () => {
@@ -3138,8 +3128,6 @@ function addBlog() {
   });
   renderBlogs();
 }
-window.addBlog = addBlog;
-window.renderBlogs = renderBlogs;
 
 function collectBlogsFromDOM() {
   if (window.__skipBlogCollectOnce) { window.__skipBlogCollectOnce = false; return; }
@@ -3167,29 +3155,12 @@ function initBlogCatTabs() {
       tabs.forEach(t => t.classList.remove("active"));
       tab.classList.add("active");
       activeBlogCat = tab.dataset.blogcat;
-      window.__activeBlogCat = activeBlogCat;
       renderBlogs();
     };
   });
 }
 
-// Attach addBlogBtn listener (both immediate and on DOMContentLoaded for safety)
-(function attachAddBlogBtn() {
-  const btn = document.getElementById("addBlogBtn");
-  if (btn && !btn.dataset.blogListenerAttached) {
-    btn.dataset.blogListenerAttached = "1";
-    btn.addEventListener("click", addBlog);
-  }
-})();
-if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", function() {
-    const btn = document.getElementById("addBlogBtn");
-    if (btn && !btn.dataset.blogListenerAttached) {
-      btn.dataset.blogListenerAttached = "1";
-      btn.addEventListener("click", addBlog);
-    }
-  });
-}
+document.getElementById("addBlogBtn")?.addEventListener("click", addBlog);
 
 // Initialiser les blogs quand la vue est activée
 (function() {

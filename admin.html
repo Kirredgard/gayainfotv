@@ -818,44 +818,6 @@
   <button id="exportBtn" type="button" style="display:none"></button>
   <button id="resetBtn" type="button" style="display:none"></button>
   <script src="admin.js"></script>
-  <script>
-    // Fix bouton "Créer un blog" — data est un 'let' dans admin.js, pas sur window
-    if (typeof window.addBlog !== 'function') {
-      window.addBlog = function() {
-        var _data = window.__gayaData || null;
-        var _renderBlogs = window.renderBlogs;
-        if (!_data || typeof _renderBlogs !== 'function') {
-          setTimeout(window.addBlog, 300);
-          return;
-        }
-        if (typeof collectBlogsFromDOM === 'function') collectBlogsFromDOM();
-        var activeCat = window.__activeBlogCat || 'opinions';
-        if (activeCat === 'all') activeCat = 'opinions';
-        if (!Array.isArray(_data.blogs)) _data.blogs = [];
-        _data.blogs.unshift({
-          id: (typeof uid === 'function' ? uid() : Date.now().toString(36) + Math.random().toString(36).slice(2,8)),
-          category: activeCat,
-          title: '', excerpt: '', content: '',
-          author: '', authorPhoto: '', media: '',
-          date: new Date().toISOString().slice(0, 10),
-          createdAt: new Date().toISOString()
-        });
-        if (typeof markDirty === 'function') markDirty();
-        window.__skipBlogCollectOnce = true;
-        _renderBlogs();
-        if (typeof saveData === 'function') saveData('Nouveau blog créé ✅');
-        setTimeout(function(){ if (typeof gayaCMSDirty !== 'undefined') gayaCMSDirty = false; }, 3000);
-      };
-    }
-    (function bindBtn() {
-      var btn = document.getElementById('addBlogBtn');
-      if (btn) {
-        btn.onclick = function(e) { e.stopPropagation(); window.addBlog(); };
-      } else {
-        setTimeout(bindBtn, 100);
-      }
-    })();
-  </script>
 
   <template id="societeEpisodeTemplate">
     <article class="editor-card societe-episode-card">
