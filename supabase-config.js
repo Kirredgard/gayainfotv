@@ -12,6 +12,22 @@ const GAYA_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJ
   const VIEWS_TABLE = "gaya_views";
   const LOCAL_KEYS = ["gayaCMSData", "gayaCMS", "gayaData", "gaya_cms_v1"];
 
+  // ── Migration : purge le localStorage CMS hérité ──────────────────────────
+  // Incrémente MIGRATION_VERSION à chaque fois que tu veux forcer une purge.
+  const MIGRATION_VERSION = 3;
+  const MIGRATION_KEY = "__gayaMigration";
+  (function purgeLegacyCache() {
+    try {
+      const done = parseInt(localStorage.getItem(MIGRATION_KEY) || "0", 10);
+      if (done < MIGRATION_VERSION) {
+        LOCAL_KEYS.forEach(k => localStorage.removeItem(k));
+        localStorage.setItem(MIGRATION_KEY, String(MIGRATION_VERSION));
+        console.log("[GAYA CMS] Cache localStorage CMS purgé (migration v" + MIGRATION_VERSION + ")");
+      }
+    } catch(e) {}
+  })();
+  // ─────────────────────────────────────────────────────────────────────────
+
   let _client = null;
   let _ready = false;
   let _remoteData = null;
@@ -29,13 +45,7 @@ const GAYA_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJ
 
   function clone(v) { return safeParse(JSON.stringify(v || {})) || {}; }
 
-  function readLocal() {
-    for (const key of LOCAL_KEYS) {
-      try { const parsed = safeParse(localStorage.getItem(key)); if (parsed) return parsed; } catch(e) {}
-    }
-    return null;
-  }
-
+  // readLocal n'est conservé QUE pour l'écriture admin (pas comme source de vérité)
   function writeLocal(data) {
     const payload = JSON.stringify(data || {});
     LOCAL_KEYS.forEach(k => { try { localStorage.setItem(k, payload); } catch(e) {} });
@@ -54,7 +64,7 @@ const GAYA_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJ
     const incoming = safeParse(payload);
     if (!incoming) return;
     _remoteData = incoming;
-    writeLocal(incoming);
+    writeLocal(incoming); // conserve une copie locale après fetch Supabase
     emit(incoming);
     resolveReady(incoming);
   }
@@ -63,12 +73,17 @@ const GAYA_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJ
     if (!_client) return;
     const { data, error } = await _client.from(CMS_TABLE).select("content").eq("id", CMS_ID).maybeSingle();
     window.__gayaCMSRemoteLoaded = true;
-    if (error) { console.warn("[GAYA CMS] Lecture Supabase échouée", error); return; }
-    if (data && data.content) applyRemote(data.content);
-    else {
-      // Supabase ne renvoie rien : fallback localStorage silencieux
-      const local = readLocal();
-      if (local) { _remoteData = local; emit(local); resolveReady(local); }
+    if (error) {
+      console.warn("[GAYA CMS] Lecture Supabase échouée", error);
+      resolveReady({});
+      return;
+    }
+    if (data && data.content) {
+      applyRemote(data.content);
+    } else {
+      // Supabase connecté mais aucune donnée : on résout avec vide (pas de fallback localStorage)
+      console.info("[GAYA CMS] Aucune donnée CMS dans Supabase");
+      resolveReady({});
     }
   }
 
@@ -108,16 +123,17 @@ const GAYA_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJ
 
       if (_pendingData) { const p = _pendingData; _pendingData = null; await writeCMS(p); }
       window.dispatchEvent(new CustomEvent("gaya-supabase-ready"));
-      resolveReady(_remoteData || readLocal() || {});
+      resolveReady(_remoteData || {});
       console.log("[GAYA CMS] Supabase connecté ✅");
     } catch(e) {
       window.__gayaCMSRemoteLoaded = true;
-      resolveReady(readLocal() || {});
-      console.warn("[GAYA CMS] Init Supabase échouée, fallback localStorage", e);
+      resolveReady({});
+      console.warn("[GAYA CMS] Init Supabase échouée", e);
     }
   }
 
-  window.gayaCMSRead = function () { return clone(_remoteData || readLocal() || {}); };
+  // gayaCMSRead : uniquement les données Supabase, jamais le localStorage seul
+  window.gayaCMSRead = function () { return clone(_remoteData || {}); };
   window.gayaCMSWrite = function (data) { return writeCMS(data); };
   window.gayaCMSOnUpdate = function (callback) { if (typeof callback === "function") _listeners.push(callback); if (_remoteData) callback(_remoteData); };
 
