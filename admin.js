@@ -3136,14 +3136,7 @@ function addBlog() {
     date: new Date().toISOString().slice(0, 10),
     createdAt: new Date().toISOString()
   });
-  // Marquer dirty AVANT saveData pour empêcher refreshCMSFromRemote
-  // d'écraser le nouveau blog pendant la sauvegarde asynchrone
-  markDirty();
   renderBlogs();
-  window.__skipBlogCollectOnce = true;
-  saveData("Nouveau blog créé ✅");
-  // Garder le verrou dirty quelques secondes le temps que Supabase confirme
-  setTimeout(() => { gayaCMSDirty = false; }, 3000);
 }
 window.addBlog = addBlog;
 window.renderBlogs = renderBlogs;
