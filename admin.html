@@ -819,19 +819,20 @@
   <button id="resetBtn" type="button" style="display:none"></button>
   <script src="admin.js"></script>
   <script>
-    // Fix bouton "Créer un blog" — définition directe si admin.js ne l'expose pas
+    // Fix bouton "Créer un blog" — data est un 'let' dans admin.js, pas sur window
     if (typeof window.addBlog !== 'function') {
       window.addBlog = function() {
-        // Attendre que data et les fonctions soient dispo
-        if (typeof data === 'undefined' || typeof renderBlogs !== 'function') {
-          console.warn('[Blog] addBlog appelé trop tôt, retry dans 300ms');
+        var _data = window.__gayaData || null;
+        var _renderBlogs = window.renderBlogs;
+        if (!_data || typeof _renderBlogs !== 'function') {
           setTimeout(window.addBlog, 300);
           return;
         }
         if (typeof collectBlogsFromDOM === 'function') collectBlogsFromDOM();
-        var activeCat = (typeof activeBlogCat !== 'undefined' && activeBlogCat !== 'all') ? activeBlogCat : 'opinions';
-        if (!Array.isArray(data.blogs)) data.blogs = [];
-        data.blogs.unshift({
+        var activeCat = window.__activeBlogCat || 'opinions';
+        if (activeCat === 'all') activeCat = 'opinions';
+        if (!Array.isArray(_data.blogs)) _data.blogs = [];
+        _data.blogs.unshift({
           id: (typeof uid === 'function' ? uid() : Date.now().toString(36) + Math.random().toString(36).slice(2,8)),
           category: activeCat,
           title: '', excerpt: '', content: '',
@@ -839,11 +840,10 @@
           date: new Date().toISOString().slice(0, 10),
           createdAt: new Date().toISOString()
         });
-        renderBlogs();
+        _renderBlogs();
         if (typeof saveData === 'function') saveData('Nouveau blog créé ✅');
       };
     }
-    // Bind sur le bouton
     (function bindBtn() {
       var btn = document.getElementById('addBlogBtn');
       if (btn) {

@@ -24,6 +24,7 @@ const defaultData = {
 };
 
 let data = loadData();
+window.__gayaData = data; // expose pour les scripts inline
 
 const els = {
   ticker: document.getElementById("ticker"),
@@ -3015,6 +3016,7 @@ document.addEventListener("click", function(e) {
 // =============================================
 
 let activeBlogCat = "all";
+window.__activeBlogCat = "all"; // expose pour les scripts inline
 
 function getFilteredBlogs() {
   const blogs = Array.isArray(data.blogs) ? data.blogs : [];
@@ -3157,6 +3159,7 @@ function initBlogCatTabs() {
       tabs.forEach(t => t.classList.remove("active"));
       tab.classList.add("active");
       activeBlogCat = tab.dataset.blogcat;
+      window.__activeBlogCat = activeBlogCat;
       renderBlogs();
     };
   });
