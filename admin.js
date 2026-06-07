@@ -3060,6 +3060,11 @@ function renderBlogs() {
         toggle.textContent = open ? "Modifier" : "Fermer";
       });
     }
+    // Auto-ouvrir si c'est un nouveau blog sans titre
+    if (!blog.title && idx === 0 && fields && toggle) {
+      fields.style.display = "block";
+      toggle.textContent = "Fermer";
+    }
     const view = node.querySelector(".view-blog");
     if (view) view.addEventListener("click", () => {
       collectBlogsFromDOM();
