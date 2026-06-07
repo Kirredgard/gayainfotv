@@ -818,7 +818,10 @@ function gayaFormatDate(value) {
 }
 
 function gayaGetCMSData() {
-  const keys = ["gayaCMSData", "gayaCMS", "gayaData"];
+  // Priorité 1 : données Supabase déjà chargées en mémoire (source la plus fraîche)
+  if (window.gayaCMSRead) { try { const d = gayaCMSRead(); if (d && (d.articles || d.slides)) return d; } catch(e) {} }
+  // Priorité 2 : fallback localStorage (inclut gaya_cms_v1 écrit par supabase-config.js)
+  const keys = ["gayaCMSData", "gayaCMS", "gayaData", "gaya_cms_v1"];
   for (const key of keys) {
     try {
       const raw = localStorage.getItem(key);
@@ -878,11 +881,14 @@ function showActualitesLoading() {
 }
 
 function reloadActualitesFromCMS() {
-  if (!window.__gayaCMSRemoteLoaded && window.supabase) {
+  // Récupération immédiate (localStorage ou mémoire Supabase) — pas de blocage réseau
+  const articles = getCMSArticlesForActualites().sort((a,b)=>(b.featured===true)-(a.featured===true));
+  if (articles.length === 0 && !window.__gayaCMSRemoteLoaded && window.supabase) {
+    // Aucune donnée locale ET Supabase pas encore répondu : afficher le loader
     showActualitesLoading();
     return;
   }
-  allArticles = getCMSArticlesForActualites().sort((a,b)=>(b.featured===true)-(a.featured===true));
+  allArticles = articles;
   currentPage = 1;
   updateFilterCounts();
   renderArticles();
@@ -1172,13 +1178,17 @@ function refreshArticleCounters() {
 window.addEventListener("gaya-supabase-ready", refreshArticleCounters);
 
 // INIT
-renderTrending();
-reloadActualitesFromCMS();
+document.addEventListener('DOMContentLoaded', function() {
+  renderTrending();
+  // Rendu immédiat depuis localStorage (sans attendre Supabase)
+  reloadActualitesFromCMS();
+  // Mise à jour dès que Supabase répond (données fraîches)
+  if (window.gayaCMSReadyPromise) window.gayaCMSReadyPromise.then(reloadActualitesFromCMS);
+});
 window.addEventListener('gaya-cms-updated', reloadActualitesFromCMS);
 window.addEventListener('gaya-supabase-ready', reloadActualitesFromCMS);
 window.addEventListener('storage', reloadActualitesFromCMS);
 if (window.gayaCMSOnUpdate) window.gayaCMSOnUpdate(reloadActualitesFromCMS);
-if (window.gayaCMSReadyPromise) window.gayaCMSReadyPromise.then(reloadActualitesFromCMS);
 </script>
   <script>
     if ("serviceWorker" in navigator) {
