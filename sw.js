@@ -1,25 +1,13 @@
-/* GAYA INFO TV — Service Worker v52
-   Stratégie : network-first pour HTML (contenu toujours frais),
-               cache-first pour JS/CSS/images (rendu immédiat sans flash de données périmées),
+/* GAYA INFO TV — Service Worker v53
+   Stratégie : network-first pour HTML + JS/CSS (contenu toujours frais),
+               cache-first pour images/fonts/icônes (assets immuables),
                bypass total pour Supabase. */
 
-const CACHE_STATIC = 'gaya-static-v52';
-const CACHE_PAGES  = 'gaya-pages-v52';
+const CACHE_STATIC = 'gaya-static-v53';
+const CACHE_PAGES  = 'gaya-pages-v53';
 
-// Assets statiques à précacher au premier install
+// Seuls les assets vraiment immuables sont précachés
 const PRECACHE = [
-  '/supabase-config.js',
-  '/script.js',
-  '/style.css',
-  '/home-cms-bridge.js',
-  '/home-latest-articles.js',
-  '/emissions.js',
-  '/emissions-cms.js',
-  '/emissions.css',
-  '/pwa-install.js',
-  '/gaya-cms-bridge.js',
-  '/article.js',
-  '/articles.js',
   '/favicon-192x192.png',
   '/favicon-512x512.png',
   '/favicon-32x32.png',
@@ -51,7 +39,7 @@ self.addEventListener('fetch', event => {
   // Requêtes Supabase : toujours réseau, jamais cache
   if (url.hostname.includes('supabase.co')) return;
 
-  // Ressources tierces (CDN fonts, icons) : cache-first
+  // Ressources tierces (CDN fonts, icons) : cache-first (immuables)
   if (url.origin !== self.location.origin) {
     event.respondWith(cacheFirst(req, CACHE_STATIC));
     return;
@@ -59,14 +47,20 @@ self.addEventListener('fetch', event => {
 
   const path = url.pathname;
 
-  // Pages HTML : network-first (contenu toujours frais)
+  // Pages HTML : network-first
   if (req.headers.get('accept')?.includes('text/html') || path.endsWith('/') || path.endsWith('.html')) {
     event.respondWith(networkFirstWithCache(req, CACHE_PAGES));
     return;
   }
 
-  // JS, CSS, images, fonts : cache-first (rendu immédiat, pas de flash de données périmées)
-  if (/\.(js|css|png|jpg|jpeg|gif|webp|svg|ico|woff2?|ttf)(\?.*)?$/i.test(path)) {
+  // JS et CSS : network-first (pour avoir toujours le code à jour)
+  if (/\.(js|css)(\?.*)?$/i.test(path)) {
+    event.respondWith(networkFirstWithCache(req, CACHE_STATIC));
+    return;
+  }
+
+  // Images, fonts, icônes : cache-first (assets immuables, gain perf)
+  if (/\.(png|jpg|jpeg|gif|webp|svg|ico|woff2?|ttf)(\?.*)?$/i.test(path)) {
     event.respondWith(cacheFirst(req, CACHE_STATIC));
     return;
   }
