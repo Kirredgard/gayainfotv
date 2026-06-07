@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <base href="/">
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="apple-touch-icon" sizes="192x192" href="/favicon-192x192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="/favicon-512x512.png">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Économie — Émissions GAYA INFO TV</title>
+<meta name="description" content="Émissions Économie de GAYA INFO TV — Agriculture, commerce, développement et finances à Dagana et Saint-Louis.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Source+Sans+3:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="/style.css">
+<link rel="stylesheet" href="/emissions.css">
+<style>
+  :root { --accent: #1E3A5F !important; --accent-light: #1E3A5F18 !important; }
+  .emissions-hero { background: #5bcf8a;; }
+  .hero-badge { color: white; border-color: white; }
+  .emissions-hero h1 em { color: white; }
+
+/* === CMS : rendu commun des pages émissions === */
+html { scroll-behavior: smooth; }
+.emission-featured {
+  background: #ffffff !important;
+  border: 1px solid rgba(0,0,0,.08) !important;
+  box-shadow: 0 10px 30px rgba(0,0,0,.08) !important;
+  position: relative !important;
+  display: grid !important;
+  grid-template-columns: minmax(0, 1.2fr) minmax(320px, .8fr) !important;
+  min-height: 360px !important;
+  border-radius: 18px !important;
+  overflow: hidden !important;
+  margin-bottom: 28px !important;
+}
+.emission-featured-media {
+  position: relative !important;
+  height: 100% !important;
+  min-height: 360px !important;
+}
+.emission-featured-media img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+}
+.emission-featured-body {
+  background: #ffffff !important;
+  padding: 42px 28px 26px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: flex-start !important;
+}
+.emission-featured-title {
+  color: #0a1235 !important;
+  font-size: 30px !important;
+  line-height: 1.08 !important;
+  margin-bottom: 14px !important;
+}
+.emission-featured-desc {
+  color: #4b5563 !important;
+  font-size: 15px !important;
+  line-height: 1.6 !important;
+  margin-bottom: 18px !important;
+  -webkit-line-clamp: 4 !important;
+}
+.emission-meta-row,
+.emission-meta-row span {
+  color: #4b5563 !important;
+  font-size: 12px !important;
+  gap: 14px !important;
+}
+.emission-ep-label { color: var(--accent) !important; }
+.play-circle { width: 76px !important; height: 76px !important; }
+.play-circle i { font-size: 24px !important; }
+.episodes-grid {
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  gap: 14px !important;
+  margin-bottom: 28px !important;
+}
+.episodes-grid .episode-card { width: 100% !important; border-radius: var(--radius-lg) !important; }
+.episodes-grid .episode-thumb { aspect-ratio: 16/9 !important; height: auto !important; max-height: none !important; }
+.episodes-grid .episode-info { padding: 11px 12px 13px !important; }
+.episodes-grid .episode-title { font-size: 13.5px !important; line-height: 1.25 !important; }
+.episodes-grid .episode-meta { font-size: 10.5px !important; }
+@media (max-width: 1050px) {
+  .episodes-grid { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; }
+}
+@media (max-width: 900px) {
+  .emission-featured {
+    grid-template-columns: 1fr !important;
+    min-height: auto !important;
+  }
+  .emission-featured-media { min-height: 240px !important; }
+  .emission-featured-title { font-size: 24px !important; }
+}
+@media (max-width: 720px) {
+  .episodes-grid { grid-template-columns: 1fr !important; }
+}
+
+
+/* === Émissions : grille 4 colonnes, badge supprimé === */
+.hero-badge { display: none !important; }
+.episodes-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+}
+@media (max-width: 1150px) {
+  .episodes-grid { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; }
+}
+@media (max-width: 850px) {
+  .episodes-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+}
+@media (max-width: 560px) {
+  .episodes-grid { grid-template-columns: 1fr !important; }
+}
+
+
+/* === Hero émissions compact === */
+.emission-featured {
+  min-height: 260px !important;
+  margin-bottom: 20px !important;
+}
+.emission-featured-media {
+  min-height: 260px !important;
+}
+.emission-featured-body {
+  padding: 26px 22px 20px !important;
+}
+.emission-featured-title {
+  font-size: 24px !important;
+  line-height: 1.08 !important;
+  margin-bottom: 10px !important;
+}
+.emission-featured-desc {
+  font-size: 13px !important;
+  line-height: 1.45 !important;
+  margin-bottom: 12px !important;
+  -webkit-line-clamp: 3 !important;
+}
+.play-circle {
+  width: 58px !important;
+  height: 58px !important;
+}
+.play-circle i {
+  font-size: 18px !important;
+}
+@media (max-width: 900px) {
+  .emission-featured {
+    min-height: auto !important;
+  }
+  .emission-featured-media {
+    min-height: 190px !important;
+  }
+}
+
+
+/* === Sections titres émissions compactes === */
+.page-hero,
+.hero-section,
+.page-title-section {
+  padding-top: 18px !important;
+  padding-bottom: 18px !important;
+  min-height: auto !important;
+}
+.page-hero .container,
+.hero-section .container,
+.page-title-section .container {
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}
+.breadcrumb,
+.hero-breadcrumb {
+  margin-bottom: 8px !important;
+  font-size: 12px !important;
+}
+.page-title,
+.hero-title,
+.page-hero h1 {
+  font-size: 34px !important;
+  line-height: 1.05 !important;
+  margin-bottom: 8px !important;
+}
+.page-subtitle,
+.hero-subtitle,
+.page-hero p {
+  font-size: 14px !important;
+  line-height: 1.45 !important;
+  max-width: 720px !important;
+  margin-bottom: 0 !important;
+}
+@media (max-width: 768px) {
+  .page-title,
+  .hero-title,
+  .page-hero h1 {
+    font-size: 26px !important;
+  }
+
+  .page-subtitle,
+  .hero-subtitle,
+  .page-hero p {
+    font-size: 13px !important;
+  }
+
+  .page-hero,
+  .hero-section,
+  .page-title-section {
+    padding-top: 14px !important;
+    padding-bottom: 14px !important;
+  }
+}
+
+
+/* === HERO TITRES ULTRA COMPACTS === */
+.page-hero,
+.hero-section,
+.page-title-section,
+.hero {
+  padding-top: 10px !important;
+  padding-bottom: 10px !important;
+  min-height: unset !important;
+}
+
+.page-hero .container,
+.hero-section .container,
+.page-title-section .container,
+.hero .container {
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+.breadcrumb,
+.hero-breadcrumb {
+  margin-bottom: 4px !important;
+  font-size: 10.5px !important;
+  line-height: 1.2 !important;
+}
+
+.page-title,
+.hero-title,
+.page-hero h1,
+.hero h1 {
+  font-size: 25px !important;
+  line-height: 1 !important;
+  margin-bottom: 5px !important;
+  letter-spacing: -.4px !important;
+}
+
+.page-subtitle,
+.hero-subtitle,
+.page-hero p,
+.hero p {
+  font-size: 12px !important;
+  line-height: 1.35 !important;
+  max-width: 560px !important;
+  margin-bottom: 0 !important;
+}
+
+@media (max-width: 768px) {
+  .page-title,
+  .hero-title,
+  .page-hero h1,
+  .hero h1 {
+    font-size: 20px !important;
+  }
+
+  .page-subtitle,
+  .hero-subtitle,
+  .page-hero p,
+  .hero p {
+    font-size: 11px !important;
+  }
+
+  .page-hero,
+  .hero-section,
+  .page-title-section,
+  .hero {
+    padding-top: 8px !important;
+    padding-bottom: 8px !important;
+  }
+}
+
+
+/* === Thème émission personnalisé === */
+:root {
+  --accent: #1E3A5F !important;
+}
+.page-hero,
+.hero,
+.hero-section,
+.page-title-section {
+  background: #1E3A5F !important;
+}
+.section-link,
+.emission-ep-label,
+.breadcrumb a:hover {
+  color: #1E3A5F !important;
+}
+.play-circle,
+.featured-badge,
+.ep-num-badge,
+.cms-accent,
+.section-title-bar h2 i {
+  background: #1E3A5F !important;
+}
+.episode-card:hover,
+.episode-list-item:hover {
+  border-color: #1E3A5F33 !important;
+}
+
+
+
+/* === Hero entier couleur thème === */
+.page-hero,
+.hero,
+.hero-section,
+.page-title-section {
+  background: #1E3A5F !important;
+  border-radius: 0 !important;
+}
+
+.page-hero .container,
+.hero .container,
+.hero-section .container,
+.page-title-section .container {
+  background: transparent !important;
+  border-radius: 0 !important;
+  max-width: 1180px !important;
+  padding-left: 18px !important;
+  padding-right: 18px !important;
+}
+
+.page-title,
+.hero-title,
+.page-hero h1,
+.hero h1,
+.page-subtitle,
+.hero-subtitle,
+.page-hero p,
+.hero p,
+.breadcrumb,
+.hero-breadcrumb,
+.breadcrumb a,
+.breadcrumb span {
+  color: #ffffff !important;
+}
+
+
+/* === Correction finale couleur hero émissions === */
+.emissions-hero {
+  background: #1E3A5F !important;
+  background-color: #1E3A5F !important;
+}
+.emissions-hero .container,
+.emissions-hero .hero-inner {
+  background: transparent !important;
+}
+.hero-watermark {
+  color: rgba(255,255,255,.08) !important;
+}
+.emissions-hero,
+.emissions-hero h1,
+.emissions-hero h1 em,
+.emissions-hero p,
+.emissions-hero .breadcrumb,
+.emissions-hero .breadcrumb a,
+.emissions-hero .breadcrumb span,
+.emissions-hero .breadcrumb i {
+  color: #ffffff !important;
+}
+
+</style>
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#e63946">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="GAYA INFO">
+  <link rel="apple-touch-icon" href="/favicon-192x192.png">
+</head>
+<body>
+
+<div class="ticker-wrap">
+    <div class="ticker-label">INFO</div>
+  <div class="ticker-content">
+    <span> Actualités, analyses et couverture d'événements en direct — suivez tout ici &nbsp;&nbsp;&nbsp;•&nbsp;&nbsp;&nbsp; Service commercial : 77 935 17 86 / 77 605 95 76 </span>
+  </div>
+</div>
+
+<header class="site-header" id="site-header">
+  <div class="header-inner">
+    <a href="/" class="logo">
+      <img src="/gaya.jpg" alt="GAYA INFO TV" onerror="this.style.display='none'">
+      <div class="logo-text"><span class="logo-name">GAYA INFO TV</span><span class="logo-tagline">L'information de proximité</span></div>
+    </a>
+    <nav class="main-nav" id="main-nav">
+      <a href="/" class="nav-link">Accueil</a>
+      <a href="/actualites/" class="nav-link">Actualités</a>
+      <div class="nav-dropdown">
+        <a href="#" class="nav-link dropdown-trigger active">Émissions <i class="fa-solid fa-chevron-down" style="font-size:10px;"></i></a>
+        <div class="dropdown-menu">
+          <a href="/societe/"><i class="fa-solid fa-users"></i> Société</a>
+          <a href="/economie/"><i class="fa-solid fa-chart-line"></i> Économie</a>
+          <a href="/religion/"><i class="fa-solid fa-mosque"></i> Religion</a>
+          <a href="/sport/"><i class="fa-solid fa-futbol"></i> Sport</a>
+          <a href="/faitsdivers/"><i class="fa-solid fa-newspaper"></i> Faits divers</a>
+        </div>
+      </div>
+      <a href="/multimedia/" class="nav-link">Multimédia</a>
+      <a href="/apropos/" class="nav-link">À propos</a>
+      <a href="/blogs/" class="nav-link">Blogs</a>
+      <a href="/contact/" class="nav-link">Contact</a>
+    </nav>
+    <div class="header-actions">
+      <button class="btn-search" id="search-toggle"><i class="fa-solid fa-magnifying-glass"></i></button>
+      <a href="#" class="btn-radio"><i class="fa-solid fa-radio"></i> Radio</a>
+      <button type="button" class="btn-live" id="btnLiveDirect"><span class="live-dot"></span> Direct</button>
+      <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+  <div class="search-bar" id="search-bar">
+    <div class="search-inner"><i class="fa-solid fa-magnifying-glass"></i><input type="text" placeholder="Rechercher..."><button class="search-close" id="search-close"><i class="fa-solid fa-xmark"></i></button></div>
+  </div>
+</header>
+
+<div class="social-bar">
+  <div class="social-bar-inner">
+    <span class="social-bar-label">Suivez-nous</span>
+    <a href="https://www.facebook.com/gayainfotv" target="_blank" rel="noopener" class="social-icon fb"><i class="fa-brands fa-facebook-f"></i></a>
+    <a href="https://www.youtube.com/@gayainfotv" target="_blank" rel="noopener" class="social-icon yt"><i class="fa-brands fa-youtube"></i></a>
+    <a href="#" class="social-icon ig"><i class="fa-brands fa-instagram"></i></a>
+    <a href="#" class="social-icon tw"><i class="fa-brands fa-x-twitter"></i></a>
+    <div class="social-bar-date" id="current-date"></div>
+  </div>
+</div>
+
+<section class="emissions-hero">
+  <div class="hero-watermark">ÉCONOMIE</div>
+  <div class="container hero-inner">
+    <div class="breadcrumb">
+      <a href="/">Accueil</a><i class="fa-solid fa-chevron-right"></i>
+      <a href="#">Émissions</a><i class="fa-solid fa-chevron-right"></i>
+      <span class="current">Économie</span>
+    </div>
+<h1>Marchés &amp; <em>Développement</em></h1>
+    <p class="hero-desc">Analyses économiques, portraits d'entrepreneurs et focus sur les filières agricoles qui font la richesse de la région.</p>
+    <div class="hero-schedule-strip">
+
+    </div>
+  </div>
+</section>
+
+<nav class="emissions-subnav">
+  <div class="emissions-subnav-inner">
+    <a href="/societe/" class="subnav-link"><i class="fa-solid fa-users"></i> Société</a>
+    <a href="/economie/" class="subnav-link active"><i class="fa-solid fa-chart-line"></i> Économie</a>
+    <a href="/religion/" class="subnav-link"><i class="fa-solid fa-mosque"></i> Religion</a>
+    <a href="/sport/" class="subnav-link"><i class="fa-solid fa-futbol"></i> Sport</a>
+    <a href="/faitsdivers/" class="subnav-link"><i class="fa-solid fa-newspaper"></i> Faits divers</a>
+  </div>
+</nav>
+
+<section class="emissions-page">
+  <div class="container">
+    <div class="emissions-layout">
+      <main>
+        <div class="emission-featured">
+          <div class="emission-featured-media" onclick="">
+            <div class="placeholder-bg"><i class="fa-solid fa-chart-line"></i></div>
+            <div class="featured-play-btn"><div class="play-circle"><i class="fa-solid fa-play"></i></div></div>
+            <span class="featured-badge">À la une</span>
+          </div>
+          <div class="emission-featured-body">
+            <div class="emission-ep-label">Économie & Agriculture</div>
+            <h2 class="emission-featured-title"></h2>
+            <p class="emission-featured-desc">Rencontre avec les producteurs de la vallée du fleuve Sénégal, qui font de l'agriculture irriguée un modèle de développement pour toute la région.</p>
+            <div class="emission-meta-row">
+              <span><i class="fa-regular fa-calendar"></i> 21 Avr 2025</span>
+              <span><i class="fa-regular fa-clock"></i> 52 min</span>
+              <span><i class="fa-regular fa-eye"></i> 4 180 vues</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-title-bar">
+          <h2><i class="fa-solid fa-film"></i> Derniers épisodes</h2>
+          <a href="#plus-episodes" class="section-link">Tous les épisodes <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+        <div class="episodes-grid" id="episodes-grid"></div>
+
+        <div class="section-title-bar" id="plus-episodes" style="margin-top:2rem;">
+          <h2><i class="fa-solid fa-list"></i> Plus d'épisodes</h2>
+        </div>
+        <div class="episodes-list" id="episodes-list"></div>
+      </main>
+
+      <aside class="sidebar">
+        <div class="sidebar-widget widget-live" id="live">
+        <div class="sidebar-widget widget-live" id="live">
+  <div class="widget-header">
+    <span class="live-indicator">
+      <span class="live-dot"></span> Diffusion en direct
+    </span>
+  </div>
+
+  <div class="live-player-wrap" id="live-content">
+    <p style="text-align:center; padding:1rem; color:#aaa;">
+      Vérification du live...
+    </p>
+  </div>
+
+  <div class="live-now">
+    <div class="live-now-badge">
+      <span class="live-dot"></span> En ce moment
+    </div>
+    <p id="live-title">Chargement...</p>
+  </div>
+</div>
+
+        <div class="sidebar-widget">
+          <div class="widget-header"><h3 class="widget-title">Programme de la semaine</h3></div>
+          <div class="schedule-list">
+            <div class="schedule-item"><span class="schedule-day">Mar</span><div><div class="schedule-show">Bourse et marchés</div><div class="schedule-time">20h00</div></div></div>
+            <div class="schedule-item"><span class="schedule-day">Jeu</span><div><div class="schedule-show">L'entreprise locale</div><div class="schedule-time">19h30</div></div></div>
+            <div class="schedule-item"><span class="schedule-day">Sam</span><div><div class="schedule-show">Agriculture & filières</div><div class="schedule-time">10h00</div></div></div>
+          </div>
+        </div>
+
+        <div class="sidebar-widget">
+          <div class="widget-header"><h3 class="widget-title">Autres émissions</h3></div>
+          <div class="other-emissions">
+            <a href="/societe/" class="other-emission-link"><i class="fa-solid fa-users" style="color:#2d5be3"></i> Société</a>
+            <a href="/economie/" class="other-emission-link current"><i class="fa-solid fa-chart-line" style="color:#1a7c4f"></i> Économie</a>
+            <a href="/religion/" class="other-emission-link"><i class="fa-solid fa-mosque" style="color:#b8571a"></i> Religion</a>
+            <a href="/sport/" class="other-emission-link"><i class="fa-solid fa-futbol" style="color:#c8102e"></i> Sport</a>
+            <a href="/faitsdivers/" class="other-emission-link"><i class="fa-solid fa-newspaper" style="color:#996600"></i> Faits divers</a>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<div class="lightbox-overlay" id="video-lightbox">
+  <div class="lightbox-box">
+    <button class="lightbox-close" onclick="closeLightbox()"><i class="fa-solid fa-xmark"></i></button>
+    <iframe id="lightbox-iframe" allowfullscreen></iframe>
+    <p class="lightbox-title" id="lightbox-video-title"></p>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="site-footer">
+  <div class="footer-top">
+    <div class="container footer-grid">
+
+      <div class="footer-col footer-brand">
+        <a href="/" class="footer-logo">
+          <img src="/gaya.jpg" alt="GAYA INFO TV" onerror="this.style.display='none'">
+          <span>GAYA INFO TV</span>
+        </a>
+        <p class="footer-about">Média de proximité dédié à l'information locale, nous couvrons l'actualité avec rigueur et impartialité.</p>
+        <div class="footer-socials">
+          <a href="https://www.facebook.com/gayainfotv" target="_blank" rel="noopener" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+          <a href="https://www.youtube.com/@gayainfotv" target="_blank" rel="noopener" aria-label="YouTube"><i class="fa-brands fa-youtube"></i></a>
+          <a href="#" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+          <a href="#" aria-label="X/Twitter"><i class="fa-brands fa-x-twitter"></i></a>
+        </div>
+      </div>
+
+      <div class="footer-col">
+        <h4>Navigation</h4>
+        <ul>
+          <li><a href="/actualites/">Actualités</a></li>
+          <li><a href="/societe/">Société</a></li>
+          <li><a href="/economie/">Économie</a></li>
+          <li><a href="/religion/">Religion</a></li>
+          <li><a href="/sport/">Sport</a></li>
+          <li><a href="/faitsdivers/">Faits divers</a></li>
+          <li><a href="/multimedia/">Multimédia</a></li>
+          <li><a href="/blogs/">Blogs</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Groupe GAYA INFO</h4>
+        <ul>
+          <li><a href="#">Radio Gaya</a></li>
+          <li><a href="#" class="gaya-sport-soon">GAYA Sport & Culture</a></li>
+        </ul>
+        <h4 style="margin-top: 1.5rem;">Informations</h4>
+        <ul>
+          <li><a href="/apropos/">À propos</a></li>
+          <li><a href="/contact/">Contact</a></li>
+          <li><a href="#nous-soutenir" class="gaya-don-trigger">Nous soutenir</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col footer-contact">
+        <h4>Nous contacter</h4>
+        <ul class="contact-list">
+          <li><i class="fa-solid fa-location-dot"></i> Gaé, Dagana — 23002 Saint-Louis, Sénégal</li>
+          <li><i class="fa-solid fa-envelope"></i> <a href="mailto:gayainfopdg@gmail.com">gayainfopdg@gmail.com</a></li>
+          <li><i class="fa-solid fa-phone"></i> 77 935 17 86 / 77 605 95 76</li>
+        </ul>
+        <div class="footer-newsletter">
+          <p>Restez informé :</p>
+          <form class="footer-form" onsubmit="subscribeNewsletter(event)">
+            <input type="email" placeholder="Votre e-mail">
+            <button type="submit">OK</button>
+          </form>
+        </div>
+      </div>
+
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="footer-bottom-inner">
+      <span>© 2025 GAYA INFO TV — Tous droits réservés</span>
+      <span>Dev - </i> SKadiar Design</span>
+    </div>
+  </div>
+</footer>
+<!-- TOAST BIENTÔT DISPONIBLE -->
+<div class="toast-soon" id="toast-soon">
+  <div class="toast-soon-icon">
+    <i class="fa-solid fa-radio"></i>
+  </div>
+  <div class="toast-soon-text">
+    <div class="toast-soon-title">Radio Gaya FM</div>
+    <div class="toast-soon-sub">Radio Gaya FM bientôt disponible ✨</div>
+  </div>
+  <button class="toast-soon-close" onclick="hideToast()">
+    <i class="fa-solid fa-xmark"></i>
+  </button>
+</div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/supabase-config.js?v=9"></script>
+<script src="/script.js?v=16"></script>
+<script src="/emissions.js"></script>
+<script>
+
+const episodes = [];
+const moreEpisodes = [];
+document.getElementById('episodes-list').innerHTML = moreEpisodes.map(e => `
+  <div class="episode-list-item" onclick="">
+    <div class="episode-list-thumb"><span class="lt-icon"><i class="fa-solid fa-chart-line"></i></span></div>
+    <div class="episode-list-info">
+      <div class="episode-list-ep">${e.ep}</div>
+      <div class="episode-list-title">${e.title}</div>
+      <div class="episode-list-meta">${e.date} · ${e.duration}</div>
+    </div>
+  </div>`).join('');
+
+</script>
+<script src="/emissions-cms.js"></script>
+  <script>
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", function() {
+        navigator.serviceWorker.register("/sw.js?v=9", { updateViaCache: "none" })
+          .then(function(reg) { console.log("SW enregistré :", reg.scope); })
+          .catch(function(err) { console.warn("SW échec :", err); });
+      });
+    }
+  </script>
+  <script src="/pwa-install.js"></script>
+</body>
+</html>

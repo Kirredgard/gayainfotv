@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <base href="/">
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="apple-touch-icon" sizes="192x192" href="/favicon-192x192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="/favicon-512x512.png">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contact — GAYA INFO TV</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Source+Sans+3:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="/style.css">
+<style>
+.page-hero {
+  background: linear-gradient(135deg, var(--color-dark) 0%, var(--color-dark-3) 100%);
+  padding: 20px 0 20px;
+}
+.page-hero h1 {
+  font-family: var(--font-display);
+  font-size: 48px;
+  font-weight: 900;
+  color: #fff;
+  margin-bottom: 12px;
+}
+.page-hero h1 em { font-style: normal; color: var(--color-red); }
+.page-hero p { font-size: 16px; color: #8888a8; }
+.breadcrumb { display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: #5a5a78; margin-bottom: 20px; }
+.breadcrumb a { color: var(--color-red); }
+.breadcrumb i { font-size: 9px; }
+
+/* ---- CONTACT PAGE ---- */
+.contact-page { padding: 60px 0 80px; }
+
+.contact-layout {
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  gap: 48px;
+  align-items: start;
+}
+
+/* INFO CARDS */
+.contact-info { display: flex; flex-direction: column; gap: 16px; }
+
+.contact-info-card {
+  background: var(--color-white);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 22px 22px;
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+.contact-info-card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+
+.contact-info-icon {
+  width: 44px;
+  height: 44px;
+  background: var(--color-red-light);
+  border-radius: var(--radius);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.contact-info-icon i { font-size: 17px; color: var(--color-red); }
+
+.contact-info-text h4 {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--color-text);
+  margin-bottom: 4px;
+}
+.contact-info-text p, .contact-info-text a {
+  font-size: 13.5px;
+  color: var(--color-text-2);
+  line-height: 1.5;
+}
+.contact-info-text a:hover { color: var(--color-red); }
+
+/* SOCIAL LINKS */
+.contact-social-section {
+  background: var(--color-dark);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+}
+.contact-social-section h4 {
+  font-size: 13px;
+  font-weight: 700;
+  color: #7070a0;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 16px;
+}
+.contact-social-links { display: flex; flex-direction: column; gap: 10px; }
+.contact-social-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: var(--radius);
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #c0c0d8;
+  transition: background 0.2s, color 0.2s;
+  border: 1px solid rgba(255,255,255,0.07);
+}
+.contact-social-link:hover { background: rgba(255,255,255,0.07); color: #fff; }
+.contact-social-link .csli {
+  width: 30px;
+  height: 30px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  flex-shrink: 0;
+}
+.csli-fb { background: #1877f2; color: #fff; }
+.csli-yt { background: #ff0000; color: #fff; }
+.csli-ig { background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366); color: #fff; }
+
+/* ---- CONTACT FORM ---- */
+.contact-form-card {
+  background: var(--color-white);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.form-header {
+  padding: 24px 28px;
+  border-bottom: 1px solid var(--color-border);
+}
+.form-header h2 {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--color-text);
+  margin-bottom: 4px;
+}
+.form-header p { font-size: 13.5px; color: var(--color-text-muted); }
+
+.form-body { padding: 28px; }
+
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+.form-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 18px; }
+.form-group:last-child { margin-bottom: 0; }
+
+.form-group label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.form-group label .required { color: var(--color-red); margin-left: 2px; }
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  padding: 10px 14px;
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius);
+  font-size: 14px;
+  color: var(--color-text);
+  background: var(--color-bg);
+  outline: none;
+  transition: border-color 0.2s, background 0.2s;
+  width: 100%;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  border-color: var(--color-red);
+  background: #fff;
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 130px;
+  line-height: 1.6;
+}
+
+.form-group select { cursor: pointer; }
+
+.form-submit {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.btn-submit {
+  padding: 12px 28px;
+  background: var(--color-red);
+  color: #fff;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: background 0.2s, transform 0.1s;
+}
+.btn-submit:hover { background: var(--color-red-dark); transform: scale(1.02); }
+.btn-submit i { font-size: 13px; }
+
+.form-note { font-size: 12px; color: var(--color-text-muted); }
+
+.success-message {
+  display: none;
+  background: #f0fff5;
+  border: 1px solid #c6e8d9;
+  border-radius: var(--radius);
+  padding: 14px 18px;
+  color: #1a7c4f;
+  font-size: 14px;
+  font-weight: 600;
+  margin-top: 16px;
+  align-items: center;
+  gap: 10px;
+}
+
+@media (max-width: 900px) {
+  .contact-layout { grid-template-columns: 1fr; }
+  .page-hero h1 { font-size: 32px; }
+}
+@media (max-width: 600px) {
+  .form-row { grid-template-columns: 1fr; }
+  .form-body { padding: 20px; }
+}
+</style>
+  <!-- Firebase SDK -->
+  <!-- GAYA CMS Firebase Config -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/supabase-config.js?v=9"></script>
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#e63946">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="GAYA INFO">
+  <link rel="apple-touch-icon" href="/favicon-192x192.png">
+</head>
+<body>
+
+<!-- TICKER -->
+<div class="ticker-wrap">
+    <div class="ticker-label">INFO</div>
+  <div class="ticker-content">
+    <span> Actualités, analyses et couverture d'événements en direct — suivez tout ici &nbsp;&nbsp;&nbsp;•&nbsp;&nbsp;&nbsp; Service commercial : 77 935 17 86 / 77 605 95 76 </span>
+  </div>
+</div>
+
+<!-- HEADER -->
+<header class="site-header" id="site-header">
+  <div class="header-inner">
+    <a href="/" class="logo">
+      <img src="/gaya.jpg" alt="GAYA INFO TV" onerror="this.style.display='none'">
+      <div class="logo-text">
+        <span class="logo-name">GAYA INFO TV</span>
+        <span class="logo-tagline">L'information de proximité</span>
+      </div>
+    </a>
+    <nav class="main-nav" id="main-nav">
+      <a href="/" class="nav-link">Accueil</a>
+      <a href="/actualites/" class="nav-link">Actualités</a>
+      <div class="nav-dropdown">
+        <a href="#" class="nav-link dropdown-trigger">Émissions <i class="fa-solid fa-chevron-down" style="font-size:10px;"></i></a>
+        <div class="dropdown-menu">
+          <a href="/societe/"><i class="fa-solid fa-users"></i> Société</a>
+          <a href="/economie/"><i class="fa-solid fa-chart-line"></i> Économie</a>
+          <a href="/religion/"><i class="fa-solid fa-mosque"></i> Religion</a>
+          <a href="/sport/"><i class="fa-solid fa-futbol"></i> Sport</a>
+          <a href="/faitsdivers/"><i class="fa-solid fa-newspaper"></i> Faits divers</a>
+        </div>
+      </div>
+      <a href="/multimedia/" class="nav-link">Multimédia</a>
+      <a href="/apropos/" class="nav-link">À propos</a>
+      <a href="/blogs/" class="nav-link">Blogs</a>
+      <a href="/contact/" class="nav-link active">Contact</a>
+    </nav>
+    <div class="header-actions">
+      <a href="#" class="btn-radio"><i class="fa-solid fa-radio"></i> Radio</a>
+      <button type="button" class="btn-live" id="btnLiveDirect"><span class="live-dot"></span> Direct</button>
+      <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</header>
+
+<!-- SOCIAL BAR -->
+<div class="social-bar">
+  <div class="social-bar-inner">
+    <span class="social-bar-label">Suivez-nous</span>
+    <a href="https://www.facebook.com/gayainfotv" target="_blank" rel="noopener" class="social-icon fb"><i class="fa-brands fa-facebook-f"></i></a>
+    <a href="https://www.youtube.com/@gayainfotv" target="_blank" rel="noopener" class="social-icon yt"><i class="fa-brands fa-youtube"></i></a>
+    <a href="#" class="social-icon ig"><i class="fa-brands fa-instagram"></i></a>
+    <a href="#" class="social-icon tw"><i class="fa-brands fa-x-twitter"></i></a>
+	<div class="social-bar-date" id="current-date"></div>
+  </div>
+</div>
+
+<!-- PAGE HERO -->
+<section class="page-hero">
+  <div class="container">
+    <div class="breadcrumb">
+      <a href="/">Accueil</a>
+      <i class="fa-solid fa-chevron-right"></i>
+      <span>Contact</span>
+    </div>
+    <h1>Contactez-<em>nous</em></h1>
+    <p>Notre équipe est à votre disposition pour toute question, partenariat ou signalement.</p>
+  </div>
+</section>
+
+<!-- CONTACT CONTENT -->
+<section class="contact-page">
+  <div class="container">
+    <div class="contact-layout">
+
+      <!-- LEFT: INFO -->
+      <div class="contact-info">
+
+        <div class="contact-info-card">
+          <div class="contact-info-icon"><i class="fa-solid fa-location-dot"></i></div>
+          <div class="contact-info-text">
+            <h4>Adresse</h4>
+            <p>Gaé, Dagana<br>23002 Saint-Louis, Sénégal</p>
+          </div>
+        </div>
+
+        <div class="contact-info-card">
+          <div class="contact-info-icon"><i class="fa-solid fa-phone"></i></div>
+          <div class="contact-info-text">
+            <h4>Téléphone</h4>
+            <a href="tel:+221779351786">77 935 17 86</a><br>
+            <a href="tel:+221776059576">77 605 95 76</a>
+            <p style="font-size:12px; color: var(--color-text-muted); margin-top: 4px;">Service commercial</p>
+          </div>
+        </div>
+
+        <div class="contact-info-card">
+          <div class="contact-info-icon"><i class="fa-solid fa-envelope"></i></div>
+          <div class="contact-info-text">
+            <h4>E-mail</h4>
+            <a href="mailto:gayainfopdg@gmail.com">gayainfopdg@gmail.com</a>
+          </div>
+        </div>
+
+        <div class="contact-info-card">
+          <div class="contact-info-icon"><i class="fa-solid fa-clock"></i></div>
+          <div class="contact-info-text">
+            <h4>Horaires</h4>
+            <p>Lun–Ven : 08h00 – 18h00<br>Sam : 09h00 – 14h00</p>
+          </div>
+        </div>
+
+        <!-- SOCIAL -->
+        <div class="contact-social-section">
+          <h4>Retrouvez-nous</h4>
+          <div class="contact-social-links">
+            <a href="https://www.facebook.com/gayainfotv" target="_blank" rel="noopener" class="contact-social-link">
+              <span class="csli csli-fb"><i class="fa-brands fa-facebook-f"></i></span>
+              GAYA INFO TV
+            </a>
+            <a href="https://www.youtube.com/@gayainfotv" target="_blank" rel="noopener" class="contact-social-link">
+              <span class="csli csli-yt"><i class="fa-brands fa-youtube"></i></span>
+              @gayainfotv
+            </a>
+            <a href="#" class="contact-social-link">
+              <span class="csli csli-ig"><i class="fa-brands fa-instagram"></i></span>
+              @gayainfotv
+            </a>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- RIGHT: FORM -->
+      <div class="contact-form-card">
+        <div class="form-header">
+          <h2>Envoyez-nous un message</h2>
+          <p>Nous vous répondrons dans les meilleurs délais.</p>
+        </div>
+        <div class="form-body">
+          <form id="contact-form" onsubmit="submitForm(event)">
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>Nom complet <span class="required">*</span></label>
+                <input type="text" placeholder="Votre nom" required>
+              </div>
+              <div class="form-group">
+                <label>E-mail <span class="required">*</span></label>
+                <input type="email" placeholder="votre@email.com" required>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Téléphone</label>
+              <input type="tel" placeholder="77 000 00 00">
+            </div>
+
+            <div class="form-group">
+              <label>Objet <span class="required">*</span></label>
+              <select required>
+                <option value="" disabled selected>Choisissez un objet</option>
+                <option>Partenariat commercial</option>
+                <option>Signalement d'information</option>
+                <option>Demande d'interview</option>
+                <option>Publicité</option>
+                <option>Autre demande</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>Message <span class="required">*</span></label>
+              <textarea placeholder="Décrivez votre demande..." required></textarea>
+            </div>
+
+            <div class="form-submit">
+              <button type="submit" class="btn-submit">
+                <i class="fa-solid fa-paper-plane"></i> Envoyer le message
+              </button>
+              <span class="form-note">Réponse sous 24–48h ouvrables</span>
+            </div>
+
+            <div class="success-message" id="success-msg">
+              <i class="fa-solid fa-circle-check"></i>
+              Votre message a été envoyé avec succès. Merci !
+            </div>
+
+          </form>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="site-footer">
+  <div class="footer-top">
+    <div class="container footer-grid">
+
+      <div class="footer-col footer-brand">
+        <a href="/" class="footer-logo">
+          <img src="/gaya.jpg" alt="GAYA INFO TV" onerror="this.style.display='none'">
+          <span>GAYA INFO TV</span>
+        </a>
+        <p class="footer-about">Média de proximité dédié à l'information locale, nous couvrons l'actualité avec rigueur et impartialité.</p>
+        <div class="footer-socials">
+          <a href="https://www.facebook.com/gayainfotv" target="_blank" rel="noopener" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+          <a href="https://www.youtube.com/@gayainfotv" target="_blank" rel="noopener" aria-label="YouTube"><i class="fa-brands fa-youtube"></i></a>
+          <a href="#" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+          <a href="#" aria-label="X/Twitter"><i class="fa-brands fa-x-twitter"></i></a>
+        </div>
+      </div>
+
+      <div class="footer-col">
+        <h4>Navigation</h4>
+        <ul>
+          <li><a href="/actualites/">Actualités</a></li>
+          <li><a href="/societe/">Société</a></li>
+          <li><a href="/economie/">Économie</a></li>
+          <li><a href="/religion/">Religion</a></li>
+          <li><a href="/sport/">Sport</a></li>
+          <li><a href="/faitsdivers/">Faits divers</a></li>
+          <li><a href="/multimedia/">Multimédia</a></li>
+          <li><a href="/blogs/">Blogs</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Groupe GAYA INFO</h4>
+        <ul>
+          <li><a href="#">Radio Gaya</a></li>
+          <li><a href="#" class="gaya-sport-soon">GAYA Sport & Culture</a></li>
+        </ul>
+        <h4 style="margin-top: 1.5rem;">Informations</h4>
+        <ul>
+          <li><a href="/apropos/">À propos</a></li>
+          <li><a href="/contact/">Contact</a></li>
+          <li><a href="#nous-soutenir" class="gaya-don-trigger">Nous soutenir</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col footer-contact">
+        <h4>Nous contacter</h4>
+        <ul class="contact-list">
+          <li><i class="fa-solid fa-location-dot"></i> Gaé, Dagana — 23002 Saint-Louis, Sénégal</li>
+          <li><i class="fa-solid fa-envelope"></i> <a href="mailto:gayainfopdg@gmail.com">gayainfopdg@gmail.com</a></li>
+          <li><i class="fa-solid fa-phone"></i> 77 935 17 86 / 77 605 95 76</li>
+        </ul>
+        <div class="footer-newsletter">
+          <p>Restez informé :</p>
+          <form class="footer-form" onsubmit="subscribeNewsletter(event)">
+            <input type="email" placeholder="Votre e-mail">
+            <button type="submit">OK</button>
+          </form>
+        </div>
+      </div>
+
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="footer-bottom-inner">
+      <span>© 2025 GAYA INFO TV — Tous droits réservés</span>
+      <span>Dev - </i> SKadiar Design</span>
+    </div>
+  </div>
+</footer>
+<!-- TOAST BIENTÔT DISPONIBLE -->
+<div class="toast-soon" id="toast-soon">
+  <div class="toast-soon-icon">
+    <i class="fa-solid fa-radio"></i>
+  </div>
+  <div class="toast-soon-text">
+    <div class="toast-soon-title">Radio Gaya FM</div>
+    <div class="toast-soon-sub">Radio Gaya FM bientôt disponible ✨</div>
+  </div>
+  <button class="toast-soon-close" onclick="hideToast()">
+    <i class="fa-solid fa-xmark"></i>
+  </button>
+</div>
+
+<script src="/script.js?v=16"></script>
+<script>
+function submitForm(e) {
+  e.preventDefault();
+  const form = e.target;
+  const msg = document.getElementById('success-msg');
+  const btn = form.querySelector('.btn-submit');
+
+  btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Envoi...';
+  btn.disabled = true;
+
+  setTimeout(() => {
+    msg.style.display = 'flex';
+    btn.innerHTML = '<i class="fa-solid fa-check"></i> Envoyé !';
+    btn.style.background = '#1a7c4f';
+    form.reset();
+  }, 1200);
+}
+</script>
+<script src="/contact-cms.js"></script>
+  <script>
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", function() {
+        navigator.serviceWorker.register("/sw.js?v=9", { updateViaCache: "none" })
+          .then(function(reg) { console.log("SW enregistré :", reg.scope); })
+          .catch(function(err) { console.warn("SW échec :", err); });
+      });
+    }
+  </script>
+  <script src="/pwa-install.js"></script>
+</body>
+</html>
