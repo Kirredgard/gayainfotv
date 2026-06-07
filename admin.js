@@ -3161,7 +3161,23 @@ function initBlogCatTabs() {
   });
 }
 
-document.getElementById("addBlogBtn")?.addEventListener("click", addBlog);
+// Attach addBlogBtn listener (both immediate and on DOMContentLoaded for safety)
+(function attachAddBlogBtn() {
+  const btn = document.getElementById("addBlogBtn");
+  if (btn && !btn.dataset.blogListenerAttached) {
+    btn.dataset.blogListenerAttached = "1";
+    btn.addEventListener("click", addBlog);
+  }
+})();
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", function() {
+    const btn = document.getElementById("addBlogBtn");
+    if (btn && !btn.dataset.blogListenerAttached) {
+      btn.dataset.blogListenerAttached = "1";
+      btn.addEventListener("click", addBlog);
+    }
+  });
+}
 
 // Initialiser les blogs quand la vue est activée
 (function() {
