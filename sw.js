@@ -1,10 +1,10 @@
-/* GAYA INFO TV — Service Worker v51
-   Stratégie : stale-while-revalidate pour JS/CSS (rendu immédiat),
-               network-first pour HTML (contenu toujours frais),
-               cache-first pour images et fonts. */
+/* GAYA INFO TV — Service Worker v52
+   Stratégie : network-first pour HTML (contenu toujours frais),
+               cache-first pour JS/CSS/images (rendu immédiat sans flash de données périmées),
+               bypass total pour Supabase. */
 
-const CACHE_STATIC = 'gaya-static-v51';
-const CACHE_PAGES  = 'gaya-pages-v51';
+const CACHE_STATIC = 'gaya-static-v52';
+const CACHE_PAGES  = 'gaya-pages-v52';
 
 // Assets statiques à précacher au premier install
 const PRECACHE = [
@@ -17,6 +17,15 @@ const PRECACHE = [
   '/emissions-cms.js',
   '/emissions.css',
   '/pwa-install.js',
+  '/gaya-cms-bridge.js',
+  '/article.js',
+  '/articles.js',
+  '/favicon-192x192.png',
+  '/favicon-512x512.png',
+  '/favicon-32x32.png',
+  '/favicon.ico',
+  '/gaya.jpg',
+  '/manifest.json',
 ];
 
 self.addEventListener('install', event => {
@@ -35,53 +44,35 @@ self.addEventListener('activate', event => {
 });
 
 self.addEventListener('fetch', event => {
-  const req  = event.request;
+  const req = event.request;
   if (req.method !== 'GET') return;
-  const url  = new URL(req.url);
+  const url = new URL(req.url);
 
-  // Requêtes API Supabase : toujours réseau, jamais cache
+  // Requêtes Supabase : toujours réseau, jamais cache
   if (url.hostname.includes('supabase.co')) return;
 
-  // Ressources externes (CDN) : stale-while-revalidate
+  // Ressources tierces (CDN fonts, icons) : cache-first
   if (url.origin !== self.location.origin) {
-    event.respondWith(staleWhileRevalidate(req, CACHE_STATIC));
+    event.respondWith(cacheFirst(req, CACHE_STATIC));
     return;
   }
 
   const path = url.pathname;
 
-  // HTML : network-first avec fallback cache (contenu toujours à jour)
+  // Pages HTML : network-first (contenu toujours frais)
   if (req.headers.get('accept')?.includes('text/html') || path.endsWith('/') || path.endsWith('.html')) {
     event.respondWith(networkFirstWithCache(req, CACHE_PAGES));
     return;
   }
 
-  // JS et CSS : stale-while-revalidate (rendu immédiat, màj en arrière-plan)
-  if (/\.(js|css)(\?.*)?$/.test(path)) {
-    event.respondWith(staleWhileRevalidate(req, CACHE_STATIC));
-    return;
-  }
-
-  // Images et fonts : cache-first (rarement changés)
-  if (/\.(png|jpg|jpeg|gif|webp|svg|ico|woff2?|ttf)$/i.test(path)) {
+  // JS, CSS, images, fonts : cache-first (rendu immédiat, pas de flash de données périmées)
+  if (/\.(js|css|png|jpg|jpeg|gif|webp|svg|ico|woff2?|ttf)(\?.*)?$/i.test(path)) {
     event.respondWith(cacheFirst(req, CACHE_STATIC));
     return;
   }
 });
 
 /* --- Stratégies --- */
-
-// Stale-while-revalidate : répond depuis le cache immédiatement,
-// met à jour le cache en arrière-plan pour la prochaine visite.
-async function staleWhileRevalidate(req, cacheName) {
-  const cache    = await caches.open(cacheName);
-  const cached   = await cache.match(req);
-  const fetchProm = fetch(req).then(res => {
-    if (res.ok) cache.put(req, res.clone());
-    return res;
-  }).catch(() => null);
-  return cached || await fetchProm;
-}
 
 // Network-first : essaie le réseau, tombe en cache si hors-ligne.
 async function networkFirstWithCache(req, cacheName) {
@@ -95,12 +86,33 @@ async function networkFirstWithCache(req, cacheName) {
   }
 }
 
-// Cache-first : répond depuis le cache, va en réseau seulement si absent.
+// Cache-first : répond depuis le cache immédiatement, va en réseau seulement si absent.
 async function cacheFirst(req, cacheName) {
   const cache  = await caches.open(cacheName);
   const cached = await cache.match(req);
   if (cached) return cached;
-  const res = await fetch(req);
-  if (res.ok) cache.put(req, res.clone());
-  return res;
+  try {
+    const res = await fetch(req);
+    if (res.ok) cache.put(req, res.clone());
+    return res;
+  } catch(_) {
+    return cached;
+  }
 }
+
+/* ---- Notifications push ---- */
+self.addEventListener('push', event => {
+  if (!event.data) return;
+  const data = event.data.json();
+  self.registration.showNotification(data.title || 'GAYA INFO TV', {
+    body: data.body || '',
+    icon: '/favicon-192x192.png',
+    badge: '/favicon-32x32.png',
+    data: { url: data.url || '/' }
+  });
+});
+
+self.addEventListener('notificationclick', event => {
+  event.notification.close();
+  event.waitUntil(clients.openWindow(event.notification.data.url || '/'));
+});
